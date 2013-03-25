@@ -1,0 +1,117 @@
+package AttributePanel;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+
+import All.Constants;
+import Data.Machine;
+
+
+public class MachineAttributePanel extends NodeAttributesPanel{
+	public JButton setData;
+	public Machine selectedNode;
+	public MachineAttributePanel(Machine node){
+		super(node);
+		setBorder(BorderFactory.createTitledBorder("Machine Attributes Panel"));
+		
+		selectedNode = node;
+		
+		setData = new JButton("Set Data");
+		setData.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(selectedNode != null){
+					selectedNode.name = name.getText();
+					
+					selectedNode.ETH_IP = ETH_IP.getText();
+					selectedNode.ETH_HW = ETH_HW.getText();
+					selectedNode.WLS_IP = parseSeparatedString(WLS_IP.getText());
+					selectedNode.WLS_HW = parseSeparatedString(WLS_HW.getText());
+					
+					selectedNode.channels = parseChannels(channels.getText());
+					
+					selectedNode.mobilityOption = mobilityOption.getSelectedItem().toString();
+					selectedNode.topologyOption = topologyOption.getSelectedItem().toString();
+					
+					System.out.println("Successfully updated the node:\n" + selectedNode);
+				}
+			}
+		});
+		
+		
+		JPanel all = new JPanel();
+		
+		GroupLayout layout = new GroupLayout(all);
+		layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+		
+		all.setLayout(layout);
+		add(all);
+		
+		Component gap = Box.createRigidArea(new Dimension(Constants.COMPONENTS_GAP, Constants.COMPONENTS_GAP));
+		
+		layout.setHorizontalGroup(
+		   layout.createParallelGroup()
+		   		  .addGroup(layout.createSequentialGroup()
+				      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				    	   .addComponent(nameLabel)
+				      	   .addComponent(ETH_IPLabel)
+				      	   .addComponent(ETH_HWLabel)
+				      	   .addComponent(WLS_IPLabel)
+				      	   .addComponent(WLS_HWLabel)
+				      	   .addComponent(channelsLabel)
+				      	   .addComponent(mobilityOptionLabel)
+				      	   .addComponent(topologyOptionLabel))
+			          .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+		        		   .addComponent(name)
+				      	   .addComponent(ETH_IP)
+				      	   .addComponent(ETH_HW)
+				      	   .addComponent(WLS_IP)
+				      	   .addComponent(WLS_HW)
+				      	   .addComponent(channels)
+				      	   .addComponent(mobilityOption)
+				      	   .addComponent(topologyOption)
+				      	   .addComponent(setData))
+				      	   
+				      	   )
+	   			
+		);
+		
+		layout.setVerticalGroup(
+		   layout.createSequentialGroup()
+		   	  .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+		           .addComponent(nameLabel)
+		           .addComponent(name))
+	          .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+		           .addComponent(ETH_IPLabel)
+		           .addComponent(ETH_IP))
+	          .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+		           .addComponent(ETH_HWLabel)
+		           .addComponent(ETH_HW))
+   	          .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+		           .addComponent(WLS_IPLabel)
+		           .addComponent(WLS_IP))
+	          .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+		           .addComponent(WLS_HWLabel)
+		           .addComponent(WLS_HW))
+	          .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+		           .addComponent(channelsLabel)
+		           .addComponent(channels))
+	          .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+		           .addComponent(mobilityOptionLabel)
+		           .addComponent(mobilityOption))
+		      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+		           .addComponent(topologyOptionLabel)
+		           .addComponent(topologyOption))
+		      .addComponent(setData)
+		);
+	}
+}

@@ -63,7 +63,7 @@ public class UI extends JFrame{
 		
 		setResizable(false);
 		setLocationByPlatform(true);
-		setSize(800, 700);
+		setSize(800, 705);
 		setVisible(true);
 	}
 	

@@ -1,3 +1,4 @@
+
 package All;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -18,6 +19,9 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
+
+import com.sun.org.apache.bcel.internal.classfile.ConstantValue;
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 
 import AttributePanel.MachineAttributePanel;
 import AttributePanel.NullAttributePanel;
@@ -54,7 +58,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		addMouseMotionListener(this);
 		
 		setSourceButton = new JButton("Set Source");
-		setDestinationButton = new JButton("Set Destination");
+		setDestinationButton = new JButton("Set Dest.");
 		
 		setSourceButton.addActionListener(new ActionListener() {
 			
@@ -186,22 +190,22 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 					});
 				}
 				
-				StatisticsCollector sc = new StatisticsCollector(listOfNodes);
-				
-				for(Node node : listOfNodes){
-					JFileChooser fc = new JFileChooser();
-					int ret = fc.showDialog(drawingPanel, String.format("Choose Node:(%s) statistics file.", node.name));
-					if(ret != JFileChooser.APPROVE_OPTION){
-						JOptionPane.showMessageDialog(drawingPanel, "Missing statistics file.");
-						return;
-					}
-					
-					String statisticsFile = fc.getSelectedFile().getAbsolutePath();
-					
-					sc.parse(statisticsFile);
-				}
-				
-				sc.calculate(listOfNodes);
+//				StatisticsCollector sc = new StatisticsCollector(listOfNodes);
+//				
+//				for(Node node : listOfNodes){
+//					JFileChooser fc = new JFileChooser();
+//					int ret = fc.showDialog(drawingPanel, String.format("Choose Node:(%s) statistics file.", node.name));
+//					if(ret != JFileChooser.APPROVE_OPTION){
+//						JOptionPane.showMessageDialog(drawingPanel, "Missing statistics file.");
+//						return;
+//					}
+//					
+//					String statisticsFile = fc.getSelectedFile().getAbsolutePath();
+//					
+//					sc.parse(statisticsFile);
+//				}
+//				
+//				sc.calculate(listOfNodes);
 				
 				ui.attributesPanel = visualizationPanel;
 				ui.add(ui.attributesPanel);
@@ -236,11 +240,11 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
         g2d.drawString("Source", 45, 635);
         g2d.drawString("Destination", 175, 635);
         g2d.drawString("Selected", 315, 635);
-        g2d.setColor(Color.GREEN);
+        g2d.setColor(Constants.SOURCE_COLOR);
         g2d.fillRect(15, 621, 25, 20);
-        g2d.setColor(Color.BLUE);
+        g2d.setColor(Constants.DEST_COLOR);
         g2d.fillRect(145, 621, 25, 20);
-        g2d.setColor(Color.RED);
+        g2d.setColor(Constants.SELECTED_COLOR);
         g2d.fillRect(285, 621, 25, 20);
 
 		g2d.setStroke(new BasicStroke(1));

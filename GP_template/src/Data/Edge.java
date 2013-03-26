@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+import All.Constants;
 import All.DrawingPanel;
 
 public class Edge {
@@ -26,7 +27,7 @@ public class Edge {
 	
 	public void draw(Graphics2D g2d, DrawingPanel drawingPanel, String drawingOption){
 		if(drawingOption.equals("Init")){
-			g2d.setColor(Color.ORANGE);
+			g2d.setColor(Constants.EDGE_COLOR);
 		}else if(drawingOption.equals("LossRatio")){
 			g2d.setColor(new Color((int) (256 * lossRatio), (int) (256 * (1 - lossRatio)), 0));
 		}else if(drawingOption.equals("LinkDelay")){
@@ -34,7 +35,7 @@ public class Edge {
 		}else if(drawingOption.equals("Throughput")){
 			g2d.setColor(new Color((int) (256 * throughput), (int) (256 * (1 - throughput)), 0));
 		}else{
-			g2d.setColor(Color.BLACK);
+			g2d.setColor(Constants.EDGE_COLOR);
 		}
 		
 		g2d.setStroke(new BasicStroke(2));

@@ -26,7 +26,7 @@ public class Machine extends Node{
 			g2d.setStroke(new BasicStroke(1.0f,  BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{10.0f}, 0.0f));
 			g2d.drawOval(x - 50, y - 50, 20 + 100, 20 + 100);
 		}else if(drawingOption.equals("NodalDelay")){
-			g2d.setColor(new Color((int) (256 * nodalDelay), (int) (256 * (1 - nodalDelay)), 0));
+			g2d.setColor(new Color((int) (256 * averageNodalDelay), (int) (256 * (1 - averageNodalDelay)), 0));
 		}else if(drawingOption.equals("WirelessInterfaces")){
 			g2d.setColor(new Color(0, 0, (int) (256 * (totalSwitches) / 100)));
 		}else{

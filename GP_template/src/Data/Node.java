@@ -3,6 +3,7 @@ package Data;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 import All.Channel;
 import All.DrawingPanel;
@@ -18,8 +19,9 @@ public abstract class Node{
 	public ArrayList<Channel> channels;
 	
 	//Additional data to be added.
-	public double nodalDelay;
+	public double averageSwitchingTime, averageNodalDelay;
 	public int totalSwitches;
+	public TreeMap<Integer, PacketInfo> inPackets, outPackets;
 	public Node(String name, int x, int y){
 		this.x = x;
 		this.y = y;
@@ -45,8 +47,11 @@ public abstract class Node{
 		mobilityOption = "Static";
 		topologyOption = "Static";
 		
-		nodalDelay = Math.random();
-		totalSwitches = (int)(Math.random() * 100);
+//		averageNodalDelay = Math.random();
+//		totalSwitches = (int)(Math.random() * 100);
+		
+		inPackets = new TreeMap<Integer, Long>();
+		outPackets = new TreeMap<Integer, Long>();
 	}
 	
 	public String getIP(){

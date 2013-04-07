@@ -11,13 +11,14 @@ public class Edge {
 	public Node from, to;
 	//Additional data to be added.
 	public double linkDelay, lossRatio, throughput;
+	public int packetCount;
 	public Edge(Node from, Node to) {
 		this.from = from;
 		this.to = to;
 		
-		linkDelay = Math.random();
-		lossRatio = Math.random();
-		throughput = Math.random();
+//		linkDelay = Math.random();
+//		lossRatio = Math.random();
+//		throughput = Math.random();
 	}
 	
 	public boolean equals(Object e){

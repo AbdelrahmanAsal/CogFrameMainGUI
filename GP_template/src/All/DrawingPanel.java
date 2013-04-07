@@ -20,9 +20,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
-import com.sun.org.apache.bcel.internal.classfile.ConstantValue;
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
-
 import AttributePanel.MachineAttributePanel;
 import AttributePanel.NullAttributePanel;
 import AttributePanel.PrimaryAttributePanel;
@@ -190,22 +187,22 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 					});
 				}
 				
-//				StatisticsCollector sc = new StatisticsCollector(listOfNodes);
-//				
-//				for(Node node : listOfNodes){
-//					JFileChooser fc = new JFileChooser();
-//					int ret = fc.showDialog(drawingPanel, String.format("Choose Node:(%s) statistics file.", node.name));
-//					if(ret != JFileChooser.APPROVE_OPTION){
-//						JOptionPane.showMessageDialog(drawingPanel, "Missing statistics file.");
-//						return;
-//					}
-//					
-//					String statisticsFile = fc.getSelectedFile().getAbsolutePath();
-//					
-//					sc.parse(statisticsFile);
-//				}
-//				
-//				sc.calculate(listOfNodes);
+				StatisticsCollector sc = new StatisticsCollector(listOfNodes);
+				
+				for(Node node : listOfNodes){
+					JFileChooser fc = new JFileChooser();
+					int ret = fc.showDialog(drawingPanel, String.format("Choose Node:(%s) statistics file.", node.name));
+					if(ret != JFileChooser.APPROVE_OPTION){
+						JOptionPane.showMessageDialog(drawingPanel, "Missing statistics file.");
+						return;
+					}
+					
+					String statisticsFile = fc.getSelectedFile().getAbsolutePath();
+					
+					sc.parse(statisticsFile);
+				}
+				
+				sc.calculate();
 				
 				ui.attributesPanel = visualizationPanel;
 				ui.add(ui.attributesPanel);

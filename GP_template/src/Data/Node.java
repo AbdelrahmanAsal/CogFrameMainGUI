@@ -19,8 +19,10 @@ public abstract class Node{
 	public ArrayList<Channel> channels;
 	
 	//Additional data to be added.
+	public static double maxAverageNodalDelay; 
 	public double averageSwitchingTime, averageNodalDelay;
 	public int totalSwitches;
+	public static int maxTotalSwitches = 0;
 	public TreeMap<Integer, PacketInfo> inPackets, outPackets;
 	public Node(String name, int x, int y){
 		this.x = x;
@@ -40,18 +42,15 @@ public abstract class Node{
 		
 		this.adjacent = new ArrayList<Edge>();
 		this.channels = new ArrayList<Channel>();
-		channels.add(new Channel(1, 10));
-		channels.add(new Channel(6, 20));
-		channels.add(new Channel(11, 30));
+		channels.add(new Channel(1, 0.1));
+		channels.add(new Channel(6, 0.2));
+		channels.add(new Channel(11, 0.3));
 		
 		mobilityOption = "Static";
 		topologyOption = "Static";
 		
-//		averageNodalDelay = Math.random();
-//		totalSwitches = (int)(Math.random() * 100);
-		
-		inPackets = new TreeMap<Integer, Long>();
-		outPackets = new TreeMap<Integer, Long>();
+		inPackets = new TreeMap<Integer, PacketInfo>();
+		outPackets = new TreeMap<Integer, PacketInfo>();
 	}
 	
 	public String getIP(){

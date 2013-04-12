@@ -62,7 +62,7 @@ public class ModuleMaker {
 		//Channels.
 		out.printf("%d\n", thisNode.channels.size());
 		for(Channel c : thisNode.channels)
-			out.printf("%d %d\n", c.channel, c.probability);
+			out.printf("%d %f\n", c.channel, c.probability);
 		
 		//Location.
 		out.printf("%d %d\n", thisNode.x, thisNode.y);

@@ -160,7 +160,7 @@ public class UI extends JFrame{
 						int channels = r.nextInt();
 						for (int j = 0; j < channels; j++) {
 							int channel = r.nextInt();
-							int prob = r.nextInt();
+							double prob = r.nextDouble();
 							node.channels.add(new Channel(channel, prob));
 						}
 						String isSource = r.next();

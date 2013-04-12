@@ -12,6 +12,9 @@ public class Edge {
 	//Additional data to be added.
 	public double linkDelay, lossRatio, throughput;
 	public int packetCount;
+	public static double maxLinkDelay;
+	public boolean used;
+	
 	public Edge(Node from, Node to) {
 		this.from = from;
 		this.to = to;
@@ -30,11 +33,17 @@ public class Edge {
 		if(drawingOption.equals("Init")){
 			g2d.setColor(Constants.EDGE_COLOR);
 		}else if(drawingOption.equals("LossRatio")){
-			g2d.setColor(new Color((int) (256 * lossRatio), (int) (256 * (1 - lossRatio)), 0));
+			if (!used)
+				return;
+			System.out.println("Loss Ratio: "+ lossRatio);
+			g2d.setColor(new Color((int) (255 * lossRatio), (int) (255 * (1 - lossRatio)), 0));
 		}else if(drawingOption.equals("LinkDelay")){
-			g2d.setColor(new Color((int) (256 * linkDelay), (int) (256 * (1 - linkDelay)), 0));
+			if (!used)
+				return;
+			System.out.println("Link Delay: "+ from.name + " -> " + to.name + ": " + linkDelay + ", " + maxLinkDelay);
+			g2d.setColor(new Color((int) (255 * (linkDelay / maxLinkDelay)), (int) (255 * (1 - ((linkDelay) / maxLinkDelay))), 0));
 		}else if(drawingOption.equals("Throughput")){
-			g2d.setColor(new Color((int) (256 * throughput), (int) (256 * (1 - throughput)), 0));
+//			g2d.setColor(new Color((int) (255 * throughput), (int) (255 * (1 - throughput)), 0));
 		}else{
 			g2d.setColor(Constants.EDGE_COLOR);
 		}

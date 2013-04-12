@@ -188,7 +188,7 @@ public class NodeAttributesPanel extends AttributesPanel{
 			String[] part = bf[i].split("[:]");
 			
 			int channel = Integer.parseInt(part[0]);
-			int probability = Integer.parseInt(part[1]);
+			double probability = Double.parseDouble(part[1]);
 			
 			ret.add(new Channel(channel, probability));
 		}

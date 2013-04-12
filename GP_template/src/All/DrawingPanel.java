@@ -187,6 +187,10 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 					});
 				}
 				
+				ui.attributesPanel = visualizationPanel;
+				ui.add(ui.attributesPanel);
+				ui.validate();
+				repaint();
 				StatisticsCollector sc = new StatisticsCollector(listOfNodes);
 				
 				for(Node node : listOfNodes){
@@ -204,10 +208,6 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 				
 				sc.calculate();
 				
-				ui.attributesPanel = visualizationPanel;
-				ui.add(ui.attributesPanel);
-				ui.validate();
-				repaint();
 			}
 		});
 		add(visualizeButton);

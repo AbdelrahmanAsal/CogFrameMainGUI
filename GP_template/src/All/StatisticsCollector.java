@@ -1,6 +1,8 @@
 package All;
 
+import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 import Data.Edge;
 import Data.Node;
@@ -8,24 +10,31 @@ import Data.PacketInfo;
 
 public class StatisticsCollector {
 	ArrayList<Node> listOfNodes;
+	TreeMap<String,Node> nodes;
 	public StatisticsCollector(ArrayList<Node> listOfNodes){
 		this.listOfNodes = listOfNodes;
+		nodes = new TreeMap<String, Node>();
 		for(Node node: listOfNodes){
-			
+			nodes.put(node.ETH_HW.toUpperCase(), node);
+			System.out.println(node.ETH_HW+"         -> ");
+			for(String hw: node.WLS_HW) {
+				nodes.put(hw.toUpperCase(), node);
+			}
 		}
 	}
 	public void parse(String fileName){
-		InputReader r = new InputReader(System.in);
+		InputReader r = null;
+		try {
+			r = new InputReader(new FileReader(fileName));
+		} catch(Exception ex) {
 		
-		String name = r.next();
-		Node currentNode = null;
-		
-		for(Node node : listOfNodes){
-			if(node.name.equals(name)){
-				currentNode = node;
-				break;
-			}
 		}
+		
+		String name = r.next().toUpperCase();
+		Node currentNode = null;
+		System.out.println(name);
+		currentNode = nodes.get(name);
+		System.out.println(currentNode);
 //		String role = r.next();
 		
 		//Sent packets table.
@@ -33,15 +42,8 @@ public class StatisticsCollector {
 		for(int i = 0; i < sentCount; i++){
 			int packetID = r.nextInt();
 			long timeStamp = r.nextLong();
-			String to = r.next();
-			Node toNode = null;
-			
-			for(Node node : listOfNodes){
-				if(node.name.equals(to)){
-					toNode = node;
-					break;
-				}
-			}
+			String to = r.next().toUpperCase();
+			Node toNode = nodes.get(to);
 			
 			currentNode.outPackets.put(packetID, new PacketInfo(packetID, timeStamp, toNode));
 		}
@@ -67,6 +69,7 @@ public class StatisticsCollector {
 			currentNode.averageSwitchingTime += switchingTime;
 		}
 		
+		Node.maxTotalSwitches = Math.max(Node.maxTotalSwitches, switchCount);
 		currentNode.averageSwitchingTime /= switchCount;
 	}
 	
@@ -80,14 +83,22 @@ public class StatisticsCollector {
 					//loss!
 				}
 			}
-			node.averageNodalDelay /= node.outPackets.size();
+			
+			if(node.outPackets.size() == 0) node.averageNodalDelay = 0;
+			else node.averageNodalDelay /= node.outPackets.size();
+			
+			Node.maxAverageNodalDelay = Math.max(Node.maxAverageNodalDelay, node.averageNodalDelay);
 			
 			for(Edge edge : node.adjacent)if(node == edge.from){
+				System.out.println("Calculating the statistics for the " + edge.from.name + " -> " + edge.to.name);
 				int toBeSent = 0, lost = 0;
 				for(int packetID : edge.from.outPackets.keySet())if(edge.to == edge.from.outPackets.get(packetID).to){
-					long timeDiff = edge.to.inPackets.get(packetID).timeStamp - edge.from.outPackets.get(packetID).timeStamp;
 					toBeSent++;
+					edge.used = true;
 					if(edge.to.inPackets.containsKey(packetID)){
+						long timeDiff = edge.to.inPackets.get(packetID).timeStamp - edge.from.outPackets.get(packetID).timeStamp;
+						timeDiff = Math.abs(timeDiff);
+						System.out.println("Adding to the link delay " + edge.from.name + " -> " + edge.to.name + ", " + timeDiff);
 						edge.linkDelay += timeDiff;
 					}else{
 						lost++;
@@ -95,14 +106,17 @@ public class StatisticsCollector {
 				}
 				
 				edge.lossRatio = lost * 1.0 / toBeSent;
-				edge.linkDelay /= toBeSent - lost;
+				
+				if(toBeSent == 0 || toBeSent - lost == 0)edge.linkDelay = 0;
+				else edge.linkDelay /= (toBeSent - lost);
+				
+				if(toBeSent - lost > 0)
+					Edge.maxLinkDelay = Math.max(edge.linkDelay, Edge.maxLinkDelay);
+				System.out.println("------>   "+edge.linkDelay);
 				edge.throughput += toBeSent - lost;
 				edge.packetCount = toBeSent - lost;
 			}
 		}
-		
-		
 	}
-	
 }
 

@@ -40,7 +40,7 @@ public class ModuleMaker {
 			wirelessNodes += node.WLS_HW.size();
 		
 		
-		PrintWriter out = new PrintWriter(String.format("ModuleFile_%s.txt", thisNode.name));
+		PrintWriter out = new PrintWriter(String.format("Module_%s.txt", thisNode.name));
 		
 		out.printf("%s\n", thisNode.name);
 		out.printf("%s\n", thisNode.type());
@@ -57,7 +57,7 @@ public class ModuleMaker {
 		//Wireless.
 		out.printf("%d\n", thisNode.WLS_HW.size());
 		for(int i = 0; i < thisNode.WLS_HW.size(); i++)
-			out.printf("%s %s\n", thisNode.WLS_HW.get(i), thisNode.WLS_IP.get(i));
+			out.printf("%s %s\n", thisNode.WLS_HW.get(i), "192.168.1.1");
 
 		//Channels.
 		out.printf("%d\n", thisNode.channels.size());
@@ -77,7 +77,7 @@ public class ModuleMaker {
 		for(Node node : listOfNodes){
 			out.printf("%s %s\n", node.ETH_HW, node.ETH_IP);
 			for(int i = 0; i < node.WLS_HW.size(); i++)
-				out.printf("%s %s\n", node.WLS_HW.get(i), node.WLS_IP.get(i));
+				out.printf("%s %s\n", node.WLS_HW.get(i), "192.168.1.1");
 		}
 		
 		//Overall Topology.

@@ -12,6 +12,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -20,6 +21,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
+import AttributePanel.AttributesPanel;
 import AttributePanel.MachineAttributePanel;
 import AttributePanel.NullAttributePanel;
 import AttributePanel.PrimaryAttributePanel;
@@ -58,7 +60,6 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		setDestinationButton = new JButton("Set Dest.");
 		
 		setSourceButton.addActionListener(new ActionListener() {
-			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(selectedIndex != -1 && listOfNodes.get(selectedIndex) instanceof Machine){
@@ -73,7 +74,6 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		add(setSourceButton);
 		
 		setDestinationButton.addActionListener(new ActionListener() {
-			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(selectedIndex != -1 && listOfNodes.get(selectedIndex) instanceof Machine){
@@ -175,6 +175,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(!visualizeButton.isSelected()){
+					ui.remove(ui.visualizeAttributesPanel);
 					ui.remove(ui.attributesPanel);
 					ui.attributesPanel = new NullAttributePanel();
 					ui.add(ui.attributesPanel);
@@ -196,26 +197,28 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 					});
 				}
 				
-				ui.attributesPanel = visualizationPanel;
+				ui.visualizeAttributesPanel = visualizationPanel;
 				ui.add(ui.attributesPanel);
+				ui.add(ui.visualizeAttributesPanel);
 				ui.validate();
 				repaint();
-				StatisticsCollector sc = new StatisticsCollector(listOfNodes);
 				
-				for(Node node : listOfNodes){
-					JFileChooser fc = new JFileChooser();
-					int ret = fc.showDialog(drawingPanel, String.format("Choose Node:(%s) statistics file.", node.name));
-					if(ret != JFileChooser.APPROVE_OPTION){
-						JOptionPane.showMessageDialog(drawingPanel, "Missing statistics file.");
-						return;
-					}
-					
-					String statisticsFile = fc.getSelectedFile().getAbsolutePath();
-					
-					sc.parse(statisticsFile);
-				}
-				
-				sc.calculate();
+//				StatisticsCollector sc = new StatisticsCollector(listOfNodes);
+//				
+//				for(Node node : listOfNodes){
+//					JFileChooser fc = new JFileChooser();
+//					int ret = fc.showDialog(drawingPanel, String.format("Choose Node:(%s) statistics file.", node.name));
+//					if(ret != JFileChooser.APPROVE_OPTION){
+//						JOptionPane.showMessageDialog(drawingPanel, "Missing statistics file.");
+//						return;
+//					}
+//					
+//					String statisticsFile = fc.getSelectedFile().getAbsolutePath();
+//					
+//					sc.parse(statisticsFile);
+//				}
+//				
+//				sc.calculate();
 				
 			}
 		});
@@ -255,7 +258,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 
 		g2d.setStroke(new BasicStroke(1));
 		
-		String drawingOption = visualizeButton.isSelected() ? ((VisualizeAttributesPanel)ui.attributesPanel).visualiztionOptions.getSelection().getActionCommand() : "Init";
+		String drawingOption = visualizeButton.isSelected() ? ui.visualizeAttributesPanel.visualiztionOptions.getSelection().getActionCommand() : "Init";
 		
 		for(Node node : listOfNodes){
 			//Draw the Node itself.
@@ -310,11 +313,10 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 
 	@Override
 	public void mousePressed(MouseEvent mouse) {
-		if(visualizeButton.isSelected())return;
+//		if(visualizeButton.isSelected())return;
 		
 		selectedIndex = -1;
 		if(SwingUtilities.isRightMouseButton(mouse)){
-			
 			fromNode = getNodeIndex(mouse);
 		}else{
 			if(mouse.getClickCount() == 1){
@@ -365,7 +367,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 
 	@Override
 	public void mouseReleased(MouseEvent mouse) {
-		if(visualizeButton.isSelected())return;
+//		if(visualizeButton.isSelected())return;
 		
 		if(SwingUtilities.isRightMouseButton(mouse)){
 			toNode = getNodeIndex(mouse);
@@ -408,12 +410,17 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 					machineAttributePanel.mobilityOption.setSelectedItem(listOfNodes.get(selectedIndex).mobilityOption);
 					machineAttributePanel.topologyOption.setSelectedItem(listOfNodes.get(selectedIndex).topologyOption);
 					
+					AttributesPanel tmp = ui.attributesPanel;
 					ui.attributesPanel = machineAttributePanel;
+
+//					ui.layout.setHorizontalGroup(ui.layout.createSequentialGroup().addComponent(ui.drawingPanel).addComponent(ui.attributesPanel));
+//					ui.layout.setVerticalGroup(ui.layout.createParallelGroup().addComponent(ui.drawingPanel).addComponent(ui.attributesPanel));
+					
 					ui.add(machineAttributePanel);
 					ui.validate();
 				}else if(listOfNodes.get(selectedIndex) instanceof Primary){
 					System.out.println(listOfNodes.get(selectedIndex));
-					ui.remove(ui.attributesPanel);
+					ui.remove(ui.attributesPanel);	
 					PrimaryAttributePanel primaryAttributePanel  = new PrimaryAttributePanel((Primary)listOfNodes.get(selectedIndex));
 					primaryAttributePanel.name.setText(listOfNodes.get(selectedIndex).name);
 					
@@ -431,6 +438,10 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 					primaryAttributePanel.inactiveDist.setSelectedItem(((Primary)listOfNodes.get(selectedIndex)).inactiveDist.type());
 					
 					ui.attributesPanel = primaryAttributePanel;
+					
+//					ui.layout.setHorizontalGroup(ui.layout.createSequentialGroup().addComponent(ui.drawingPanel).addComponent(ui.attributesPanel));
+//					ui.layout.setVerticalGroup(ui.layout.createParallelGroup().addComponent(ui.drawingPanel).addComponent(ui.attributesPanel));
+					
 					ui.add(primaryAttributePanel);
 					ui.validate();
 					
@@ -444,6 +455,10 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 				ui.remove(ui.attributesPanel);
 				
 				ui.attributesPanel = new NullAttributePanel();
+				
+//				ui.layout.setHorizontalGroup(ui.layout.createSequentialGroup().addComponent(drawingPanel).addComponent(ui.attributesPanel));
+//				ui.layout.setVerticalGroup(ui.layout.createParallelGroup().addComponent(drawingPanel).addComponent(ui.attributesPanel));
+				
 				ui.add(ui.attributesPanel);
 				ui.validate();
 			}

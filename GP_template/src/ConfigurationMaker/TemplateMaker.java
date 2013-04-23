@@ -37,9 +37,10 @@ public class TemplateMaker {
 		BufferedReader bfd = new BufferedReader(
 				new FileReader(templateFilePath));
 		int dotIndex = templateFilePath.lastIndexOf('.');
-		String outputFilePath = templateFilePath.substring(0,
-				templateFilePath.indexOf("_inter"))
-				+ "_out_" + thisNode.name + templateFilePath.substring(dotIndex);
+//		String outputFilePath = templateFilePath.substring(0,
+//				templateFilePath.indexOf("_inter"))
+//				+ "_out_" + thisNode.name + templateFilePath.substring(dotIndex);
+		String outputFilePath = "Configuration_" + thisNode.name + templateFilePath.substring(dotIndex);
 		BufferedWriter out = new BufferedWriter(new FileWriter(outputFilePath));
 		System.out.println("Starting replacement by values..");
 		String s;

@@ -29,16 +29,16 @@ public abstract class Node{
 		this.y = y;
 		isSource = isDestination = false;
 		
-		this.name = name;
+//		this.name = name;
 		
 		this.ETH_IP = "10.0.0.21";
-		this.ETH_HW = "11:12:13:14:15:16";
+//		this.ETH_HW = "11:12:13:14:15:16";
 		this.WLS_HW = new ArrayList<String>();
-		WLS_HW.add("11:12:13:14:15:16");
-		WLS_HW.add("11:12:13:14:15:19");
+//		WLS_HW.add("11:12:13:14:15:16");
+//		WLS_HW.add("11:12:13:14:15:19");
 		this.WLS_IP = new ArrayList<String>();
-		WLS_IP.add("192.168.1.1");
-		WLS_IP.add("192.168.1.2");
+//		WLS_IP.add("192.168.1.1");
+//		WLS_IP.add("192.168.1.2");
 		
 		this.adjacent = new ArrayList<Edge>();
 		this.channels = new ArrayList<Channel>();

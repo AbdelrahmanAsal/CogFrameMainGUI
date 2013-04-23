@@ -40,6 +40,7 @@ public class NodeAttributesPanel extends AttributesPanel{
 		
 		nameLabel = new JLabel("Name of the Node:");
 		name = new JTextArea("");
+		name.setEnabled(false);
 		name.addKeyListener(new KeyListener() {
 		    public void keyPressed(KeyEvent e) {
 		    	if(e.getKeyCode() == KeyEvent.VK_TAB) {
@@ -80,6 +81,7 @@ public class NodeAttributesPanel extends AttributesPanel{
 		
 		ETH_HWLabel = new JLabel("Ethernet hardware of the Node:");
 		ETH_HW = new JTextArea("");
+		ETH_HW.setEnabled(false);
 		ETH_HW.addKeyListener(new KeyListener() {
 		    public void keyPressed(KeyEvent e) {
 		    	if(e.getKeyCode() == KeyEvent.VK_TAB) {
@@ -100,6 +102,7 @@ public class NodeAttributesPanel extends AttributesPanel{
 		
 		WLS_IPLabel = new JLabel("Wireless IPs of the Node:");
 		WLS_IP = new JTextArea("", Constants.TEXT_HEIGHT, Constants.TEXT_WIDTH);
+		WLS_IP.setEnabled(false);
 		WLS_IP.addKeyListener(new KeyListener() {
 		    public void keyPressed(KeyEvent e) {
 		    	if(e.getKeyCode() == KeyEvent.VK_TAB) {
@@ -121,6 +124,7 @@ public class NodeAttributesPanel extends AttributesPanel{
 		
 		WLS_HWLabel = new JLabel("Wireless hardware of the Node:");
 		WLS_HW = new JTextArea("", Constants.TEXT_HEIGHT, Constants.TEXT_WIDTH);
+		WLS_HW.setEnabled(false);
 		WLS_HW.addKeyListener(new KeyListener() {
 		    public void keyPressed(KeyEvent e) {
 		    	if(e.getKeyCode() == KeyEvent.VK_TAB) {

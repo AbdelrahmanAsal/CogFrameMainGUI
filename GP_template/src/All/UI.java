@@ -13,16 +13,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.ParallelGroup;
+import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import AttributePanel.AttributesPanel;
 import AttributePanel.NullAttributePanel;
+import AttributePanel.VisualizeAttributesPanel;
 import Data.Edge;
 import Data.Machine;
 import Data.Node;
@@ -32,6 +37,7 @@ public class UI extends JFrame{
 	UI self;
 	DrawingPanel drawingPanel;
 	AttributesPanel attributesPanel;
+	VisualizeAttributesPanel visualizeAttributesPanel;
 
 	//TO BE DELETED !!!!!!!.
 	MobilityOption mobilityOptionChosen = MobilityOption.STATIC; 
@@ -40,10 +46,21 @@ public class UI extends JFrame{
 	PolicyOption PrivacyOptionChosen = PolicyOption.C1_6_11;
 	
 	String ccc = "Ethernet";
+	GroupLayout layout;
+	JPanel all;
+	ParallelGroup pg;
+	SequentialGroup sg;
 	
 	public UI(){
 		this.self = this;
 		setLayout(new GridLayout());
+//		all = new JPanel();
+//		
+//		layout = new GroupLayout(all);
+//		all.setLayout(layout);
+//
+//		add(all);
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		try {
 			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
@@ -60,6 +77,12 @@ public class UI extends JFrame{
 		drawingPanel = new DrawingPanel(this);
 		drawingPanel.setBorder(BorderFactory.createTitledBorder("Network topology"));
 		
+//		sg = layout.createSequentialGroup();
+//		sg.addComponent(drawingPanel).addComponent(attributesPanel);
+//		pg = layout.createParallelGroup();
+//		pg.addComponent(drawingPanel).addComponent(attributesPanel);
+//		layout.setHorizontalGroup(sg);
+//		layout.setVerticalGroup(pg);
 		add(drawingPanel);
 		add(attributesPanel);
 		
@@ -72,6 +95,8 @@ public class UI extends JFrame{
 	}
 	
 	private void setAllMenus() {
+		JMenuItem seperator = new JMenuItem("----");
+		
 		//Set Menu bars.
 		JMenuBar menuBar = new JMenuBar();
 		
@@ -287,7 +312,6 @@ public class UI extends JFrame{
 			@Override
 			public void mouseClicked(MouseEvent arg0) {}
 		});
-		
 		JMenuItem editVisualize = new JMenuItem("Visualize");
 		editVisualize.addMouseListener(new MouseListener() {
 			@Override
@@ -305,7 +329,6 @@ public class UI extends JFrame{
 			@Override
 			public void mouseClicked(MouseEvent arg0) {}
 		});
-		
 		JMenuItem editGetInformation= new JMenuItem("Get Information");
 		editGetInformation.addMouseListener(new MouseListener() {
 			@Override
@@ -321,16 +344,200 @@ public class UI extends JFrame{
 						in = new BufferedReader(new InputStreamReader(
 								echoSocket.getInputStream()));
 
-						System.out.println("connection established");
-						BufferedReader stdIn = new BufferedReader(new InputStreamReader(
-								System.in));
-						String userInput = "GET";
-						out.println(userInput);
-						System.out.println("echo: " + in.readLine());
+						System.out.println("Getting information of the node");
+						String command = "GET Information\n";
+						out.println(command);
+						
+						node.name = in.readLine();
+						node.ETH_HW = in.readLine();
+						int numberOfWireless = Integer.parseInt(in.readLine());
+						node.WLS_HW.clear();
+						for(int i = 0; i < numberOfWireless; i++)
+							node.WLS_HW.add(in.readLine());
 						
 						out.close();
 						in.close();
-						stdIn.close();
+						echoSocket.close();
+					}catch(Exception ex){
+						ex.printStackTrace();
+					}
+				}
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+		});
+		
+		JMenuItem editGetStatistics= new JMenuItem("Get Statistics");
+		editGetStatistics.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				for(Node node : drawingPanel.listOfNodes){
+					Socket echoSocket = null;
+					PrintWriter out = null;
+					BufferedReader in = null;
+
+					try {
+						echoSocket = new Socket(node.ETH_IP, 7);
+						out = new PrintWriter(echoSocket.getOutputStream(), true);
+						in = new BufferedReader(new InputStreamReader(
+								echoSocket.getInputStream()));
+						PrintWriter fileWriter = new PrintWriter("Statistics_" + node.name + ".txt");
+
+						System.out.println("Getting statistics of the node");
+						String command = "GET Statistics";
+						out.println(command);
+						
+						while(true){
+							String line = in.readLine();
+							if(line == null)break;
+							
+							fileWriter.println(line);
+						}
+		
+						fileWriter.close();
+						out.close();
+						in.close();
+						echoSocket.close();
+					}catch(Exception ex){
+						ex.printStackTrace();
+					}
+				}
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+		});
+		
+		JMenuItem editPostConfiguration = new JMenuItem("Post Configuration");
+		editPostConfiguration .addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				for(Node node : drawingPanel.listOfNodes){
+					Socket echoSocket = null;
+					PrintWriter out = null;
+					BufferedReader in = null;
+
+					try {
+						echoSocket = new Socket(node.ETH_IP, 7);
+						out = new PrintWriter(echoSocket.getOutputStream(), true);
+						in = new BufferedReader(new InputStreamReader(
+								echoSocket.getInputStream()));
+						BufferedReader fileReader = new BufferedReader(new FileReader("Configuration_" + node.name + ".click"));
+
+						System.out.println("Posting Configuration of the node");
+						String command = "Post Configuration";
+						out.println(command);
+						
+						while(true){
+							String line = fileReader.readLine();
+							if(line == null)break;
+
+							out.println(line);
+						}
+						out.println();
+		
+						fileReader.close();
+						out.close();
+						in.close();
+						echoSocket.close();
+					}catch(Exception ex){
+						ex.printStackTrace();
+					}
+				}
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+		});
+		
+		JMenuItem editPostModule = new JMenuItem("Post Module");
+		editPostModule.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				for(Node node : drawingPanel.listOfNodes){
+					Socket echoSocket = null;
+					PrintWriter out = null;
+					BufferedReader in = null;
+
+					try {
+						echoSocket = new Socket(node.ETH_IP, 7);
+						out = new PrintWriter(echoSocket.getOutputStream(), true);
+						in = new BufferedReader(new InputStreamReader(
+								echoSocket.getInputStream()));
+						BufferedReader fileReader = new BufferedReader(new FileReader("Module_" + node.name + ".txt"));
+
+						System.out.println("Posting Module of the node");
+						String command = "Post Module";
+						out.println(command);
+						
+						while(true){
+							String line = fileReader.readLine();
+							if(line == null)break;
+
+							out.println(line);
+						}
+						out.println();
+		
+						fileReader.close();
+						out.close();
+						in.close();
+						echoSocket.close();
+					}catch(Exception ex){
+						ex.printStackTrace();
+					}
+				}
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+		});
+		
+		JMenuItem editStartExperiment = new JMenuItem("Start Experiment");
+		editStartExperiment.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				for(Node node : drawingPanel.listOfNodes){
+					Socket echoSocket = null;
+					PrintWriter out = null;
+					BufferedReader in = null;
+
+					try {
+						echoSocket = new Socket(node.ETH_IP, 7);
+						out = new PrintWriter(echoSocket.getOutputStream(), true);
+						in = new BufferedReader(new InputStreamReader(
+								echoSocket.getInputStream()));
+
+						System.out.println("Start Experiment");
+						String command = "Start";
+						out.println(command);
+		
+						out.close();
+						in.close();
 						echoSocket.close();
 					}catch(Exception ex){
 						ex.printStackTrace();
@@ -352,7 +559,12 @@ public class UI extends JFrame{
 		editOption.add(editSetDestination);
 		editOption.add(editGenerate);
 		editOption.add(editVisualize);
+		editOption.add(seperator);
 		editOption.add(editGetInformation);
+		editOption.add(editGetStatistics);
+		editOption.add(editPostConfiguration);
+		editOption.add(editPostModule);
+		editOption.add(editStartExperiment);
 		
 		//Mobility Options.
 		JMenu mobilityOption = new JMenu("Mobility Option");

@@ -17,8 +17,9 @@ public class PrimaryMaker extends TemplateMaker {
 		BufferedReader bfd = new BufferedReader(
 				new FileReader(templateFilePath));
 		int dotIndex = templateFilePath.lastIndexOf('.');
-		String outputFilePath = templateFilePath.substring(0, dotIndex)
-				+ "_intermediate" + templateFilePath.substring(dotIndex);
+//		String outputFilePath = templateFilePath.substring(0, dotIndex)
+//				+ "_intermediate" + templateFilePath.substring(dotIndex);
+		String outputFilePath = "Configuration_" + thisNode.name + templateFilePath.substring(dotIndex);
 		BufferedWriter out = new BufferedWriter(new FileWriter(outputFilePath));
 
 		String s;

@@ -2,9 +2,13 @@ package All;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -236,6 +240,121 @@ public class UI extends JFrame{
 		fileOption.add(fileExit);
 		
 		//Mobility Options.
+		JMenu editOption = new JMenu("Edit");
+		JMenuItem editSetSource = new JMenuItem("Set Source");
+		editSetSource.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+
+			}
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+		});
+		
+		JMenuItem editSetDestination = new JMenuItem("Set Destination");
+		editSetDestination.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+
+			}
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+		});
+		JMenuItem editGenerate = new JMenuItem("Generate");
+		editGenerate.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+		});
+		
+		JMenuItem editVisualize = new JMenuItem("Visualize");
+		editVisualize.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				//Just exit!.
+				System.exit(0);
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+		});
+		
+		JMenuItem editGetInformation= new JMenuItem("Get Information");
+		editGetInformation.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				for(Node node : drawingPanel.listOfNodes){
+					Socket echoSocket = null;
+					PrintWriter out = null;
+					BufferedReader in = null;
+
+					try {
+						echoSocket = new Socket(node.ETH_IP, 7);
+						out = new PrintWriter(echoSocket.getOutputStream(), true);
+						in = new BufferedReader(new InputStreamReader(
+								echoSocket.getInputStream()));
+
+						System.out.println("connection established");
+						BufferedReader stdIn = new BufferedReader(new InputStreamReader(
+								System.in));
+						String userInput = "GET";
+						out.println(userInput);
+						System.out.println("echo: " + in.readLine());
+						
+						out.close();
+						in.close();
+						stdIn.close();
+						echoSocket.close();
+					}catch(Exception ex){
+						ex.printStackTrace();
+					}
+				}
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+		});
+		
+		editOption.add(editSetSource);
+		editOption.add(editSetDestination);
+		editOption.add(editGenerate);
+		editOption.add(editVisualize);
+		editOption.add(editGetInformation);
+		
+		//Mobility Options.
 		JMenu mobilityOption = new JMenu("Mobility Option");
 		JMenuItem mobilityStatic = new JMenuItem("Static");
 		JMenuItem mobilityCentralized = new JMenuItem("Centralized node");
@@ -301,6 +420,7 @@ public class UI extends JFrame{
 		settingsOption.add(help);
 		
 		menuBar.add(fileOption);
+		menuBar.add(editOption);
 		menuBar.add(mobilityOption);
 //		menuBar.add(topologyOption);
 //		menuBar.add(primaryOption);

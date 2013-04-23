@@ -174,6 +174,15 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		visualizeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				if(!visualizeButton.isSelected()){
+					ui.remove(ui.attributesPanel);
+					ui.attributesPanel = new NullAttributePanel();
+					ui.add(ui.attributesPanel);
+					ui.validate();
+					repaint();
+					return;
+				}
+				
 				ui.remove(ui.attributesPanel);
 				
 				VisualizeAttributesPanel visualizationPanel = new VisualizeAttributesPanel();

@@ -18,11 +18,8 @@ import Data.Machine;
 public class MachineAttributePanel extends NodeAttributesPanel{
 	public JButton setData;
 	public Machine selectedNode;
-	public MachineAttributePanel(Machine node){
-		super(node);
+	public MachineAttributePanel(){
 		setBorder(BorderFactory.createTitledBorder("Machine Attributes Panel"));
-		
-		selectedNode = node;
 		
 		setData = new JButton("Set Data");
 		setData.addActionListener(new ActionListener() {
@@ -114,4 +111,22 @@ public class MachineAttributePanel extends NodeAttributesPanel{
 		      .addComponent(setData)
 		);
 	}
+	
+	public void setInfo(Machine node){
+		selectedNode = node;
+		
+		//Fill the required information.
+		name.setText(node.name);
+		
+		ETH_IP.setText(node.ETH_IP);
+		ETH_HW.setText(node.ETH_HW);
+		WLS_IP.setText(node.getWLS_IP());
+		WLS_HW.setText(node.getWLS_HW(0, -1));
+		
+		channels.setText(node.getChannels());
+		
+		mobilityOption.setSelectedItem(node.mobilityOption);
+		topologyOption.setSelectedItem(node.topologyOption);
+	}
+	
 }

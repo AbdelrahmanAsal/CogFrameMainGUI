@@ -27,7 +27,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 
 import AttributePanel.AttributesPanel;
 import AttributePanel.NullAttributePanel;
-import AttributePanel.VisualizeAttributesPanel;
+import AttributePanel.VisualizeAttributePanel;
 import Data.Edge;
 import Data.Machine;
 import Data.Node;
@@ -37,29 +37,18 @@ public class UI extends JFrame{
 	UI self;
 	DrawingPanel drawingPanel;
 	AttributesPanel attributesPanel;
-	VisualizeAttributesPanel visualizeAttributesPanel;
+	VisualizeAttributePanel visualizeAttributesPanel;
 
 	//TO BE DELETED !!!!!!!.
 	MobilityOption mobilityOptionChosen = MobilityOption.STATIC; 
 	TopologyOption topologyOptionChosen = TopologyOption.STATIC;
 	PrimaryOption primaryOptionChosen = PrimaryOption.STATIC;
 	PolicyOption PrivacyOptionChosen = PolicyOption.C1_6_11;
-	
 	String ccc = "Ethernet";
-	GroupLayout layout;
-	JPanel all;
-	ParallelGroup pg;
-	SequentialGroup sg;
 	
 	public UI(){
 		this.self = this;
 		setLayout(new GridLayout());
-//		all = new JPanel();
-//		
-//		layout = new GroupLayout(all);
-//		all.setLayout(layout);
-//
-//		add(all);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		try {
@@ -72,23 +61,17 @@ public class UI extends JFrame{
 		} catch (Exception e) {
 		}
 		
-		attributesPanel = new NullAttributePanel();
+		attributesPanel = new AttributesPanel();
 		
 		drawingPanel = new DrawingPanel(this);
 		drawingPanel.setBorder(BorderFactory.createTitledBorder("Network topology"));
 		
-//		sg = layout.createSequentialGroup();
-//		sg.addComponent(drawingPanel).addComponent(attributesPanel);
-//		pg = layout.createParallelGroup();
-//		pg.addComponent(drawingPanel).addComponent(attributesPanel);
-//		layout.setHorizontalGroup(sg);
-//		layout.setVerticalGroup(pg);
 		add(drawingPanel);
 		add(attributesPanel);
 		
 		setAllMenus();
 		
-		setResizable(false);
+//		setResizable(false);
 		setLocationByPlatform(true);
 		setSize(800, 710);
 		setVisible(true);

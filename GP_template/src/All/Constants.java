@@ -14,6 +14,11 @@ public class Constants {
 	public static Color PRIMARY_COLOR = new Color(194, 15, 232);//purple
 	public static Color HOP_COLOR = new Color(80, 80, 80);//gray
 	public static Color EDGE_COLOR = Color.orange;
+	
+	public static String machineAPCode = "MACHINE";
+	public static String primaryAPCode = "PRIMARY";
+	public static String nullAPCode = "NULL";
+	public static String visualizeAPCode = "VISUALIZE";
 }
 	
 enum MobilityOption{GPS, STATIC, OTHER}

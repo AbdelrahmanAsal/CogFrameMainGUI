@@ -30,12 +30,12 @@ import All.Constants;
 import Data.Node;
 
 
-public class NodeAttributesPanel extends AttributesPanel{
+public class NodeAttributesPanel extends JPanel{
 	public JLabel nameLabel, ETH_IPLabel, ETH_HWLabel, WLS_IPLabel, WLS_HWLabel, channelsLabel, mobilityOptionLabel, topologyOptionLabel;
 	public JTextArea name, ETH_IP, ETH_HW, WLS_IP, WLS_HW, channels;
 	public JComboBox mobilityOption, topologyOption;
 	public JButton setData;
-	public NodeAttributesPanel(Node node){
+	public NodeAttributesPanel(){
 		setLayout(new FlowLayout());
 		
 		nameLabel = new JLabel("Name of the Node:");

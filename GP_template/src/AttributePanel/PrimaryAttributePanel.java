@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import All.Constants;
+import Data.Machine;
 import Data.Primary;
 import Distributions.ExponentialDistribution;
 import Distributions.ProbabilityDistribution;
@@ -36,10 +37,8 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 	public JTextArea selectedChannel;
 	public Primary selectedNode;
 	public JPanel distPanel;
-	public PrimaryAttributePanel(Primary node){
-		super(node);
+	public PrimaryAttributePanel(){
 		setBorder(BorderFactory.createTitledBorder("Primary Attributes Panel"));
-		selectedNode = node;
 		
 		activeDistLabel = new JLabel("Active Distribution");
 		activeDist = new JComboBox(new String[]{"Uniform", "Exponential"});
@@ -209,5 +208,29 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 		    	   .addComponent(selectedChannel))
 		       .addComponent(setData)
 		);
+	}
+	
+	public void setInfo(Primary node){
+		selectedNode = node;
+		
+		//Fill the required information.
+		name.setText(node.name);
+		
+		ETH_IP.setText(node.ETH_IP);
+		ETH_HW.setText(node.ETH_HW);
+		WLS_IP.setText(node.getWLS_IP());
+		WLS_HW.setText(node.getWLS_HW(0, -1));
+		
+		channels.setText(node.getChannels());
+
+		mobilityOption.setSelectedItem(node.mobilityOption);
+		topologyOption.setSelectedItem(node.topologyOption);
+		
+		activeDist.setSelectedItem(((Primary)node).activeDist.type());
+		inactiveDist.setSelectedItem(((Primary)node).inactiveDist.type());
+		
+		//Delayed Setting. NEED TO BE CLONED.
+		tempActiveDist = (node).activeDist;
+		tempInactiveDist = (node).inactiveDist;
 	}
 }

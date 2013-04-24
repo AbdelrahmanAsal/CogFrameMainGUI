@@ -25,7 +25,7 @@ import AttributePanel.AttributesPanel;
 import AttributePanel.MachineAttributePanel;
 import AttributePanel.NullAttributePanel;
 import AttributePanel.PrimaryAttributePanel;
-import AttributePanel.VisualizeAttributesPanel;
+import AttributePanel.VisualizeAttributePanel;
 import ConfigurationMaker.ModuleMaker;
 import ConfigurationMaker.NodeMaker;
 import ConfigurationMaker.PrimaryMaker;
@@ -175,18 +175,12 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(!visualizeButton.isSelected()){
-					ui.remove(ui.visualizeAttributesPanel);
-					ui.remove(ui.attributesPanel);
-					ui.attributesPanel = new NullAttributePanel();
-					ui.add(ui.attributesPanel);
-					ui.validate();
-					repaint();
+					ui.attributesPanel.informationPanelCardLayout.show(ui.attributesPanel.informationPanel, Constants.nullAPCode);
+					ui.attributesPanel.deactiveVisualization();
 					return;
 				}
 				
-				ui.remove(ui.attributesPanel);
-				
-				VisualizeAttributesPanel visualizationPanel = new VisualizeAttributesPanel();
+				VisualizeAttributePanel visualizationPanel = new VisualizeAttributePanel();
 				for(JRadioButton button: visualizationPanel.buttons){
 					button.addActionListener(new ActionListener() {
 						
@@ -197,11 +191,9 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 					});
 				}
 				
+				ui.attributesPanel.informationPanelCardLayout.show(ui.attributesPanel.informationPanel, Constants.visualizeAPCode);
+				ui.attributesPanel.activeVisualization();
 				ui.visualizeAttributesPanel = visualizationPanel;
-				ui.add(ui.attributesPanel);
-				ui.add(ui.visualizeAttributesPanel);
-				ui.validate();
-				repaint();
 				
 //				StatisticsCollector sc = new StatisticsCollector(listOfNodes);
 //				
@@ -396,71 +388,16 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		}else{
 			if(selectedIndex != -1){
 				if(listOfNodes.get(selectedIndex) instanceof Machine){
-					ui.remove(ui.attributesPanel);
-					MachineAttributePanel machineAttributePanel = new MachineAttributePanel((Machine)listOfNodes.get(selectedIndex));
-					machineAttributePanel.name.setText(listOfNodes.get(selectedIndex).name);
-					
-					machineAttributePanel.ETH_IP.setText(listOfNodes.get(selectedIndex).ETH_IP);
-					machineAttributePanel.ETH_HW.setText(listOfNodes.get(selectedIndex).ETH_HW);
-					machineAttributePanel.WLS_IP.setText(listOfNodes.get(selectedIndex).getWLS_IP());
-					machineAttributePanel.WLS_HW.setText(listOfNodes.get(selectedIndex).getWLS_HW(0, -1));
-					
-					machineAttributePanel.channels.setText(listOfNodes.get(selectedIndex).getChannels());
-					
-					machineAttributePanel.mobilityOption.setSelectedItem(listOfNodes.get(selectedIndex).mobilityOption);
-					machineAttributePanel.topologyOption.setSelectedItem(listOfNodes.get(selectedIndex).topologyOption);
-					
-					AttributesPanel tmp = ui.attributesPanel;
-					ui.attributesPanel = machineAttributePanel;
-
-//					ui.layout.setHorizontalGroup(ui.layout.createSequentialGroup().addComponent(ui.drawingPanel).addComponent(ui.attributesPanel));
-//					ui.layout.setVerticalGroup(ui.layout.createParallelGroup().addComponent(ui.drawingPanel).addComponent(ui.attributesPanel));
-					
-					ui.add(machineAttributePanel);
-					ui.validate();
+					ui.attributesPanel.machineAP.setInfo((Machine)listOfNodes.get(selectedIndex));
+					ui.attributesPanel.informationPanelCardLayout.show(ui.attributesPanel.informationPanel, Constants.machineAPCode);
 				}else if(listOfNodes.get(selectedIndex) instanceof Primary){
-					System.out.println(listOfNodes.get(selectedIndex));
-					ui.remove(ui.attributesPanel);	
-					PrimaryAttributePanel primaryAttributePanel  = new PrimaryAttributePanel((Primary)listOfNodes.get(selectedIndex));
-					primaryAttributePanel.name.setText(listOfNodes.get(selectedIndex).name);
-					
-					primaryAttributePanel.ETH_IP.setText(listOfNodes.get(selectedIndex).ETH_IP);
-					primaryAttributePanel.ETH_HW.setText(listOfNodes.get(selectedIndex).ETH_HW);
-					primaryAttributePanel.WLS_IP.setText(listOfNodes.get(selectedIndex).getWLS_IP());
-					primaryAttributePanel.WLS_HW.setText(listOfNodes.get(selectedIndex).getWLS_HW(0, -1));
-					
-					primaryAttributePanel.channels.setText(listOfNodes.get(selectedIndex).getChannels());
-
-					primaryAttributePanel.mobilityOption.setSelectedItem(listOfNodes.get(selectedIndex).mobilityOption);
-					primaryAttributePanel.topologyOption.setSelectedItem(listOfNodes.get(selectedIndex).topologyOption);
-					
-					primaryAttributePanel.activeDist.setSelectedItem(((Primary)listOfNodes.get(selectedIndex)).activeDist.type());
-					primaryAttributePanel.inactiveDist.setSelectedItem(((Primary)listOfNodes.get(selectedIndex)).inactiveDist.type());
-					
-					ui.attributesPanel = primaryAttributePanel;
-					
-//					ui.layout.setHorizontalGroup(ui.layout.createSequentialGroup().addComponent(ui.drawingPanel).addComponent(ui.attributesPanel));
-//					ui.layout.setVerticalGroup(ui.layout.createParallelGroup().addComponent(ui.drawingPanel).addComponent(ui.attributesPanel));
-					
-					ui.add(primaryAttributePanel);
-					ui.validate();
-					
-					//Delayed Setting. NEED TO BE CLONED.
-					primaryAttributePanel.tempActiveDist = ((Primary)listOfNodes.get(selectedIndex)).activeDist;
-					primaryAttributePanel.tempInactiveDist = ((Primary)listOfNodes.get(selectedIndex)).inactiveDist;
+					ui.attributesPanel.primaryAP.setInfo((Primary)listOfNodes.get(selectedIndex));
+					ui.attributesPanel.informationPanelCardLayout.show(ui.attributesPanel.informationPanel, Constants.primaryAPCode);
 				}else{
 					System.out.println("Unidentified node type.");
 				}
 			}else{
-				ui.remove(ui.attributesPanel);
-				
-				ui.attributesPanel = new NullAttributePanel();
-				
-//				ui.layout.setHorizontalGroup(ui.layout.createSequentialGroup().addComponent(drawingPanel).addComponent(ui.attributesPanel));
-//				ui.layout.setVerticalGroup(ui.layout.createParallelGroup().addComponent(drawingPanel).addComponent(ui.attributesPanel));
-				
-				ui.add(ui.attributesPanel);
-				ui.validate();
+				ui.attributesPanel.informationPanelCardLayout.show(ui.attributesPanel.informationPanel, Constants.nullAPCode);
 			}
 		}
 		repaint();

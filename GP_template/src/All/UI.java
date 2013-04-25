@@ -335,8 +335,11 @@ public class UI extends JFrame{
 						node.ETH_HW = in.readLine();
 						int numberOfWireless = Integer.parseInt(in.readLine());
 						node.WLS_HW.clear();
-						for(int i = 0; i < numberOfWireless; i++)
+						node.WLS_Name.clear();
+						for(int i = 0; i < numberOfWireless; i++){
+							node.WLS_Name.add(in.readLine());
 							node.WLS_HW.add(in.readLine());
+						}
 						
 						out.close();
 						in.close();

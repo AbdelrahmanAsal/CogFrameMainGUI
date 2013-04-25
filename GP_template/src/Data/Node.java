@@ -14,6 +14,7 @@ public abstract class Node{
 	public boolean isSource, isDestination;
 	public String name, ETH_IP, ETH_HW, mobilityOption, topologyOption;
 	public ArrayList<String> WLS_HW;
+	public ArrayList<String> WLS_Name;
 	public ArrayList<String> WLS_IP;
 	public ArrayList<Edge> adjacent;
 	public ArrayList<Channel> channels;
@@ -39,6 +40,7 @@ public abstract class Node{
 		this.WLS_IP = new ArrayList<String>();
 //		WLS_IP.add("192.168.1.1");
 //		WLS_IP.add("192.168.1.2");
+		this.WLS_Name = new ArrayList<String>();
 		
 		this.adjacent = new ArrayList<Edge>();
 		this.channels = new ArrayList<Channel>();

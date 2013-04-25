@@ -1,44 +1,37 @@
 package AttributePanel;
-import java.awt.BorderLayout;
-import java.awt.Button;
-import java.awt.Color;
+
+import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.Label;
-import java.awt.TextArea;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.border.BevelBorder;
-import javax.swing.plaf.basic.BasicBorders;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
 
 import All.Channel;
 import All.Constants;
-import Data.Node;
 
 
 public class NodeAttributesPanel extends JPanel{
 	public JLabel nameLabel, ETH_IPLabel, ETH_HWLabel, WLS_IPLabel, WLS_HWLabel, channelsLabel, mobilityOptionLabel, topologyOptionLabel;
-	public JTextArea name, ETH_IP, ETH_HW, WLS_IP, WLS_HW, channels;
+	public JTextArea name, ETH_IP, ETH_HW, WLS_IP, channels;
 	public JComboBox mobilityOption, topologyOption;
 	public JButton setData;
+	JTable WLS_HW_Table;
+	JScrollPane ps;
 	public NodeAttributesPanel(){
 		setLayout(new FlowLayout());
 		
-		nameLabel = new JLabel("Name of the Node:");
+		nameLabel = new JLabel("Name:");
 		name = new JTextArea("");
 		name.setEnabled(false);
 		name.addKeyListener(new KeyListener() {
@@ -59,7 +52,7 @@ public class NodeAttributesPanel extends JPanel{
 		name.setLineWrap(true);
 		name.setBorder(BorderFactory.createLoweredBevelBorder());
 		
-		ETH_IPLabel = new JLabel("Ethernet IP of the Node:");
+		ETH_IPLabel = new JLabel("Ethernet IP:");
 		ETH_IP = new JTextArea("");
 		ETH_IP.addKeyListener(new KeyListener() {
 		    public void keyPressed(KeyEvent e) {
@@ -79,14 +72,14 @@ public class NodeAttributesPanel extends JPanel{
 		ETH_IP.setLineWrap(true);
 		ETH_IP.setBorder(BorderFactory.createLoweredBevelBorder());
 		
-		ETH_HWLabel = new JLabel("Ethernet hardware of the Node:");
+		ETH_HWLabel = new JLabel("Ethernet hardware:");
 		ETH_HW = new JTextArea("");
 		ETH_HW.setEnabled(false);
 		ETH_HW.addKeyListener(new KeyListener() {
 		    public void keyPressed(KeyEvent e) {
 		    	if(e.getKeyCode() == KeyEvent.VK_TAB) {
 		    		if(e.getModifiers() > 0) ETH_IP.transferFocusBackward();
-		    		else WLS_HW.transferFocus();	
+		    		else WLS_HW_Table.transferFocus();	
 		    		e.consume();
 		    	}
 		    }
@@ -100,7 +93,8 @@ public class NodeAttributesPanel extends JPanel{
 		ETH_HW.setLineWrap(true);
 		ETH_HW.setBorder(BorderFactory.createLoweredBevelBorder());
 		
-		WLS_IPLabel = new JLabel("Wireless IPs of the Node:");
+		WLS_IPLabel = new JLabel("Wireless IPs:");
+		
 		WLS_IP = new JTextArea("", Constants.TEXT_HEIGHT, Constants.TEXT_WIDTH);
 		WLS_IP.setEnabled(false);
 		WLS_IP.addKeyListener(new KeyListener() {
@@ -122,28 +116,20 @@ public class NodeAttributesPanel extends JPanel{
 		WLS_IP.setLineWrap(true);
 		WLS_IP.setBorder(BorderFactory.createLoweredBevelBorder());
 		
-		WLS_HWLabel = new JLabel("Wireless hardware of the Node:");
-		WLS_HW = new JTextArea("", Constants.TEXT_HEIGHT, Constants.TEXT_WIDTH);
-		WLS_HW.setEnabled(false);
-		WLS_HW.addKeyListener(new KeyListener() {
-		    public void keyPressed(KeyEvent e) {
-		    	if(e.getKeyCode() == KeyEvent.VK_TAB) {
-		    		System.out.println(e.getModifiers());
-		    		if(e.getModifiers() > 0) transferFocusBackward();
-		    		else transferFocus();	
-		    		e.consume();
-		    	}
-		    }
+		WLS_HWLabel = new JLabel("Wireless hardware:");
+		WLS_HW_Table = new JTable();
+		WirelessInterfacesTable t = new WirelessInterfacesTable();
+		WLS_HW_Table.setModel(t);
+		WLS_HW_Table.setBorder(BorderFactory.createLoweredBevelBorder());
+		TableColumn tcol = WLS_HW_Table.getColumnModel().getColumn(0);
+		tcol.setPreferredWidth(20);
 
-			@Override
-			public void keyReleased(KeyEvent e) {}
-
-			@Override
-			public void keyTyped(KeyEvent e) {}
-		});
-		WLS_HW.setLineWrap(true);
-		WLS_HW.setBorder(BorderFactory.createLoweredBevelBorder());
+		JTableHeader header = WLS_HW_Table.getTableHeader();
+		header.setUpdateTableInRealTime(true);
+		header.setReorderingAllowed(true);
 		
+		ps = new JScrollPane(WLS_HW_Table);
+		ps.setPreferredSize( new Dimension(200,100));
 		channelsLabel = new JLabel("Channels/Probabilities:");
 		channels = new JTextArea("");
 		channels.addKeyListener(new KeyListener() {

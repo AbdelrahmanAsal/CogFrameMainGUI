@@ -10,6 +10,7 @@ import javax.swing.Box;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.event.TableModelEvent;
 
 import All.Constants;
 import Data.Machine;
@@ -31,7 +32,7 @@ public class MachineAttributePanel extends NodeAttributesPanel{
 					selectedNode.ETH_IP = ETH_IP.getText();
 					selectedNode.ETH_HW = ETH_HW.getText();
 					selectedNode.WLS_IP = parseSeparatedString(WLS_IP.getText());
-					selectedNode.WLS_HW = parseSeparatedString(WLS_HW.getText());
+//					selectedNode.WLS_HW = parseSeparatedString(WLS_HW.getText());
 					
 					selectedNode.channels = parseChannels(channels.getText());
 					
@@ -72,7 +73,7 @@ public class MachineAttributePanel extends NodeAttributesPanel{
 				      	   .addComponent(ETH_IP)
 				      	   .addComponent(ETH_HW)
 				      	   .addComponent(WLS_IP)
-				      	   .addComponent(WLS_HW)
+				      	   .addComponent(ps)
 				      	   .addComponent(channels)
 				      	   .addComponent(mobilityOption)
 				      	   .addComponent(topologyOption)
@@ -98,7 +99,7 @@ public class MachineAttributePanel extends NodeAttributesPanel{
 		           .addComponent(WLS_IP))
 	          .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 		           .addComponent(WLS_HWLabel)
-		           .addComponent(WLS_HW))
+		           .addComponent(ps))
 	          .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 		           .addComponent(channelsLabel)
 		           .addComponent(channels))
@@ -121,7 +122,13 @@ public class MachineAttributePanel extends NodeAttributesPanel{
 		ETH_IP.setText(node.ETH_IP);
 		ETH_HW.setText(node.ETH_HW);
 		WLS_IP.setText(node.getWLS_IP());
-		WLS_HW.setText(node.getWLS_HW(0, -1));
+		for(int i = 0; i < node.WLS_HW.size(); i++){
+			WirelessInterfacesTable t = (WirelessInterfacesTable)WLS_HW_Table.getModel();
+			t.current.add(new WirelessTableRowEntry(node.WLS_Name.get(i), node.WLS_HW.get(i)));
+			WLS_HW_Table.getTableHeader().repaint();
+			WLS_HW_Table.tableChanged(new TableModelEvent(t));
+			WLS_HW_Table.repaint();
+		}
 		
 		channels.setText(node.getChannels());
 		

@@ -11,6 +11,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -30,6 +32,8 @@ import ConfigurationMaker.ModuleMaker;
 import ConfigurationMaker.NodeMaker;
 import ConfigurationMaker.PrimaryMaker;
 import Data.Edge;
+import Data.Event;
+import Data.Interval;
 import Data.Machine;
 import Data.Node;
 import Data.Primary;
@@ -47,11 +51,26 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 	
 	public JButton setSourceButton, setDestinationButton, generate;
 	public JToggleButton visualizeButton;
+	public StatisticsCollector sc;
+	
+	public int maxRange;
 	public DrawingPanel(UI ui_){
+		
 		this.drawingPanel = this;
 		this.ui = ui_;
 		
 		listOfNodes = new ArrayList<Node>();
+		
+		Node node1 = new Machine("1", 100, 100);
+		Node node2 = new Machine("2", 200, 200);
+		
+		node1.WLS_HW.add("08:11:96:8B:84:F4");
+		node1.WLS_Name.add("wlan0");
+		node2.WLS_HW.add("08:11:96:8B:84:F3");
+		node2.WLS_Name.add("wlan1");
+		
+		listOfNodes.add(node1);
+		listOfNodes.add(node2);
 		
 		addMouseListener(this);
 		addMouseMotionListener(this);
@@ -140,7 +159,6 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 				try{
 					//Generate the files for all the nodes.
 					for(Node node : listOfNodes){
-						
 						//Generate the configuration files for this node.
 						if(node instanceof Primary){
 							primaryMaker.parseTemplateFile(primaryTemplate, (Primary)node);
@@ -180,37 +198,34 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 					return;
 				}
 				
-				VisualizeAttributePanel visualizationPanel = new VisualizeAttributePanel();
-				for(JRadioButton button: visualizationPanel.buttons){
-					button.addActionListener(new ActionListener() {
-						
-						@Override
-						public void actionPerformed(ActionEvent arg0) {
-							repaint();
-						}
-					});
-				}
-				
 				ui.attributesPanel.informationPanelCardLayout.show(ui.attributesPanel.informationPanel, Constants.visualizeAPCode);
 				ui.attributesPanel.activeVisualization();
-				ui.visualizeAttributesPanel = visualizationPanel;
 				
-//				StatisticsCollector sc = new StatisticsCollector(listOfNodes);
-//				
-//				for(Node node : listOfNodes){
-//					JFileChooser fc = new JFileChooser();
-//					int ret = fc.showDialog(drawingPanel, String.format("Choose Node:(%s) statistics file.", node.name));
-//					if(ret != JFileChooser.APPROVE_OPTION){
-//						JOptionPane.showMessageDialog(drawingPanel, "Missing statistics file.");
-//						return;
-//					}
-//					
-//					String statisticsFile = fc.getSelectedFile().getAbsolutePath();
-//					
-//					sc.parse(statisticsFile);
-//				}
-//				
-//				sc.calculate();
+				sc = new StatisticsCollector(listOfNodes);
+				
+				for(Node node : listOfNodes){
+					JFileChooser fc = new JFileChooser();
+					int ret = fc.showDialog(drawingPanel, String.format("Choose Node:(%s) statistics file.", node.name));
+					if(ret != JFileChooser.APPROVE_OPTION){
+						JOptionPane.showMessageDialog(drawingPanel, "Missing statistics file.");
+						return;
+					}
+					
+					String statisticsFile = fc.getSelectedFile().getAbsolutePath();
+					
+					sc.parse(statisticsFile);
+				}
+				
+				sc.calculate();
+				maxRange = (int) (sc.maxTimestamp - sc.minTimestamp);
+				ui.attributesPanel.visualizationPanel.ticker.setMaximum(maxRange);
+				ui.attributesPanel.visualizationPanel.ticker.setValue(0);
+				
+				ui.attributesPanel.visualizationPanel.ticker.setMajorTickSpacing(maxRange/5);
+				ui.attributesPanel.visualizationPanel.ticker.setMinorTickSpacing(maxRange/50); 
+				ui.attributesPanel.visualizationPanel.ticker.setPaintTicks(true);    
+				ui.attributesPanel.visualizationPanel.ticker.setPaintLabels(true);   
+				
 				
 			}
 		});
@@ -250,16 +265,48 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 
 		g2d.setStroke(new BasicStroke(1));
 		
-		String drawingOption = visualizeButton.isSelected() ? ui.visualizeAttributesPanel.visualiztionOptions.getSelection().getActionCommand() : "Init";
+		String drawingOption = visualizeButton.isSelected() ? ui.attributesPanel.visualizationPanel.visualiztionOptions.getSelection().getActionCommand() : "Init";
 		
 		for(Node node : listOfNodes){
 			//Draw the Node itself.
 			node.draw(g2d, this, drawingOption);
 			
 			//Draw all the edges.
-			
 			for(Edge edge : node.adjacent){
 				edge.draw(g2d, this, drawingOption);
+			}
+		}
+		
+		//Draw simulation of the packets.
+		if(!drawingOption.equals("Init")){
+			long currentTime = ui.attributesPanel.visualizationPanel.currentSimulationTime;
+			System.out.println("Current Simulation time: " + currentTime);
+			for(Interval interval : sc.timeline){
+				if(interval.fromTime <= currentTime && currentTime <= interval.toTime){
+					int fromX = interval.fromNode.x;
+					int fromY = interval.fromNode.y;
+					
+					int toX = interval.toNode.x;
+					int toY = interval.toNode.y;
+					
+					int dX = toX - fromX;
+					int dY = toY - fromY;
+					
+					long currentDisp = currentTime - interval.fromTime;
+					long totalTime = interval.toTime - interval.fromTime;
+	
+					int packetX = (int) (fromX + (currentDisp * 1.0 / totalTime) * dX);
+					int packetY = (int) (fromY + (currentDisp * 1.0 / totalTime) * dY);
+					
+					System.out.println("Current Displacement: " + currentDisp);
+					System.out.printf("Packet position: (%d, %d)\n", packetX, packetY);
+					
+					g2d.setColor(Constants.SELECTED_COLOR);
+					g2d.fillOval(packetX + 5, packetY + 5, 10, 10);
+					
+					g2d.setColor(Color.BLACK);
+					g2d.drawOval(packetX + 5, packetY + 5, 10, 10);
+				}
 			}
 		}
 	}

@@ -56,9 +56,7 @@ public class MachineAttributePanel extends NodeAttributesPanel{
 		
 		Component gap = Box.createRigidArea(new Dimension(Constants.COMPONENTS_GAP, Constants.COMPONENTS_GAP));
 		
-		layout.setHorizontalGroup(
-		   layout.createParallelGroup()
-		   		  .addGroup(layout.createSequentialGroup()
+		layout.setHorizontalGroup(layout.createSequentialGroup()
 				      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				    	   .addComponent(nameLabel)
 				      	   .addComponent(ETH_IPLabel)
@@ -78,8 +76,6 @@ public class MachineAttributePanel extends NodeAttributesPanel{
 				      	   .addComponent(mobilityOption)
 				      	   .addComponent(topologyOption)
 				      	   .addComponent(setData))
-				      	   
-				      	   )
 	   			
 		);
 		
@@ -118,12 +114,12 @@ public class MachineAttributePanel extends NodeAttributesPanel{
 		
 		//Fill the required information.
 		name.setText(node.name);
-		
 		ETH_IP.setText(node.ETH_IP);
 		ETH_HW.setText(node.ETH_HW);
 		WLS_IP.setText(node.getWLS_IP());
+		WirelessInterfacesTable t = (WirelessInterfacesTable)WLS_HW_Table.getModel();
+		t.current.clear();
 		for(int i = 0; i < node.WLS_HW.size(); i++){
-			WirelessInterfacesTable t = (WirelessInterfacesTable)WLS_HW_Table.getModel();
 			t.current.add(new WirelessTableRowEntry(node.WLS_Name.get(i), node.WLS_HW.get(i)));
 			WLS_HW_Table.getTableHeader().repaint();
 			WLS_HW_Table.tableChanged(new TableModelEvent(t));

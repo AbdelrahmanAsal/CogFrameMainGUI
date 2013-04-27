@@ -2,16 +2,25 @@ package All;
 
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.TreeMap;
 
+import Data.AccessPair;
 import Data.Edge;
+import Data.Event;
+import Data.Interval;
 import Data.Node;
 import Data.PacketInfo;
 
 public class StatisticsCollector {
 	ArrayList<Node> listOfNodes;
+	ArrayList<Interval> timeline;
+	TreeMap<Integer, ArrayList<AccessPair>> packetAccesses;
 	TreeMap<String,Node> nodes;
+	public long minTimestamp = Long.MAX_VALUE, maxTimestamp = Long.MIN_VALUE;
 	public StatisticsCollector(ArrayList<Node> listOfNodes){
+		this.timeline = new ArrayList<Interval>();
+		this.packetAccesses = new TreeMap<Integer, ArrayList<AccessPair>>();
 		this.listOfNodes = listOfNodes;
 		nodes = new TreeMap<String, Node>();
 		for(Node node: listOfNodes){
@@ -46,6 +55,7 @@ public class StatisticsCollector {
 			Node toNode = nodes.get(to);
 			
 			currentNode.outPackets.put(packetID, new PacketInfo(packetID, timeStamp, toNode));
+			insertAccessPair(new AccessPair(timeStamp, currentNode), packetID);
 		}
 		
 		//Received packets table.
@@ -54,7 +64,8 @@ public class StatisticsCollector {
 			int packetID = r.nextInt();
 			long timeStamp = r.nextLong();
 			
-			currentNode.inPackets.put(packetID, new PacketInfo(packetID, timeStamp, currentNode));			
+			currentNode.inPackets.put(packetID, new PacketInfo(packetID, timeStamp, currentNode));		
+			insertAccessPair(new AccessPair(timeStamp, currentNode), packetID);
 		}
 		
 		int switchCount = r.nextInt();
@@ -73,7 +84,28 @@ public class StatisticsCollector {
 		currentNode.averageSwitchingTime /= switchCount;
 	}
 	
+	private void insertAccessPair(AccessPair ap, int packetID) {
+		if(!packetAccesses.containsKey(packetID))packetAccesses.put(packetID, new ArrayList<AccessPair>());
+		
+		ArrayList<AccessPair> accessList = packetAccesses.get(packetID);
+		accessList.add(ap);
+	}
 	public void calculate(){
+		//Generate the intervals for the simulation of the timeline.
+		for(int packetID : packetAccesses.keySet()){
+			ArrayList<AccessPair> accessList = packetAccesses.get(packetID);
+			Collections.sort(accessList);
+			minTimestamp = Math.min(accessList.get(0).timestamp, minTimestamp);
+			maxTimestamp = Math.max(accessList.get(accessList.size() - 1).timestamp, maxTimestamp);
+			for(int i = 0; i + 1 < accessList.size(); i++){
+				AccessPair fromAP = accessList.get(i);
+				AccessPair toAP = accessList.get(i + 1);
+				timeline.add(new Interval(packetID, fromAP.node, toAP.node, fromAP.timestamp, toAP.timestamp));
+			}	
+		}
+		
+		System.out.println(timeline);
+		
 		for(Node node : listOfNodes){
 			for(int packetID : node.inPackets.keySet()){
 				if(node.outPackets.containsKey(packetID)){

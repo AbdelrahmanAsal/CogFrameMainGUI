@@ -6,6 +6,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import All.Constants;
+import All.DrawingPanel;
 
 
 public class AttributesPanel extends JPanel{
@@ -19,13 +20,17 @@ public class AttributesPanel extends JPanel{
 	
 	public JPanel informationPanel;
 	public VisualizeAttributePanel visualizationPanel;
-	public AttributesPanel(){
+	
+	public DrawingPanel drawingPanel;
+	public AttributesPanel(DrawingPanel drawingPanel){
+		this.drawingPanel = drawingPanel;
+		
 		informationPanelCardLayout = new CardLayout();
 		
 		informationPanel = new JPanel();
 		informationPanel.setLayout(informationPanelCardLayout);
 		
-		visualizationPanel = new VisualizeAttributePanel();
+		visualizationPanel = new VisualizeAttributePanel(drawingPanel);
 		
 		tabbedPane = new JTabbedPane();
 		tabbedPane.addTab("Information", informationPanel);

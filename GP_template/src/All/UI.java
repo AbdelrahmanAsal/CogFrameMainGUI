@@ -31,13 +31,12 @@ import AttributePanel.VisualizeAttributePanel;
 import Data.Edge;
 import Data.Machine;
 import Data.Node;
-import Data.Pair;
+import Data.StringPair;
 
 public class UI extends JFrame{
 	UI self;
 	DrawingPanel drawingPanel;
 	AttributesPanel attributesPanel;
-	VisualizeAttributePanel visualizeAttributesPanel;
 
 	//TO BE DELETED !!!!!!!.
 	MobilityOption mobilityOptionChosen = MobilityOption.STATIC; 
@@ -61,10 +60,10 @@ public class UI extends JFrame{
 		} catch (Exception e) {
 		}
 		
-		attributesPanel = new AttributesPanel();
-		
 		drawingPanel = new DrawingPanel(this);
 		drawingPanel.setBorder(BorderFactory.createTitledBorder("Network topology"));
+		
+		attributesPanel = new AttributesPanel(drawingPanel);
 		
 		add(drawingPanel);
 		add(attributesPanel);
@@ -144,7 +143,7 @@ public class UI extends JFrame{
 					
 					InputReader r = new InputReader(new FileReader(fileName));
 					HashMap<String, Node> map = new HashMap<String, Node>();
-					ArrayList<Pair> pairs = new ArrayList<Pair>();
+					ArrayList<StringPair> pairs = new ArrayList<StringPair>();
 					int noOfNodes = r.nextInt();
 					for (int i = 0; i < noOfNodes; i++) {
 						String nodeName = r.next();
@@ -166,7 +165,7 @@ public class UI extends JFrame{
 						int adjacent = r.nextInt();
 						for (int j = 0; j < adjacent; j++) {
 							String next = r.next();
-							pairs.add(new Pair(nodeName, next));
+							pairs.add(new StringPair(nodeName, next));
 						}
 						node.channels = new ArrayList<Channel>();
 						int channels = r.nextInt();
@@ -187,7 +186,7 @@ public class UI extends JFrame{
 						}
 						drawingPanel.listOfNodes.add(node);
 					}
-					for (Pair e : pairs) {
+					for (StringPair e : pairs) {
 						Edge edge = new Edge(map.get(e.n1), map.get(e.n2));
 						map.get(e.n1).adjacent.add(edge);
 					}

@@ -222,9 +222,9 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 		ETH_IP.setText(node.ETH_IP);
 		ETH_HW.setText(node.ETH_HW);
 		WLS_IP.setText(node.getWLS_IP());
-		
+		WirelessInterfacesTable t = (WirelessInterfacesTable)WLS_HW_Table.getModel();
+		t.current.clear();
 		for(int i = 0; i < node.WLS_HW.size(); i++){
-			WirelessInterfacesTable t = (WirelessInterfacesTable)WLS_HW_Table.getModel();
 			t.current.add(new WirelessTableRowEntry(node.WLS_Name.get(i), node.WLS_HW.get(i)));
 			WLS_HW_Table.getTableHeader().repaint();
 			WLS_HW_Table.tableChanged(new TableModelEvent(t));

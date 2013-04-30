@@ -82,6 +82,18 @@ public class StatisticsCollector {
 		
 		Node.maxTotalSwitches = Math.max(Node.maxTotalSwitches, switchCount);
 		currentNode.averageSwitchingTime /= switchCount;
+		
+		int noOfProtocolPackets = r.nextInt();
+		for(int i = 0; i < noOfProtocolPackets; i++) {
+			String message = r.next();
+			String fromMac = r.next();
+			String toMac = r.next();
+			long fromTime = r.nextLong();
+			long toTime = r.nextLong();
+			minTimestamp = Math.min(fromTime, minTimestamp);
+			maxTimestamp = Math.max(toTime, maxTimestamp);
+			timeline.add(new Interval(-1, nodes.get(fromMac), nodes.get(toMac), fromTime, toTime, message));
+		}
 	}
 	
 	private void insertAccessPair(AccessPair ap, int packetID) {
@@ -100,7 +112,7 @@ public class StatisticsCollector {
 			for(int i = 0; i + 1 < accessList.size(); i++){
 				AccessPair fromAP = accessList.get(i);
 				AccessPair toAP = accessList.get(i + 1);
-				timeline.add(new Interval(packetID, fromAP.node, toAP.node, fromAP.timestamp, toAP.timestamp));
+				timeline.add(new Interval(packetID, fromAP.node, toAP.node, fromAP.timestamp, toAP.timestamp, ""));
 			}	
 		}
 		

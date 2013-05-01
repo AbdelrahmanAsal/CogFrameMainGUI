@@ -1,33 +1,30 @@
 package All;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.ParallelGroup;
-import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import AttributePanel.AttributesPanel;
-import AttributePanel.NullAttributePanel;
-import AttributePanel.VisualizeAttributePanel;
 import Data.Edge;
 import Data.Machine;
 import Data.Node;
@@ -37,6 +34,7 @@ public class UI extends JFrame{
 	UI self;
 	DrawingPanel drawingPanel;
 	AttributesPanel attributesPanel;
+	JSplitPane splitPane;
 
 	//TO BE DELETED !!!!!!!.
 	MobilityOption mobilityOptionChosen = MobilityOption.STATIC; 
@@ -48,6 +46,7 @@ public class UI extends JFrame{
 	public UI(){
 		this.self = this;
 		setLayout(new GridLayout());
+		setTitle("CogFrame");
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		try {
@@ -69,10 +68,18 @@ public class UI extends JFrame{
 		add(attributesPanel);
 		
 		setAllMenus();
+
+		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+				drawingPanel, attributesPanel);
+		splitPane.setContinuousLayout(true);
+		splitPane.setOneTouchExpandable(true);
+		add(splitPane);
+	    this.pack();
+		repaint();
 		
 //		setResizable(false);
 		setLocationByPlatform(true);
-		setSize(800, 710);
+		setSize(1000, 710);
 		setVisible(true);
 	}
 	

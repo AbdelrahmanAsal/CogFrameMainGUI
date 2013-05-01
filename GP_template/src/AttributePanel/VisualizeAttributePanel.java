@@ -97,6 +97,7 @@ public class VisualizeAttributePanel extends JPanel{
 				ticker.setValue(0);
 			}
 		});
+	
 		
 		JButton forward = new JButton(">>");
 		forward.addActionListener(new ActionListener() {
@@ -146,14 +147,13 @@ public class VisualizeAttributePanel extends JPanel{
 		});
 		
 		ticker = new JSlider(JSlider.HORIZONTAL, 0, 0, 0);
+		ticker.putClientProperty("JSlider.isFilled", Boolean.TRUE);
 		ticker.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				if (!ticker.getValueIsAdjusting()) {
-					int time = (int) ticker.getValue();
-					currentSimulationTime = time;
-					drawingP.repaint();
-				}
+				int time = (int) ticker.getValue();
+				currentSimulationTime = time;
+				drawingP.repaint();
 			}
 		});
 
@@ -222,13 +222,14 @@ public class VisualizeAttributePanel extends JPanel{
 				if(!finished){
 					currentSimulationTime += playerStepSize;
 					currentSimulationTime = Math.min(drawingP.maxRange, currentSimulationTime);
+					if (currentSimulationTime == drawingP.maxRange)
+						finished = true;
 					ticker.setValue((int)currentSimulationTime);
 					drawingP.repaint();
 				}
 				try {
 					this.sleep(100);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

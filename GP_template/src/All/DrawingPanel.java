@@ -44,20 +44,19 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 	public int offX, offY;
 	
 	public JButton setSourceButton, setDestinationButton, generate;
-	public JToggleButton visualizeButton;
+	public JToggleButton visualizeButton, gridButton;
 	public StatisticsCollector sc;
 	
 	public int maxRange;
 	TreeMap<String, Color> colorMap;
 	public DrawingPanel(UI ui_){
-		
 		this.drawingPanel = this;
 		this.ui = ui_;
 		colorMap = null;
 		listOfNodes = new ArrayList<Node>();
 		
-		Node node1 = new Machine("1", 100, 100);
-		Node node2 = new Machine("2", 200, 200);
+		Node node1 = new Machine("1", 100, 150);
+		Node node2 = new Machine("2", 250, 300);
 		
 		node1.WLS_HW.add("08:11:96:8B:84:F4");
 		node1.WLS_Name.add("wlan0");
@@ -222,10 +221,20 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 				ui.attributesPanel.visualizationPanel.ticker.setPaintTicks(true);    
 				ui.attributesPanel.visualizationPanel.ticker.setPaintLabels(true);   
 				
-				
 			}
 		});
 		add(visualizeButton);
+		
+		gridButton = new JToggleButton("Show grid");
+		gridButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				repaint();
+			}
+			
+		});
+		add(gridButton);
 	}
 	
 	@Override
@@ -240,39 +249,49 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		g2d.setStroke(new BasicStroke(0.1f, BasicStroke.CAP_BUTT,
 			        BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f));
 		
-		//Vertical.
-		for(int d = 0; d < 19; d++)
-			g2d.drawLine(15 + d * 20, 85, 15 + d * 20, 620);
+		int drawingPanelHeight = drawingPanel.getHeight();
+		int drawingPanelWidth = drawingPanel.getWidth();
 		
-		//Horizental.
-		for(int d = 1; d < 28; d++)
-			g2d.drawLine(10, 70 + d * 20, 390, 70 + d * 20);
-		
-		//Legend box.
-        g2d.drawString("Source", 45, 635);
-        g2d.drawString("Destination", 175, 635);
-        g2d.drawString("Selected", 315, 635);
-        g2d.setColor(Constants.SOURCE_COLOR);
-        g2d.fillRect(15, 621, 25, 20);
-        g2d.setColor(Constants.DEST_COLOR);
-        g2d.fillRect(145, 621, 25, 20);
-        g2d.setColor(Constants.SELECTED_COLOR);
-        g2d.fillRect(285, 621, 25, 20);
+		if(gridButton.isSelected()) {
+			int stX = 20;
+			
+			// Vertical.
+			for (int d = 0; d < drawingPanelWidth / 20 - 1; d++)
+				g2d.drawLine(stX + d * 20, 85, stX + d * 20, drawingPanelHeight - 55);
+	
+			// Horizontal.
+			for (int d = 1; d < drawingPanelHeight / 20 - 5; d++)
+				g2d.drawLine(stX - 5, 70 + d * 20, drawingPanelWidth - 25, 70 + d * 20);
+		}
 
-		g2d.setStroke(new BasicStroke(1));
+		//Legend box.
+		int vStringShift = 20;
+		int vRectShift = 35;
+		g2d.drawString("Source", 45, drawingPanelHeight - vStringShift);
+		g2d.drawString("Destination", 175, drawingPanelHeight - vStringShift);
+		g2d.drawString("Selected", 315, drawingPanelHeight - vStringShift);
+		g2d.setColor(Constants.SOURCE_COLOR);
+		g2d.fillRect(15, drawingPanelHeight - vRectShift, 25, 20);
+		g2d.setColor(Constants.DEST_COLOR);
+		g2d.fillRect(145, drawingPanelHeight - vRectShift, 25, 20);
+		g2d.setColor(Constants.SELECTED_COLOR);
+		g2d.fillRect(285, drawingPanelHeight - vRectShift, 25, 20);
+
+        g2d.setStroke(new BasicStroke(1));
 		
 		String drawingOption = visualizeButton.isSelected() ? ui.attributesPanel.visualizationPanel.visualiztionOptions.getSelection().getActionCommand() : "Init";
 		
-		for(Node node : listOfNodes){
-			//Draw the Node itself.
+		for (Node node : listOfNodes) {
+			// Draw the Node itself.
 			node.draw(g2d, this, drawingOption);
-			
-			//Draw all the edges.
-			for(Edge edge : node.adjacent){
+
+			// Draw all the edges.
+			for (Edge edge : node.adjacent) {
 				edge.draw(g2d, this, drawingOption);
 			}
 		}
-		//Draw simulation of the packets.
+		
+		// Draw simulation of the packets.
 		if(!drawingOption.equals("Init")){
 			long currentTime = ui.attributesPanel.visualizationPanel.currentSimulationTime;
 			System.out.println("Current Simulation time: " + currentTime);
@@ -316,11 +335,11 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 
 	@Override
 	public void mouseDragged(MouseEvent mouse) {
-		if(visualizeButton.isSelected())return;
+		if(visualizeButton.isSelected()) return;
 		
-		if(selectedIndex != -1){
-			listOfNodes.get(selectedIndex).x = cap(mouse.getX() - offX, 70, 300);
-			listOfNodes.get(selectedIndex).y = cap(mouse.getY() - offY, 120, 550);
+		if (selectedIndex != -1) {
+			listOfNodes.get(selectedIndex).x = cap(mouse.getX() - offX, 60, drawingPanel.getWidth() - 80);
+			listOfNodes.get(selectedIndex).y = cap(mouse.getY() - offY, 120, drawingPanel.getHeight() - 120);
 		}
 		repaint();
 	}
@@ -418,7 +437,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 				if(listOfNodes.get(fromNode).adjacent.contains(new Edge(listOfNodes.get(fromNode), listOfNodes.get(toNode)))){
 					int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this edge?");
 					
-					if(result == 0){//Yes delete the edge.
+					if(result == 0){ // Yes delete the edge.
 						System.out.println("Removing the edge between " + fromNode + " -> " + toNode);
 						
 						listOfNodes.get(fromNode).adjacent.remove(new Edge(listOfNodes.get(fromNode), listOfNodes.get(toNode)));

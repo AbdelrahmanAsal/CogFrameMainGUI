@@ -63,14 +63,18 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		
 		Node node1 = new Machine("1", 100, 100);
 		Node node2 = new Machine("2", 200, 200);
+		Node node3 = new Machine("3", 300, 300);
 		
 		node1.WLS_HW.add("08:11:96:8B:84:F4");
 		node1.WLS_Name.add("wlan0");
 		node2.WLS_HW.add("08:11:96:8B:84:F3");
 		node2.WLS_Name.add("wlan1");
+		node3.WLS_HW.add("08:11:96:8B:84:F2");
+		node3.WLS_Name.add("wlan1");
 		
 		listOfNodes.add(node1);
 		listOfNodes.add(node2);
+		listOfNodes.add(node3);
 		
 		addMouseListener(this);
 		addMouseMotionListener(this);

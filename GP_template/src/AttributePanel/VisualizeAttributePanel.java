@@ -66,7 +66,7 @@ public class VisualizeAttributePanel extends JPanel{
 			}
 		});
 		
-		JButton run = new JButton("►");
+		JButton run = new JButton("Run");
 		run.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -74,7 +74,7 @@ public class VisualizeAttributePanel extends JPanel{
 			}
 		});
 		
-		JButton pause = new JButton("▌▌");
+		JButton pause = new JButton("Pause");
 		pause.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -82,7 +82,7 @@ public class VisualizeAttributePanel extends JPanel{
 			}
 		});
 		
-		JButton stop = new JButton("■");
+		JButton stop = new JButton("Stop");
 		stop.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {

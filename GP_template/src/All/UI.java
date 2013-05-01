@@ -74,6 +74,7 @@ public class UI extends JFrame{
 		setLocationByPlatform(true);
 		setSize(900, 710);
 		setVisible(true);
+		setExtendedState(JFrame.MAXIMIZED_BOTH);
 	}
 	
 	private void setAllMenus() {

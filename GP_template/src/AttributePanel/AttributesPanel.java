@@ -20,6 +20,7 @@ public class AttributesPanel extends JPanel{
 	
 	public JPanel informationPanel;
 	public VisualizeAttributePanel visualizationPanel;
+	ChartsPanel chartsPanel;
 	
 	public DrawingPanel drawingPanel;
 	public AttributesPanel(DrawingPanel drawingPanel){
@@ -44,10 +45,15 @@ public class AttributesPanel extends JPanel{
 		informationPanel.add(nullAP, Constants.nullAPCode);
 		informationPanel.add(machineAP, Constants.machineAPCode);
 		informationPanel.add(primaryAP, Constants.primaryAPCode);
+		
+		chartsPanel = new ChartsPanel(drawingPanel);
+		
 	}
 	
 	public void activeVisualization(){
 		tabbedPane.addTab("Visualization", visualizationPanel);
+		chartsPanel.panelDimension = informationPanel.getSize();
+		tabbedPane.addTab("Charts", chartsPanel);
 	}
 	public void deactiveVisualization(){
 		tabbedPane.remove(1);

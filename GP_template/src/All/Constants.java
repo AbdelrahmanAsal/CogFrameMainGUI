@@ -14,7 +14,6 @@ public class Constants {
 	public static Color PRIMARY_COLOR = new Color(194, 15, 232);//purple
 	public static Color HOP_COLOR = new Color(80, 80, 80);//gray
 	public static Color EDGE_COLOR = Color.orange;
-	public static Color SELECTED_PROTOCOL_COLOR = Color.blue;
 	
 	public static String machineAPCode = "MACHINE";
 	public static String primaryAPCode = "PRIMARY";

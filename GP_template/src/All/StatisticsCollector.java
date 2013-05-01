@@ -18,11 +18,19 @@ public class StatisticsCollector {
 	TreeMap<Integer, ArrayList<AccessPair>> packetAccesses;
 	TreeMap<String,Node> nodes;
 	public long minTimestamp = Long.MAX_VALUE, maxTimestamp = Long.MIN_VALUE;
+	public ArrayList<Long> switchingTimeSet;
+	public ArrayList<ArrayList<Double>> primaryActiveDist;
+	public ArrayList<ArrayList<Double>> primaryInactiveDist;
+	public ArrayList<String> primaryNames;
+	public Node src, dest;
+	
 	public StatisticsCollector(ArrayList<Node> listOfNodes){
 		this.timeline = new ArrayList<Interval>();
 		this.packetAccesses = new TreeMap<Integer, ArrayList<AccessPair>>();
 		this.listOfNodes = listOfNodes;
 		nodes = new TreeMap<String, Node>();
+		switchingTimeSet = new ArrayList<Long>();
+		
 		for(Node node: listOfNodes){
 			nodes.put(node.ETH_HW.toUpperCase(), node);
 			System.out.println(node.ETH_HW+"         -> ");
@@ -30,8 +38,42 @@ public class StatisticsCollector {
 				nodes.put(hw.toUpperCase(), node);
 			}
 		}
+		primaryActiveDist = new ArrayList<ArrayList<Double>>();
+		primaryInactiveDist =  new ArrayList<ArrayList<Double>>();
+		primaryNames = new ArrayList<String>();
 	}
-	public void parse(String fileName){
+	public void parsePrimary(String fileName) {
+		InputReader r = null;
+		try {
+			r = new InputReader(new FileReader(fileName));
+		} catch(Exception ex) {
+		
+		}
+		String name = r.next().toUpperCase();
+		Node currentNode = null;
+		System.out.println(name);
+		currentNode = nodes.get(name);
+		primaryNames.add(currentNode.name);
+		
+		ArrayList<Double> active = new ArrayList<Double>();
+		int n = r.nextInt();
+		for (int i = 0; i < n; i++) {
+//			long timestamp = r.nextLong();
+			double value = r.nextDouble();
+			active.add(value);
+		}
+		primaryActiveDist.add(active);
+		ArrayList<Double> inactive = new ArrayList<Double>();
+		n = r.nextInt();
+		for (int i = 0; i < n; i++) {
+//			long timestamp = r.nextLong();
+			double value = r.nextDouble();
+			inactive.add(value);
+		}
+		primaryInactiveDist.add(inactive);
+	}
+	
+	public void parseMachine(String fileName){
 		InputReader r = null;
 		try {
 			r = new InputReader(new FileReader(fileName));
@@ -76,6 +118,8 @@ public class StatisticsCollector {
 			int channelFrom = r.nextInt();
 			int channelTo = r.nextInt();
 			
+			switchingTimeSet.add(switchingTime);
+			
 			currentNode.totalSwitches++;
 			currentNode.averageSwitchingTime += switchingTime;
 		}
@@ -117,8 +161,11 @@ public class StatisticsCollector {
 		}
 		
 		System.out.println(timeline);
-		
 		for(Node node : listOfNodes){
+			if (node.isSource)
+				src = node;
+			if (node.isDestination)
+				dest = node;
 			for(int packetID : node.inPackets.keySet()){
 				if(node.outPackets.containsKey(packetID)){
 					long timeDiff = node.outPackets.get(packetID).timeStamp - node.inPackets.get(packetID).timeStamp;
@@ -161,6 +208,7 @@ public class StatisticsCollector {
 				edge.packetCount = toBeSent - lost;
 			}
 		}
+		
 	}
 }
 

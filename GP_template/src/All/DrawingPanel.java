@@ -58,14 +58,20 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		
 		Node node1 = new Machine("1", 100, 100);
 		Node node2 = new Machine("2", 200, 200);
+		Node node3 = new Primary("3", 300, 300);
+		node1.isSource = true;
+		node2.isDestination = true;
 		
 		node1.WLS_HW.add("08:11:96:8B:84:F4");
 		node1.WLS_Name.add("wlan0");
 		node2.WLS_HW.add("08:11:96:8B:84:F3");
 		node2.WLS_Name.add("wlan1");
+		node3.WLS_HW.add("08:11:96:8B:84:F7");
+		node3.WLS_Name.add("wlan0");
 		
 		listOfNodes.add(node1);
 		listOfNodes.add(node2);
+		listOfNodes.add(node3);
 		
 		addMouseListener(this);
 		addMouseMotionListener(this);
@@ -207,8 +213,10 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 					}
 					
 					String statisticsFile = fc.getSelectedFile().getAbsolutePath();
-					
-					sc.parse(statisticsFile);
+					if(node instanceof Machine)
+						sc.parseMachine(statisticsFile);
+					else if(node instanceof Primary) 
+						sc.parsePrimary(statisticsFile);
 				}
 				
 				sc.calculate();

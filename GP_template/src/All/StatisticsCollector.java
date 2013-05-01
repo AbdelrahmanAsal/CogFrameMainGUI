@@ -58,7 +58,7 @@ public class StatisticsCollector {
 		ArrayList<Double> active = new ArrayList<Double>();
 		int n = r.nextInt();
 		for (int i = 0; i < n; i++) {
-//			long timestamp = r.nextLong();
+			long timestamp = r.nextLong();
 			double value = r.nextDouble();
 			active.add(value);
 		}
@@ -66,7 +66,7 @@ public class StatisticsCollector {
 		ArrayList<Double> inactive = new ArrayList<Double>();
 		n = r.nextInt();
 		for (int i = 0; i < n; i++) {
-//			long timestamp = r.nextLong();
+			long timestamp = r.nextLong();
 			double value = r.nextDouble();
 			inactive.add(value);
 		}
@@ -146,8 +146,9 @@ public class StatisticsCollector {
 		ArrayList<AccessPair> accessList = packetAccesses.get(packetID);
 		accessList.add(ap);
 	}
+	
 	public void calculate(){
-		//Generate the intervals for the simulation of the timeline.
+		// Generate the intervals for the simulation of the timeline.
 		for(int packetID : packetAccesses.keySet()){
 			ArrayList<AccessPair> accessList = packetAccesses.get(packetID);
 			Collections.sort(accessList);

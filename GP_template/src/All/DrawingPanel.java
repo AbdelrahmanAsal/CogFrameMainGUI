@@ -57,7 +57,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		
 		Node node1 = new Machine("1", 100, 150);
 		Node node2 = new Machine("2", 250, 300);
-		Node node3 = new Primary("3", 300, 300);
+		Node node3 = new Primary("3", 370, 200);
 		node1.isSource = true;
 		node2.isDestination = true;
 		

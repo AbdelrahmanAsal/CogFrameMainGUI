@@ -1,4 +1,6 @@
 package All;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -13,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
@@ -47,7 +50,7 @@ public class UI extends JFrame{
 	
 	public UI(){
 		this.self = this;
-		setLayout(new GridLayout());
+		setLayout(new BorderLayout());
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		try {
@@ -61,18 +64,15 @@ public class UI extends JFrame{
 		}
 		
 		drawingPanel = new DrawingPanel(this);
-		drawingPanel.setBorder(BorderFactory.createTitledBorder("Network topology"));
-		
 		attributesPanel = new AttributesPanel(drawingPanel);
 		
-		add(drawingPanel);
-		add(attributesPanel);
+		add(drawingPanel, BorderLayout.CENTER);
+		add(attributesPanel, BorderLayout.EAST);
 		
 		setAllMenus();
 		
-//		setResizable(false);
 		setLocationByPlatform(true);
-		setSize(800, 710);
+		setSize(900, 710);
 		setVisible(true);
 	}
 	

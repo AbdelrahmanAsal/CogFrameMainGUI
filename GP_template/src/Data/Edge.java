@@ -45,6 +45,7 @@ public class Edge {
 		}else if(drawingOption.equals("Throughput")){
 //			g2d.setColor(new Color((int) (255 * throughput), (int) (255 * (1 - throughput)), 0));
 		}else{
+			System.out.println("EDGE");
 			g2d.setColor(Constants.EDGE_COLOR);
 		}
 		

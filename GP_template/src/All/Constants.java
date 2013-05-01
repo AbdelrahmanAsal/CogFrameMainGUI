@@ -3,6 +3,7 @@ package All;
 import java.awt.Color;
 
 public class Constants {
+	public static final int MARGIN = 20;
 	public int radius;
 	public static int TEXT_WIDTH = 1;
 	public static int TEXT_HEIGHT = 1;

@@ -4,13 +4,13 @@ import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
-public class WirelessInterfacesTable extends AbstractTableModel {
-	String[] colNames = { "Name", "H/W" };
-	ArrayList<WirelessTableRowEntry> current;
+public class PacketsColorTableModel extends AbstractTableModel {
+	String[] colNames = { "Type", "Color" };
+	public ArrayList<PacketsColorRowEntry> current;
 	protected int columnsCount = colNames.length;
 
-	public WirelessInterfacesTable() {
-		current = new ArrayList<WirelessTableRowEntry>();
+	public PacketsColorTableModel() {
+		current = new ArrayList<PacketsColorRowEntry>();
 	}
 
 	public int getRowCount() {
@@ -33,9 +33,7 @@ public class WirelessInterfacesTable extends AbstractTableModel {
 		if (nRow < 0 || nRow >= current.size())
 			return "";
 		if (nCol == 0)
-			return current.get(nRow).interfaceName;
-		if (nCol == 1)
-			return current.get(nRow).interfaceHW;
+			return current.get(nRow).type;
 		return "";
 	}
 

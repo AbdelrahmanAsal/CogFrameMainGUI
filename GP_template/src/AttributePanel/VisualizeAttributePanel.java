@@ -1,4 +1,6 @@
 package AttributePanel;
+
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -12,11 +14,14 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
-import javax.swing.JTextArea;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.TableColumn;
+
 
 import All.DrawingPanel;
 
@@ -29,7 +34,8 @@ public class VisualizeAttributePanel extends JPanel{
 	public Player player;
 	public final JSlider ticker;
 	public long playerStepSize = 1;
-	
+	public JTable packetsColorTable;
+	public PacketsColorTableModel packetsColorModel;
 	public VisualizeAttributePanel(DrawingPanel drawingPanel){
 		this.drawingP = drawingPanel;
 		player = new Player();
@@ -151,6 +157,21 @@ public class VisualizeAttributePanel extends JPanel{
 			}
 		});
 
+		packetsColorModel = new PacketsColorTableModel();
+		packetsColorTable = new JTable();
+		packetsColorTable.setModel(packetsColorModel);
+		packetsColorTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		packetsColorTable.setBorder(BorderFactory.createLoweredBevelBorder());
+		int[] colWidth = {235, 85};
+		for (int i = 0; i < 2; i++) {
+			TableColumn tcol = packetsColorTable.getColumnModel().getColumn(i);
+			tcol.setPreferredWidth(colWidth[i]);
+			tcol.setCellRenderer(new PacketsColorTableCellRenderer());
+		}
+
+		JScrollPane ps = new JScrollPane(packetsColorTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		ps.setPreferredSize( new Dimension(200,250));
 		
 		GroupLayout layout = new GroupLayout(this);
 		setLayout(layout);
@@ -158,7 +179,6 @@ public class VisualizeAttributePanel extends JPanel{
 		visualiztionOptions = new ButtonGroup();
 		for(JRadioButton button: buttons)
 			visualiztionOptions.add(button);
-		
 		
 		lossRatio.setSelected(true);
 		
@@ -173,8 +193,8 @@ public class VisualizeAttributePanel extends JPanel{
 					.addComponent(wirelessInterfaces)
 					.addGroup(layout.createSequentialGroup().addComponent(backward).addComponent(run).addComponent(pause).addComponent(stop).addComponent(forward))
 					.addComponent(ticker)
-					.addGroup(layout.createSequentialGroup().addComponent(stepLabel).addComponent(step))
-					.addGroup(layout.createSequentialGroup().addComponent(seekLabel).addComponent(seek))
+					.addGroup(layout.createSequentialGroup().addComponent(stepLabel).addComponent(step).addComponent(seekLabel).addComponent(seek))
+					.addComponent(ps)
 		);
 		layout.setVerticalGroup(
 				layout.createSequentialGroup()
@@ -185,8 +205,8 @@ public class VisualizeAttributePanel extends JPanel{
 					.addComponent(wirelessInterfaces)
 					.addGroup(layout.createParallelGroup().addComponent(backward).addComponent(run).addComponent(pause).addComponent(stop).addComponent(forward))
 					.addComponent(ticker)
-					.addGroup(layout.createParallelGroup().addComponent(stepLabel).addComponent(step))
-					.addGroup(layout.createParallelGroup().addComponent(seekLabel).addComponent(seek))
+					.addGroup(layout.createParallelGroup().addComponent(stepLabel).addComponent(step).addComponent(seekLabel).addComponent(seek))
+					.addComponent(ps)
 		);
 	}
 	
@@ -198,14 +218,13 @@ public class VisualizeAttributePanel extends JPanel{
 		}
 		@Override
 		public void run() {
-			while(true){
+			while(true) {
 				if(!finished){
 					currentSimulationTime += playerStepSize;
 					currentSimulationTime = Math.min(drawingP.maxRange, currentSimulationTime);
 					ticker.setValue((int)currentSimulationTime);
 					drawingP.repaint();
 				}
-				
 				try {
 					this.sleep(100);
 				} catch (InterruptedException e) {

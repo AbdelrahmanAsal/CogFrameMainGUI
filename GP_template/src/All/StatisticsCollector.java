@@ -130,8 +130,8 @@ public class StatisticsCollector {
 		int noOfProtocolPackets = r.nextInt();
 		for(int i = 0; i < noOfProtocolPackets; i++) {
 			String message = r.next();
-			String fromMac = r.next();
-			String toMac = r.next();
+			String fromMac = r.next().toUpperCase();
+			String toMac = r.next().toUpperCase();
 			long fromTime = r.nextLong();
 			long toTime = r.nextLong();
 			minTimestamp = Math.min(fromTime, minTimestamp);
@@ -163,10 +163,13 @@ public class StatisticsCollector {
 		
 		System.out.println(timeline);
 		for(Node node : listOfNodes){
+			System.out.println(node + " <->");
 			if (node.isSource)
 				src = node;
-			if (node.isDestination)
+			if (node.isDestination) {
+				System.out.println("NODE IS DESTINATION");
 				dest = node;
+			}
 			for(int packetID : node.inPackets.keySet()){
 				if(node.outPackets.containsKey(packetID)){
 					long timeDiff = node.outPackets.get(packetID).timeStamp - node.inPackets.get(packetID).timeStamp;

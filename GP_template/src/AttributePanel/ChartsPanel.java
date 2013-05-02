@@ -147,6 +147,8 @@ public class ChartsPanel extends JPanel {
 		XYSeries dataset = new XYSeries("Packets Loss Ratio");
 		Node dest = drawingPanel.sc.dest;
 		Node src = drawingPanel.sc.src;
+		System.out.println(dest);
+		System.out.println(dest.inPackets);
 		long minTime = drawingPanel.sc.minTimestamp;
 		for(int packetID : dest.inPackets.keySet()){
 			PacketInfo info = dest.inPackets.get(packetID);

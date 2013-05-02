@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import javax.swing.JFrame;
@@ -69,7 +70,7 @@ public class UI extends JFrame {
 		splitPane.setContinuousLayout(true);
 		splitPane.setOneTouchExpandable(true);
 		add(splitPane);
-
+		repaint();
 		setLocationByPlatform(true);
 		setSize(1000, 800);
 		setVisible(true);
@@ -338,7 +339,9 @@ public class UI extends JFrame {
 							node.WLS_Name.add(in.readLine());
 							node.WLS_HW.add(in.readLine());
 						}
-
+						Collections.reverse(node.WLS_HW);
+						Collections.reverse(node.WLS_Name);
+						
 						out.close();
 						in.close();
 						echoSocket.close();

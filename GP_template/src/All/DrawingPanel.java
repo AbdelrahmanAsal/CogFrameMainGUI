@@ -276,6 +276,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 			}
 			
 		});
+		gridButton.setSelected(true);
 		experimentTools.add(gridButton);
 		
 		add(experimentTools);
@@ -339,7 +340,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 			long currentTime = ui.attributesPanel.visualizationPanel.currentSimulationTime;
 			System.out.println("Current Simulation time: " + currentTime);
 			for(Interval interval : sc.timeline){
-				if(interval.fromTime <= currentTime && currentTime <= interval.toTime){
+				if(interval.fromTime <= currentTime + sc.minTimestamp && currentTime + sc.minTimestamp <= interval.toTime){
 					int fromX = interval.fromNode.x;
 					int fromY = interval.fromNode.y;
 					
@@ -349,7 +350,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 					int dX = toX - fromX;
 					int dY = toY - fromY;
 					
-					long currentDisp = currentTime - interval.fromTime;
+					long currentDisp = currentTime + sc.minTimestamp - interval.fromTime;
 					long totalTime = interval.toTime - interval.fromTime;
 	
 					int packetX = (int) (fromX + (currentDisp * 1.0 / totalTime) * dX);

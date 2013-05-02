@@ -74,10 +74,10 @@ public class ChartsPanel extends JPanel {
 				primaryMachines[i] = drawingPanel.sc.primaryNames.get(i);
 			}
 			machineBox.setModel(new JComboBox(primaryMachines).getModel());
-			
+
 			// PU behaviour
 			chart = getProbabilityDistributionChart(drawingPanel.sc.primaryActiveDist.get(machineBox.getSelectedIndex()), "active");
-			
+
 		}  else if (index == 2) {
 			// PU behaviour inactive
 			String[] primaryMachines = new String[drawingPanel.sc.primaryNames.size()];
@@ -85,7 +85,7 @@ public class ChartsPanel extends JPanel {
 				primaryMachines[i] = drawingPanel.sc.primaryNames.get(i);
 			}
 			machineBox.setModel(new JComboBox(primaryMachines).getModel());
-			
+
 			chart = getProbabilityDistributionChart(drawingPanel.sc.primaryInactiveDist.get(machineBox.getSelectedIndex()), "inactive");
 		} else if (index == 3) {
 			// CDF switching
@@ -107,7 +107,7 @@ public class ChartsPanel extends JPanel {
 		currChartPanel = chartPanel;
 		box.add(chartPanel);
 	}
-	
+
 	public JFreeChart getProbabilityDistributionChart(ArrayList<Double> data, String type) {
 		Collections.sort(data);
 		XYSeries dataset = new XYSeries("Primary user inactive behaviour");
@@ -124,7 +124,7 @@ public class ChartsPanel extends JPanel {
 				true, false);
 		return chart;
 	}
-	
+
 	public JFreeChart getSwitchingTimeChart() {
 		ArrayList<Long> switchingTime = drawingPanel.sc.switchingTimeSet;
 		Collections.sort(switchingTime);
@@ -142,11 +142,13 @@ public class ChartsPanel extends JPanel {
 				true, false);
 		return chart;
 	}
-	
+
 	public JFreeChart getLossRatioChart() { 
 		XYSeries dataset = new XYSeries("Packets Loss Ratio");
 		Node dest = drawingPanel.sc.dest;
 		Node src = drawingPanel.sc.src;
+		System.out.println(dest);
+		System.out.println(dest.inPackets);
 		long minTime = drawingPanel.sc.minTimestamp;
 		for(int packetID : dest.inPackets.keySet()){
 			PacketInfo info = dest.inPackets.get(packetID);
@@ -176,7 +178,7 @@ public class ChartsPanel extends JPanel {
 				true, false);
 		return chart;
 	}
-	
+
 	public JFreeChart getPacketDelayChart() { 
 		XYSeries dataset = new XYSeries("Packet Delay");
 		Node dest = drawingPanel.sc.dest;
@@ -208,5 +210,5 @@ public class ChartsPanel extends JPanel {
 				true, false);
 		return chart;
 	}
-	
+
 }

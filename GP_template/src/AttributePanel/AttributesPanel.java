@@ -1,6 +1,9 @@
 package AttributePanel;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Dimension;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -9,12 +12,14 @@ import javax.swing.JTabbedPane;
 
 import All.Constants;
 import All.DrawingPanel;
+import All.UI;
 
 
-public class AttributesPanel extends JPanel{
+public class AttributesPanel extends JPanel implements ComponentListener {
 	public MachineAttributePanel machineAP;
 	public PrimaryAttributePanel primaryAP;
 	public NullAttributePanel nullAP;
+	public EdgeAttributePanel edgeAP;
 	public CardLayout informationPanelCardLayout;
 	
 	JTabbedPane tabbedPane;
@@ -27,7 +32,7 @@ public class AttributesPanel extends JPanel{
 	public DrawingPanel drawingPanel;
 	public AttributesPanel(DrawingPanel drawingPanel){
 		this.drawingPanel = drawingPanel;
-		
+		addComponentListener(this);
 		informationPanelCardLayout = new CardLayout();
 		
 		informationPanel = new JPanel();
@@ -43,10 +48,12 @@ public class AttributesPanel extends JPanel{
 		machineAP = new MachineAttributePanel();
 		primaryAP = new PrimaryAttributePanel();
 		nullAP = new NullAttributePanel();
+		edgeAP = new EdgeAttributePanel();
 		
 		informationPanel.add(nullAP, Constants.nullAPCode);
 		informationPanel.add(machineAP, Constants.machineAPCode);
 		informationPanel.add(primaryAP, Constants.primaryAPCode);
+		informationPanel.add(edgeAP, Constants.edgeAPCode);
 		
 		chartsPanel = new ChartsPanel(drawingPanel);
 	}
@@ -59,6 +66,31 @@ public class AttributesPanel extends JPanel{
 	public void deactiveVisualization(){
 		tabbedPane.remove(1);//Visualization.
 		tabbedPane.remove(1);//Charts.
+	}
+
+	@Override
+	public void componentHidden(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentResized(ComponentEvent e) {
+		this.machineAP.setPreferredSize(new Dimension(drawingPanel.ui.getWidth() - drawingPanel.getWidth() - 100, this.getHeight() - 100));
+		this.machineAP.revalidate();
+		repaint();
+	}
+
+	@Override
+	public void componentShown(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
 

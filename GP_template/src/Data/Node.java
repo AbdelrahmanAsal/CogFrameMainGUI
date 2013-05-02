@@ -156,4 +156,8 @@ public abstract class Node{
 	public String type(){
 		return "N/A";
 	}
+	
+	public double distance(Node other){
+		return Math.hypot(x - other.x, y - other.y);
+	}
 }

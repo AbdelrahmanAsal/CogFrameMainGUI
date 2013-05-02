@@ -21,41 +21,41 @@ public class MachineAttributePanel extends NodeAttributesPanel{
 	public Machine selectedNode;
 	public MachineAttributePanel(){
 		setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Machine Attributes Panel"));
-		
+
 		setData = new JButton("Set Data");
 		setData.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(selectedNode != null){
 					selectedNode.name = name.getText();
-					
+
 					selectedNode.ETH_IP = ETH_IP.getText();
 					selectedNode.ETH_HW = ETH_HW.getText();
 					selectedNode.WLS_IP = parseSeparatedString(WLS_IP.getText());
 //					selectedNode.WLS_HW = parseSeparatedString(WLS_HW.getText());
-					
+
 					selectedNode.channels = parseChannels(channels.getText());
-					
+
 					selectedNode.mobilityOption = mobilityOption.getSelectedItem().toString();
 					selectedNode.topologyOption = topologyOption.getSelectedItem().toString();
-					
+
 					System.out.println("Successfully updated the node:\n" + selectedNode);
 				}
 			}
 		});
-		
-		
+
+
 		JPanel all = new JPanel();
-		
+
 		GroupLayout layout = new GroupLayout(all);
 		layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);
-		
+
 		all.setLayout(layout);
 		add(all);
-		
+
 		Component gap = Box.createRigidArea(new Dimension(Constants.COMPONENTS_GAP, Constants.COMPONENTS_GAP));
-		
+
 		layout.setHorizontalGroup(layout.createSequentialGroup()
 				      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				    	   .addComponent(nameLabel)
@@ -76,9 +76,9 @@ public class MachineAttributePanel extends NodeAttributesPanel{
 				      	   .addComponent(mobilityOption)
 				      	   .addComponent(topologyOption)
 				      	   .addComponent(setData))
-	   			
+
 		);
-		
+
 		layout.setVerticalGroup(
 		   layout.createSequentialGroup()
 		   	  .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
@@ -108,10 +108,10 @@ public class MachineAttributePanel extends NodeAttributesPanel{
 		      .addComponent(setData)
 		);
 	}
-	
+
 	public void setInfo(Machine node){
 		selectedNode = node;
-		
+
 		//Fill the required information.
 		name.setText(node.name);
 		ETH_IP.setText(node.ETH_IP);
@@ -125,11 +125,12 @@ public class MachineAttributePanel extends NodeAttributesPanel{
 			WLS_HW_Table.tableChanged(new TableModelEvent(t));
 			WLS_HW_Table.repaint();
 		}
-		
+
 		channels.setText(node.getChannels());
-		
+
 		mobilityOption.setSelectedItem(node.mobilityOption);
 		topologyOption.setSelectedItem(node.topologyOption);
 	}
-	
+
 }
+

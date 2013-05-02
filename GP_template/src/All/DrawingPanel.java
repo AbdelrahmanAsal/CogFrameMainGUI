@@ -1,14 +1,18 @@
 package All;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.Random;
@@ -21,7 +25,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
-import javax.swing.SwingUtilities;
 
 import AttributePanel.PacketsColorRowEntry;
 import ConfigurationMaker.ModuleMaker;
@@ -34,11 +37,12 @@ import Data.Node;
 import Data.Primary;
 
 
-public class DrawingPanel extends JPanel implements MouseMotionListener, MouseListener{
+public class DrawingPanel extends JPanel implements MouseMotionListener, MouseListener, ComponentListener{
 	public UI ui;
 	public DrawingPanel drawingPanel;
-	public int selectedIndex = -1;
-	public int fromNode = -1, toNode = -1;
+	public Edge selectedEdge;
+	public Node selectedNode;
+	public Node fromNode, toNode;
 	
 	public ArrayList<Node> listOfNodes;
 	public Node source, destination;
@@ -55,6 +59,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 	TreeMap<String, Color> colorMap;
 	public DrawingPanel(UI ui_){
 		setBorder(BorderFactory.createTitledBorder("Network topology"));
+		addComponentListener(this);
 		this.drawingPanel = this;
 		this.ui = ui_;
 		colorMap = null;
@@ -109,10 +114,10 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		setSourceButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if(selectedIndex != -1 && listOfNodes.get(selectedIndex) instanceof Machine){
+				if(selectedNode != null && selectedNode instanceof Machine){
 					if(source != null)source.isSource = false;
 					
-					source = listOfNodes.get(selectedIndex);
+					source = selectedNode;
 					source.isSource = true;
 					repaint();
 				}
@@ -123,10 +128,10 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		setDestinationButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if(selectedIndex != -1 && listOfNodes.get(selectedIndex) instanceof Machine){
+				if(selectedNode != null && selectedNode instanceof Machine){
 					if(destination != null)destination.isDestination = false;
 					
-					destination = listOfNodes.get(selectedIndex);
+					destination = selectedNode;
 					destination.isDestination = true;
 					repaint();
 				}
@@ -236,6 +241,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 					int ret = fc.showDialog(drawingPanel, String.format("Choose Node:(%s) statistics file.", node.name));
 					if(ret != JFileChooser.APPROVE_OPTION){
 						JOptionPane.showMessageDialog(drawingPanel, "Missing statistics file.");
+						visualizeButton.setSelected(false);
 						return;
 					}
 					
@@ -320,7 +326,9 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		for (Node node : listOfNodes) {
 			// Draw the Node itself.
 			node.draw(g2d, this, drawingOption);
-
+		}
+		
+		for(Node node : listOfNodes){
 			// Draw all the edges.
 			for (Edge edge : node.adjacent) {
 				edge.draw(g2d, this, drawingOption);
@@ -332,7 +340,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 			long currentTime = ui.attributesPanel.visualizationPanel.currentSimulationTime;
 			System.out.println("Current Simulation time: " + currentTime);
 			for(Interval interval : sc.timeline){
-				if(interval.fromTime <= currentTime && currentTime <= interval.toTime){
+				if(interval.fromTime <= currentTime + sc.minTimestamp && currentTime + sc.minTimestamp <= interval.toTime){
 					int fromX = interval.fromNode.x;
 					int fromY = interval.fromNode.y;
 					
@@ -342,7 +350,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 					int dX = toX - fromX;
 					int dY = toY - fromY;
 					
-					long currentDisp = currentTime - interval.fromTime;
+					long currentDisp = currentTime + sc.minTimestamp - interval.fromTime;
 					long totalTime = interval.toTime - interval.fromTime;
 	
 					int packetX = (int) (fromX + (currentDisp * 1.0 / totalTime) * dX);
@@ -373,10 +381,11 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 	public void mouseDragged(MouseEvent mouse) {
 		if(visualizeButton.isSelected()) return;
 		
-		if(selectedIndex != -1){
-			listOfNodes.get(selectedIndex).x = cap(mouse.getX() - offX, 70, getWidth() - 100);
-			listOfNodes.get(selectedIndex).y = cap(mouse.getY() - offY, 160, getHeight() - 120);
+		if(selectedNode != null){
+			selectedNode.x = cap(mouse.getX() - offX, 70, getWidth() - 100);
+			selectedNode.y = cap(mouse.getY() - offY, 160, getHeight() - 120);
 		}
+		
 		repaint();
 	}
 
@@ -411,16 +420,18 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 	@Override
 	public void mousePressed(MouseEvent mouse) {
 //		if(visualizeButton.isSelected())return;
-		
-		selectedIndex = -1;
+		selectedNode = null;
+		selectedEdge = null;
 		if(selectionMode.isSelected()){
-			selectedIndex = getNodeIndex(mouse);
-			if(selectedIndex != -1){
-				offX = mouse.getX() - listOfNodes.get(selectedIndex).x;
-				offY = mouse.getY() - listOfNodes.get(selectedIndex).y;
+			selectedNode = getSelectedNode(mouse);
+			if(selectedNode != null){
+				offX = mouse.getX() - selectedNode.x;
+				offY = mouse.getY() - selectedNode.y;
+			}else{
+				selectedEdge = getSelectedEdge(mouse);
 			}
 		}else if(nodesMode.isSelected()){
-			if(getNodeIndex(mouse) == -1){
+			if(getSelectedNode(mouse) == null){
 				String[] options = new String[]{"Machine", "Primary"};
 				int type = JOptionPane.showOptionDialog(null, "Choose type of the node", "", 1, 2, null, options, options[0]);
 				
@@ -444,7 +455,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 				int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this node?");
 				
 				if(result == 0){//Yes delete the node.
-					Node toDeleteNode = listOfNodes.get(getNodeIndex(mouse));
+					Node toDeleteNode = getSelectedNode(mouse);
 					
 					listOfNodes.remove(toDeleteNode);
 					
@@ -455,7 +466,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 				}
 			}
 		}else if(edgesMode.isSelected()){
-			fromNode = getNodeIndex(mouse);
+			fromNode = getSelectedNode(mouse);
 		}
 		
 		repaint();
@@ -466,41 +477,44 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 //		if(visualizeButton.isSelected())return;
 		
 		if(selectionMode.isSelected()){
-			if(selectedIndex != -1){
-				if(listOfNodes.get(selectedIndex) instanceof Machine){
-					ui.attributesPanel.machineAP.setInfo((Machine)listOfNodes.get(selectedIndex));
+			if(selectedNode != null){
+				if(selectedNode instanceof Machine){
+					ui.attributesPanel.machineAP.setInfo((Machine)selectedNode);
 					ui.attributesPanel.informationPanelCardLayout.show(ui.attributesPanel.informationPanel, Constants.machineAPCode);
-				}else if(listOfNodes.get(selectedIndex) instanceof Primary){
-					ui.attributesPanel.primaryAP.setInfo((Primary)listOfNodes.get(selectedIndex));
+				}else if(selectedNode instanceof Primary){
+					ui.attributesPanel.primaryAP.setInfo((Primary)selectedNode);
 					ui.attributesPanel.informationPanelCardLayout.show(ui.attributesPanel.informationPanel, Constants.primaryAPCode);
 				}else{
 					System.out.println("Unidentified node type.");
 				}
+			}else if(selectedEdge != null){
+				ui.attributesPanel.edgeAP.setInfo(selectedEdge);
+				ui.attributesPanel.informationPanelCardLayout.show(ui.attributesPanel.informationPanel, Constants.edgeAPCode);
 			}else{
 				ui.attributesPanel.informationPanelCardLayout.show(ui.attributesPanel.informationPanel, Constants.nullAPCode);
 			}
 		}else if(edgesMode.isSelected()){
-			toNode = getNodeIndex(mouse);
+			toNode = getSelectedNode(mouse);
 			
-			if(fromNode != -1 && toNode != -1 && fromNode != toNode){
-				if(listOfNodes.get(fromNode).adjacent.contains(new Edge(listOfNodes.get(fromNode), listOfNodes.get(toNode)))){
+			if(fromNode != null && toNode != null && fromNode != toNode){
+				if(fromNode.adjacent.contains(new Edge(fromNode, toNode))){
 					int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this edge?");
 					
 					if(result == 0){ // Yes delete the edge.
 						System.out.println("Removing the edge between " + fromNode + " -> " + toNode);
 						
-						listOfNodes.get(fromNode).adjacent.remove(new Edge(listOfNodes.get(fromNode), listOfNodes.get(toNode)));
-						listOfNodes.get(toNode).adjacent.remove(new Edge(listOfNodes.get(toNode), listOfNodes.get(fromNode)));
+						fromNode.adjacent.remove(new Edge(fromNode, toNode));
+						toNode.adjacent.remove(new Edge(toNode, fromNode));
 					}
 					
 				}else{
 					System.out.println("Adding a new edge between " + fromNode + " -> " + toNode);
 					
-					Edge edge1 = new Edge(listOfNodes.get(fromNode), listOfNodes.get(toNode));
-					Edge edge2 = new Edge(listOfNodes.get(toNode), listOfNodes.get(fromNode));
+					Edge edge1 = new Edge(fromNode, toNode);
+					Edge edge2 = new Edge(toNode, fromNode);
 					
-					listOfNodes.get(fromNode).addAdjacentEdge(edge1);
-					listOfNodes.get(toNode).addAdjacentEdge(edge2);
+					fromNode.addAdjacentEdge(edge1);
+					toNode.addAdjacentEdge(edge2);
 				}
 			}
 		}
@@ -508,16 +522,32 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		repaint();
 	}
 	
-	private int getNodeIndex(MouseEvent mouse){
+	private Node getSelectedNode(MouseEvent mouse){
 		for(int i = 0; i < listOfNodes.size(); i++){
 			Node node = listOfNodes.get(i);
 			
 			if(node.x <= mouse.getX() && mouse.getX() <= node.x + 20 &&
 			   node.y <= mouse.getY() && mouse.getY() <= node.y + 20){
-				return i;
+				return node;
 			}
 		}
-		return -1;
+		return null;
+	}
+	
+	private Edge getSelectedEdge(MouseEvent mouse){
+		for(int i = 0; i < listOfNodes.size(); i++){
+			Node node = listOfNodes.get(i);
+			for(Edge edge : node.adjacent){
+				Line2D line = edge.getRepLine();
+				double ptToLine = line.ptSegDist(mouse.getX(), mouse.getY());
+				
+				if(ptToLine <= Constants.eps){
+					System.out.println("Selected an Edge");
+					return edge;
+				}
+			}
+		}
+		return null;
 	}
 	
 	private void fillColorMap() {
@@ -541,4 +571,31 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		}
 		ui.attributesPanel.visualizationPanel.packetsColorModel.current.add(new PacketsColorRowEntry("WirelessPacket", Constants.SELECTED_COLOR));
 	}
+
+	@Override
+	public void componentHidden(ComponentEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentResized(ComponentEvent arg0) {
+		ui.attributesPanel.machineAP.setPreferredSize(new Dimension(ui.getWidth() - ui.drawingPanel.getWidth() - 100, ui.attributesPanel.getHeight() - 100));
+		ui.attributesPanel.machineAP.revalidate();
+		repaint();
+	}
+
+	@Override
+	public void componentShown(ComponentEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
 }

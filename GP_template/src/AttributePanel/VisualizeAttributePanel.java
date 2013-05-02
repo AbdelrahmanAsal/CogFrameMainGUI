@@ -40,10 +40,10 @@ public class VisualizeAttributePanel extends JPanel{
 		this.drawingP = drawingPanel;
 		player = new Player();
 		player.start();
-		
+
 		buttons = new ArrayList<JRadioButton>();
 		setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Visualization Attributes Panel"));
-		
+
 		JRadioButton lossRatio = new JRadioButton("Loss Ratio");
 		lossRatio.setActionCommand("LossRatio");
 		buttons.add(lossRatio);
@@ -56,11 +56,11 @@ public class VisualizeAttributePanel extends JPanel{
 		JRadioButton linkDelay = new JRadioButton("Link Delay");
 		linkDelay.setActionCommand("LinkDelay");
 		buttons.add(linkDelay);
-		
+
 		JRadioButton wirelessInterfaces = new JRadioButton("Wireless Interfaces");
 		wirelessInterfaces.setActionCommand("WirelessInterfaces");
 		buttons.add(wirelessInterfaces);
-		
+
 		JButton backward = new JButton("<<");
 		backward.addActionListener(new ActionListener() {
 			@Override
@@ -71,7 +71,7 @@ public class VisualizeAttributePanel extends JPanel{
 				System.out.println("Current Simulation time: " + currentSimulationTime);
 			}
 		});
-		
+
 		JButton run = new JButton("Run");
 		run.addActionListener(new ActionListener() {
 			@Override
@@ -79,7 +79,7 @@ public class VisualizeAttributePanel extends JPanel{
 				player.finished = false;
 			}
 		});
-		
+
 		JButton pause = new JButton("Pause");
 		pause.addActionListener(new ActionListener() {
 			@Override
@@ -87,7 +87,7 @@ public class VisualizeAttributePanel extends JPanel{
 				player.finished = true;
 			}
 		});
-		
+
 		JButton stop = new JButton("Stop");
 		stop.addActionListener(new ActionListener() {
 			@Override
@@ -97,8 +97,8 @@ public class VisualizeAttributePanel extends JPanel{
 				ticker.setValue(0);
 			}
 		});
-	
-		
+
+
 		JButton forward = new JButton(">>");
 		forward.addActionListener(new ActionListener() {
 			@Override
@@ -109,7 +109,7 @@ public class VisualizeAttributePanel extends JPanel{
 				System.out.println("Current Simulation time: " + currentSimulationTime);
 			}
 		});
-		
+
 		JLabel stepLabel = new JLabel("Step:");
 		final JTextField step = new JTextField("1");
 		step.addKeyListener(new KeyListener() {
@@ -126,7 +126,7 @@ public class VisualizeAttributePanel extends JPanel{
 			@Override
 			public void keyTyped(KeyEvent e) {}
 		});
-		
+
 		JLabel seekLabel = new JLabel("Seek:");
 		final JTextField seek = new JTextField("");
 		seek.addKeyListener(new KeyListener() {
@@ -145,7 +145,7 @@ public class VisualizeAttributePanel extends JPanel{
 			@Override
 			public void keyTyped(KeyEvent e) {}
 		});
-		
+
 		ticker = new JSlider(JSlider.HORIZONTAL, 0, 0, 0);
 		ticker.putClientProperty("JSlider.isFilled", Boolean.TRUE);
 		ticker.addChangeListener(new ChangeListener() {
@@ -172,16 +172,16 @@ public class VisualizeAttributePanel extends JPanel{
 		JScrollPane ps = new JScrollPane(packetsColorTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		ps.setPreferredSize( new Dimension(200,250));
-		
+
 		GroupLayout layout = new GroupLayout(this);
 		setLayout(layout);
-		
+
 		visualiztionOptions = new ButtonGroup();
 		for(JRadioButton button: buttons)
 			visualiztionOptions.add(button);
-		
+
 		lossRatio.setSelected(true);
-		
+
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(true);
 		layout.setHorizontalGroup(
@@ -209,10 +209,10 @@ public class VisualizeAttributePanel extends JPanel{
 					.addComponent(ps)
 		);
 	}
-	
+
 	class Player extends Thread{
 		public boolean finished;
-		
+
 		public Player() {
 			finished = true;
 		}

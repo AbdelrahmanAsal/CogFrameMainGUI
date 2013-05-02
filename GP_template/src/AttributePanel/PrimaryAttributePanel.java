@@ -40,7 +40,7 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 	public JPanel distPanel;
 	public PrimaryAttributePanel(){
 		setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Primary Attributes Panel"));
-		
+
 		activeDistLabel = new JLabel("Active Distribution");
 		activeDist = new JComboBox(new String[]{"Uniform", "Exponential"});
 		activeDist.addItemListener(new ItemListener() {
@@ -65,7 +65,7 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 				tempActiveDist.showPanel();
 			}
 		});
-		
+
 		inactiveDistLabel = new JLabel("Inactive Distribution");
 		inactiveDist = new JComboBox(new String[]{"Uniform", "Exponential"});
 		inactiveDist.addItemListener(new ItemListener() {
@@ -90,48 +90,48 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 				tempInactiveDist.showPanel();
 			}
 		});
-		
+
 		selectedChannelLabel = new JLabel("Selected Channel");
 		selectedChannel = new JTextArea();
 		selectedChannel.setLineWrap(true);
 		selectedChannel.setBorder(BorderFactory.createLoweredBevelBorder());
-		
+
 		setData = new JButton("Set Data");
 		setData.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(selectedNode != null){
 					selectedNode.name = name.getText();
-					
+
 					selectedNode.ETH_IP = ETH_IP.getText();
 					selectedNode.ETH_HW = ETH_HW.getText();
 					selectedNode.WLS_IP = parseSeparatedString(WLS_IP.getText());
 //					selectedNode.WLS_HW = parseSeparatedString(WLS_HW.getText());
-					
+
 					selectedNode.channels = parseChannels(channels.getText());
-					
+
 					selectedNode.mobilityOption = mobilityOption.getSelectedItem().toString();
 					selectedNode.topologyOption = topologyOption.getSelectedItem().toString();
-					
+
 					selectedNode.activeDist = tempActiveDist;
 					selectedNode.inactiveDist = tempInactiveDist;
-					
+
 					System.out.println("Successfully updated the node:\n" + selectedNode);
 				}
 			}
 		});
-		
+
 		JPanel all = new JPanel();
-		
+
 		GroupLayout layout = new GroupLayout(all);
 		layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);
-		
+
 		all.setLayout(layout);
 		add(all);
-		
+
 		Component gap = Box.createRigidArea(new Dimension(Constants.COMPONENTS_GAP, Constants.COMPONENTS_GAP));
-		
+
 		layout.setHorizontalGroup(
 		   layout.createParallelGroup()
 		   		  .addGroup(layout.createSequentialGroup()
@@ -168,7 +168,7 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 			      	   	   .addComponent(setData))
 		   			  )
 		);
-		
+
 		layout.setVerticalGroup(
 		   layout.createSequentialGroup()
 		   	  .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
@@ -212,13 +212,13 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 		       .addComponent(setData)
 		);
 	}
-	
+
 	public void setInfo(Primary node){
 		selectedNode = node;
-		
+
 		//Fill the required information.
 		name.setText(node.name);
-		
+
 		ETH_IP.setText(node.ETH_IP);
 		ETH_HW.setText(node.ETH_HW);
 		WLS_IP.setText(node.getWLS_IP());
@@ -230,17 +230,18 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 			WLS_HW_Table.tableChanged(new TableModelEvent(t));
 			WLS_HW_Table.repaint();
 		}
-		
+
 		channels.setText(node.getChannels());
 
 		mobilityOption.setSelectedItem(node.mobilityOption);
 		topologyOption.setSelectedItem(node.topologyOption);
-		
+
 		activeDist.setSelectedItem(((Primary)node).activeDist.type());
 		inactiveDist.setSelectedItem(((Primary)node).inactiveDist.type());
-		
+
 		//Delayed Setting. NEED TO BE CLONED.
 		tempActiveDist = (node).activeDist;
 		tempInactiveDist = (node).inactiveDist;
 	}
 }
+

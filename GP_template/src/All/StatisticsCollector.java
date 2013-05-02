@@ -58,7 +58,7 @@ public class StatisticsCollector {
 		ArrayList<Double> active = new ArrayList<Double>();
 		int n = r.nextInt();
 		for (int i = 0; i < n; i++) {
-			long timestamp = r.nextLong();
+//			long timestamp = r.nextLong();
 			double value = r.nextDouble();
 			active.add(value);
 		}
@@ -66,7 +66,7 @@ public class StatisticsCollector {
 		ArrayList<Double> inactive = new ArrayList<Double>();
 		n = r.nextInt();
 		for (int i = 0; i < n; i++) {
-			long timestamp = r.nextLong();
+//			long timestamp = r.nextLong();
 			double value = r.nextDouble();
 			inactive.add(value);
 		}

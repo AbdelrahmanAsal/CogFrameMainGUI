@@ -1,4 +1,3 @@
-
 package All;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -23,8 +22,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
-
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 
 import AttributePanel.PacketsColorRowEntry;
 import ConfigurationMaker.ModuleMaker;
@@ -63,9 +60,9 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		colorMap = null;
 		listOfNodes = new ArrayList<Node>();
 		
-		Node node1 = new Machine("1", 100, 100);
-		Node node2 = new Machine("2", 200, 200);
-		Node node3 = new Primary("3", 300, 300);
+		Node node1 = new Machine("1", 200, 200);
+		Node node2 = new Machine("2", 300, 300);
+		Node node3 = new Primary("3", 400, 400);
 		node1.isSource = true;
 		node2.isDestination = true;
 		
@@ -100,6 +97,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		editingModes.add(selectionMode);
 		editingModes.add(nodesMode);
 		editingModes.add(edgesMode);
+		
 		add(editingModes);
 		
 		JPanel experimentTools = new JPanel();
@@ -261,7 +259,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 				
 			}
 		});
-		add(visualizeButton);
+		experimentTools.add(visualizeButton);
 		
 		gridButton = new JToggleButton("Show grid");
 		gridButton.addActionListener(new ActionListener() {
@@ -272,8 +270,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 			}
 			
 		});
-		add(gridButton);
-		experimentTools.add(visualizeButton);
+		experimentTools.add(gridButton);
 		
 		add(experimentTools);
 	}
@@ -292,26 +289,16 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		
 		int width = getWidth();
 		int height = getHeight();
-		
-		//Vertical.
-		for(int d = 0; 15 + d * 20 < width - Constants.MARGIN; d++)
-			g2d.drawLine(15 + d * 20, 95, 15 + d * 20, height - 10);
-		
-		//Horizental.
-		for(int d = 1; 70 + d * 20 < height - Constants.MARGIN; d++)
-			g2d.drawLine(10, 70 + d * 20, width - Constants.MARGIN, 70 + d * 20);
-			//g2d.drawLine(10, 80 + d * 20, width - Constants.MARGIN, 80 + d * 20);
-		
+
 		if(gridButton.isSelected()) {
 			int stX = 20;
-			
-			// Vertical.
-			for (int d = 0; d < drawingPanelWidth / 20 - 1; d++)
-				g2d.drawLine(stX + d * 20, 85, stX + d * 20, drawingPanelHeight - 55);
-	
-			// Horizontal.
-			for (int d = 1; d < drawingPanelHeight / 20 - 5; d++)
-				g2d.drawLine(stX - 5, 70 + d * 20, drawingPanelWidth - 25, 70 + d * 20);
+			//Vertical.
+			for(int d = 0; stX + d * 20 < width - 20; d++)
+				g2d.drawLine(stX + d * 20, 115, stX + d * 20, height - 55);
+
+			//Horizental.
+			for(int d = 2; 70 + d * 20 < height - 60; d++)
+				g2d.drawLine(stX - 5, 80 + d * 20, width - 25, 80 + d * 20);
 		}
 
 		//Legend box.
@@ -386,8 +373,8 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		if(visualizeButton.isSelected()) return;
 		
 		if(selectedIndex != -1){
-			listOfNodes.get(selectedIndex).x = cap(mouse.getX() - offX, 70, getWidth() - 90);
-			listOfNodes.get(selectedIndex).y = cap(mouse.getY() - offY, 120, getHeight() - 90);
+			listOfNodes.get(selectedIndex).x = cap(mouse.getX() - offX, 70, getWidth() - 100);
+			listOfNodes.get(selectedIndex).y = cap(mouse.getY() - offY, 160, getHeight() - 120);
 		}
 		repaint();
 	}

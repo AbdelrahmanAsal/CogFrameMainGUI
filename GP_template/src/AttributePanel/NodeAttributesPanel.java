@@ -129,8 +129,7 @@ public class NodeAttributesPanel extends JPanel{
 		header.setReorderingAllowed(true);
 		
 		ps = new JScrollPane(WLS_HW_Table);
-		ps.setPreferredSize( new Dimension(200,100));
-		
+		ps.setPreferredSize(new Dimension(250,100));
 		channelsLabel = new JLabel("Channels/Probabilities:");
 		channels = new JTextArea("");
 		channels.addKeyListener(new KeyListener() {

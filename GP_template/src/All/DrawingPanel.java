@@ -1,4 +1,3 @@
-
 package All;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -22,6 +21,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
+import javax.swing.SwingUtilities;
 
 import AttributePanel.PacketsColorRowEntry;
 import ConfigurationMaker.ModuleMaker;
@@ -45,7 +45,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 	public int offX, offY;
 	
 	public JButton setSourceButton, setDestinationButton, generate;
-	public JToggleButton visualizeButton;
+	public JToggleButton visualizeButton, gridButton;
 	public StatisticsCollector sc;
 	
 	public ButtonGroup modes;
@@ -60,9 +60,9 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		colorMap = null;
 		listOfNodes = new ArrayList<Node>();
 		
-		Node node1 = new Machine("1", 400, 400);
-		Node node2 = new Machine("2", 200, 200);
-		Node node3 = new Machine("3", 300, 300);
+		Node node1 = new Machine("1", 200, 200);
+		Node node2 = new Machine("2", 300, 300);
+		Node node3 = new Primary("3", 400, 400);
 		node1.isSource = true;
 		node2.isDestination = true;
 		
@@ -97,6 +97,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		editingModes.add(selectionMode);
 		editingModes.add(nodesMode);
 		editingModes.add(edgesMode);
+		
 		add(editingModes);
 		
 		JPanel experimentTools = new JPanel();
@@ -256,10 +257,21 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 				ui.attributesPanel.visualizationPanel.ticker.setPaintTicks(true);    
 				ui.attributesPanel.visualizationPanel.ticker.setPaintLabels(true);   
 				
-				
 			}
 		});
 		experimentTools.add(visualizeButton);
+		
+		gridButton = new JToggleButton("Show grid");
+		gridButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				repaint();
+			}
+			
+		});
+		gridButton.setSelected(true);
+		experimentTools.add(gridButton);
 		
 		add(experimentTools);
 	}
@@ -278,15 +290,18 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		
 		int width = getWidth();
 		int height = getHeight();
-		
-		//Vertical.
-		for(int d = 0; 15 + d * 20 < width - Constants.MARGIN; d++)
-			g2d.drawLine(15 + d * 20, 95, 15 + d * 20, height - 10);
-		
-		//Horizental.
-		for(int d = 1; 70 + d * 20 < height - Constants.MARGIN; d++)
-			g2d.drawLine(10, 80 + d * 20, width - Constants.MARGIN, 80 + d * 20);
-		
+
+		if(gridButton.isSelected()) {
+			int stX = 20;
+			//Vertical.
+			for(int d = 0; stX + d * 20 < width - 20; d++)
+				g2d.drawLine(stX + d * 20, 115, stX + d * 20, height - 55);
+
+			//Horizental.
+			for(int d = 2; 70 + d * 20 < height - 60; d++)
+				g2d.drawLine(stX - 5, 80 + d * 20, width - 25, 80 + d * 20);
+		}
+
 		//Legend box.
         g2d.drawString("Source", 45, height - Constants.MARGIN);
         g2d.drawString("Destination", 175, height - Constants.MARGIN);
@@ -298,20 +313,21 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
         g2d.setColor(Constants.SELECTED_COLOR);
         g2d.fillRect(285, height - 35, 25, 20);
 
-		g2d.setStroke(new BasicStroke(1));
+        g2d.setStroke(new BasicStroke(1));
 		
 		String drawingOption = visualizeButton.isSelected() ? ui.attributesPanel.visualizationPanel.visualiztionOptions.getSelection().getActionCommand() : "Init";
 		
-		for(Node node : listOfNodes){
-			//Draw the Node itself.
+		for (Node node : listOfNodes) {
+			// Draw the Node itself.
 			node.draw(g2d, this, drawingOption);
-			
-			//Draw all the edges.
-			for(Edge edge : node.adjacent){
+
+			// Draw all the edges.
+			for (Edge edge : node.adjacent) {
 				edge.draw(g2d, this, drawingOption);
 			}
 		}
-		//Draw simulation of the packets.
+		
+		// Draw simulation of the packets.
 		if(!drawingOption.equals("Init")){
 			long currentTime = ui.attributesPanel.visualizationPanel.currentSimulationTime;
 			System.out.println("Current Simulation time: " + currentTime);
@@ -355,11 +371,11 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 
 	@Override
 	public void mouseDragged(MouseEvent mouse) {
-		if(visualizeButton.isSelected())return;
+		if(visualizeButton.isSelected()) return;
 		
 		if(selectedIndex != -1){
-			listOfNodes.get(selectedIndex).x = cap(mouse.getX() - offX, 70, getWidth() - 90);
-			listOfNodes.get(selectedIndex).y = cap(mouse.getY() - offY, 120, getHeight() - 90);
+			listOfNodes.get(selectedIndex).x = cap(mouse.getX() - offX, 70, getWidth() - 100);
+			listOfNodes.get(selectedIndex).y = cap(mouse.getY() - offY, 160, getHeight() - 120);
 		}
 		repaint();
 	}
@@ -470,7 +486,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 				if(listOfNodes.get(fromNode).adjacent.contains(new Edge(listOfNodes.get(fromNode), listOfNodes.get(toNode)))){
 					int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this edge?");
 					
-					if(result == 0){//Yes delete the edge.
+					if(result == 0){ // Yes delete the edge.
 						System.out.println("Removing the edge between " + fromNode + " -> " + toNode);
 						
 						listOfNodes.get(fromNode).adjacent.remove(new Edge(listOfNodes.get(fromNode), listOfNodes.get(toNode)));

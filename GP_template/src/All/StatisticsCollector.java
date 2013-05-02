@@ -146,8 +146,9 @@ public class StatisticsCollector {
 		ArrayList<AccessPair> accessList = packetAccesses.get(packetID);
 		accessList.add(ap);
 	}
+	
 	public void calculate(){
-		//Generate the intervals for the simulation of the timeline.
+		// Generate the intervals for the simulation of the timeline.
 		for(int packetID : packetAccesses.keySet()){
 			ArrayList<AccessPair> accessList = packetAccesses.get(packetID);
 			Collections.sort(accessList);

@@ -18,9 +18,10 @@ public class Machine extends Node{
 	@Override
 	public void draw(Graphics2D g2d, DrawingPanel drawingPanel, String drawingOption){
 		if(drawingOption.equals("Init")){
-			if(drawingPanel.selectedIndex != -1 && this == drawingPanel.listOfNodes.get(drawingPanel.selectedIndex))g2d.setColor(Constants.SELECTED_COLOR);//Color the selected node.
-			else if(this == drawingPanel.source) g2d.setColor(Constants.SOURCE_COLOR);//Color the source.
-			else if(this == drawingPanel.destination) g2d.setColor(Constants.DEST_COLOR);//Color the destination.
+			// Color the selected node.
+			if(drawingPanel.selectedIndex != -1 && this == drawingPanel.listOfNodes.get(drawingPanel.selectedIndex))g2d.setColor(Constants.SELECTED_COLOR);
+			else if (this == drawingPanel.source) g2d.setColor(Constants.SOURCE_COLOR); // Color the source.
+			else if(this == drawingPanel.destination) g2d.setColor(Constants.DEST_COLOR); // Color the destination.
 			else g2d.setColor(Constants.HOP_COLOR);
 			
 			g2d.setStroke(new BasicStroke(1.0f,  BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{10.0f}, 0.0f));
@@ -38,7 +39,7 @@ public class Machine extends Node{
 		g2d.setStroke(new BasicStroke(1.0f,  BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
 		g2d.fill(new Rectangle2D.Double(x, y, 20, 20));
 
-		//Anchors.
+		// Anchors.
 		g2d.setColor(Color.BLACK);
 		g2d.drawLine(x - 10, y + 10, x + 30, y + 10);
 		g2d.drawLine(x + 10, y - 10, x + 10, y + 30);

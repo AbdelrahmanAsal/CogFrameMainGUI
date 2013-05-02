@@ -1,7 +1,5 @@
 package All;
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedReader;
@@ -10,27 +8,19 @@ import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.ParallelGroup;
-import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import AttributePanel.AttributesPanel;
-import AttributePanel.NullAttributePanel;
-import AttributePanel.VisualizeAttributePanel;
 import Data.Edge;
 import Data.Machine;
 import Data.Node;
@@ -40,6 +30,7 @@ public class UI extends JFrame{
 	UI self;
 	DrawingPanel drawingPanel;
 	AttributesPanel attributesPanel;
+	JSplitPane splitPane;
 
 	//TO BE DELETED !!!!!!!.
 	MobilityOption mobilityOptionChosen = MobilityOption.STATIC; 
@@ -47,11 +38,11 @@ public class UI extends JFrame{
 	PrimaryOption primaryOptionChosen = PrimaryOption.STATIC;
 	PolicyOption PrivacyOptionChosen = PolicyOption.C1_6_11;
 	String ccc = "Ethernet";
-	
+
 	public UI(){
 		this.self = this;
 		setLayout(new BorderLayout());
-		
+		setTitle("CogFrame");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		try {
 			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
@@ -62,27 +53,36 @@ public class UI extends JFrame{
 			}
 		} catch (Exception e) {
 		}
-		
+
 		drawingPanel = new DrawingPanel(this);
 		attributesPanel = new AttributesPanel(drawingPanel);
-		
+
 		add(drawingPanel, BorderLayout.CENTER);
 		add(attributesPanel, BorderLayout.EAST);
-		
+
 		setAllMenus();
 		
+//		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+//				drawingPanel, attributesPanel);
+//		splitPane.setContinuousLayout(true);
+//		splitPane.setOneTouchExpandable(true);
+//		add(splitPane);
+//	    this.pack();
+		repaint();
+
 		setLocationByPlatform(true);
-		setSize(900, 710);
+		setSize(1000, 710);
+//		setSize(900, 710);
 		setVisible(true);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 	}
-	
+
 	private void setAllMenus() {
 		JMenuItem seperator = new JMenuItem("----");
-		
+
 		//Set Menu bars.
 		JMenuBar menuBar = new JMenuBar();
-		
+
 		//Mobility Options.
 		JMenu fileOption = new JMenu("File");
 		JMenuItem fileSave = new JMenuItem("Save");
@@ -91,12 +91,12 @@ public class UI extends JFrame{
 			public void mouseReleased(MouseEvent arg0) {
 				try {
 					String fileName = JOptionPane.showInputDialog(null, "Enter the name for the file");
-					
+
 					if(fileName == null){
 						System.out.println("Saving cancelled");
 						return;
 					}
-					
+
 					PrintWriter out = new PrintWriter(new FileWriter(fileName));
 					out.println(drawingPanel.listOfNodes.size());
 					for (Node n : drawingPanel.listOfNodes) {
@@ -117,12 +117,11 @@ public class UI extends JFrame{
 					out.close();
 				} catch (Exception e) {
 					e.printStackTrace();
-
 				}
 				JOptionPane.showMessageDialog(null, "File saved.");
 			}
-			
-			
+
+
 			@Override
 			public void mousePressed(MouseEvent arg0) {}
 			@Override
@@ -132,16 +131,16 @@ public class UI extends JFrame{
 			@Override
 			public void mouseClicked(MouseEvent arg0) {}
 		});
-		
+
 		JMenuItem fileLoad = new JMenuItem("Load");
 		fileLoad.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				try {
 					drawingPanel.listOfNodes.clear();
-					
+
 					String fileName = JOptionPane.showInputDialog(null, "Enter the name of the saved file.");
-					
+
 					InputReader r = new InputReader(new FileReader(fileName));
 					HashMap<String, Node> map = new HashMap<String, Node>();
 					ArrayList<StringPair> pairs = new ArrayList<StringPair>();
@@ -197,8 +196,8 @@ public class UI extends JFrame{
 				drawingPanel.repaint();
 				JOptionPane.showMessageDialog(null, "File Loaded.");
 			}
-			
-			
+
+
 			@Override
 			public void mousePressed(MouseEvent arg0) {}
 			@Override
@@ -215,7 +214,7 @@ public class UI extends JFrame{
 				drawingPanel.listOfNodes.clear();
 				drawingPanel.repaint();
 			}
-			
+
 			@Override
 			public void mousePressed(MouseEvent arg0) {}
 			@Override
@@ -232,7 +231,7 @@ public class UI extends JFrame{
 				//Just exit!.
 				System.exit(0);
 			}
-			
+
 			@Override
 			public void mousePressed(MouseEvent arg0) {}
 			@Override
@@ -246,7 +245,7 @@ public class UI extends JFrame{
 		fileOption.add(fileLoad);
 		fileOption.add(clearButton);
 		fileOption.add(fileExit);
-		
+
 		//Mobility Options.
 		JMenu editOption = new JMenu("Edit");
 		JMenuItem editSetSource = new JMenuItem("Set Source");
@@ -264,7 +263,7 @@ public class UI extends JFrame{
 			@Override
 			public void mouseClicked(MouseEvent arg0) {}
 		});
-		
+
 		JMenuItem editSetDestination = new JMenuItem("Set Destination");
 		editSetDestination.addMouseListener(new MouseListener() {
 			@Override
@@ -285,7 +284,7 @@ public class UI extends JFrame{
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 			}
-			
+
 			@Override
 			public void mousePressed(MouseEvent arg0) {}
 			@Override
@@ -302,7 +301,7 @@ public class UI extends JFrame{
 				//Just exit!.
 				System.exit(0);
 			}
-			
+
 			@Override
 			public void mousePressed(MouseEvent arg0) {}
 			@Override
@@ -330,7 +329,7 @@ public class UI extends JFrame{
 						System.out.println("Getting information of the node");
 						String command = "GET Information\n";
 						out.println(command);
-						
+
 						node.name = in.readLine();
 						node.ETH_HW = in.readLine();
 						int numberOfWireless = Integer.parseInt(in.readLine());
@@ -340,7 +339,7 @@ public class UI extends JFrame{
 							node.WLS_Name.add(in.readLine());
 							node.WLS_HW.add(in.readLine());
 						}
-						
+
 						out.close();
 						in.close();
 						echoSocket.close();
@@ -349,7 +348,7 @@ public class UI extends JFrame{
 					}
 				}
 			}
-			
+
 			@Override
 			public void mousePressed(MouseEvent arg0) {}
 			@Override
@@ -359,7 +358,7 @@ public class UI extends JFrame{
 			@Override
 			public void mouseClicked(MouseEvent arg0) {}
 		});
-		
+
 		JMenuItem editGetStatistics= new JMenuItem("Get Statistics");
 		editGetStatistics.addMouseListener(new MouseListener() {
 			@Override
@@ -379,14 +378,14 @@ public class UI extends JFrame{
 						System.out.println("Getting statistics of the node");
 						String command = "GET Statistics";
 						out.println(command);
-						
+
 						while(true){
 							String line = in.readLine();
 							if(line == null)break;
-							
+
 							fileWriter.println(line);
 						}
-		
+
 						fileWriter.close();
 						out.close();
 						in.close();
@@ -396,7 +395,7 @@ public class UI extends JFrame{
 					}
 				}
 			}
-			
+
 			@Override
 			public void mousePressed(MouseEvent arg0) {}
 			@Override
@@ -406,7 +405,7 @@ public class UI extends JFrame{
 			@Override
 			public void mouseClicked(MouseEvent arg0) {}
 		});
-		
+
 		JMenuItem editPostConfiguration = new JMenuItem("Post Configuration");
 		editPostConfiguration .addMouseListener(new MouseListener() {
 			@Override
@@ -426,7 +425,7 @@ public class UI extends JFrame{
 						System.out.println("Posting Configuration of the node");
 						String command = "Post Configuration";
 						out.println(command);
-						
+
 						while(true){
 							String line = fileReader.readLine();
 							if(line == null)break;
@@ -434,7 +433,7 @@ public class UI extends JFrame{
 							out.println(line);
 						}
 						out.println();
-		
+
 						fileReader.close();
 						out.close();
 						in.close();
@@ -444,7 +443,7 @@ public class UI extends JFrame{
 					}
 				}
 			}
-			
+
 			@Override
 			public void mousePressed(MouseEvent arg0) {}
 			@Override
@@ -454,7 +453,7 @@ public class UI extends JFrame{
 			@Override
 			public void mouseClicked(MouseEvent arg0) {}
 		});
-		
+
 		JMenuItem editPostModule = new JMenuItem("Post Module");
 		editPostModule.addMouseListener(new MouseListener() {
 			@Override
@@ -474,7 +473,7 @@ public class UI extends JFrame{
 						System.out.println("Posting Module of the node");
 						String command = "Post Module";
 						out.println(command);
-						
+
 						while(true){
 							String line = fileReader.readLine();
 							if(line == null)break;
@@ -482,7 +481,7 @@ public class UI extends JFrame{
 							out.println(line);
 						}
 						out.println();
-		
+
 						fileReader.close();
 						out.close();
 						in.close();
@@ -492,7 +491,7 @@ public class UI extends JFrame{
 					}
 				}
 			}
-			
+
 			@Override
 			public void mousePressed(MouseEvent arg0) {}
 			@Override
@@ -502,7 +501,7 @@ public class UI extends JFrame{
 			@Override
 			public void mouseClicked(MouseEvent arg0) {}
 		});
-		
+
 		JMenuItem editStartExperiment = new JMenuItem("Start Experiment");
 		editStartExperiment.addMouseListener(new MouseListener() {
 			@Override
@@ -521,7 +520,7 @@ public class UI extends JFrame{
 						System.out.println("Start Experiment");
 						String command = "Start";
 						out.println(command);
-		
+
 						out.close();
 						in.close();
 						echoSocket.close();
@@ -530,7 +529,7 @@ public class UI extends JFrame{
 					}
 				}
 			}
-			
+
 			@Override
 			public void mousePressed(MouseEvent arg0) {}
 			@Override
@@ -540,7 +539,7 @@ public class UI extends JFrame{
 			@Override
 			public void mouseClicked(MouseEvent arg0) {}
 		});
-		
+
 		editOption.add(editSetSource);
 		editOption.add(editSetDestination);
 		editOption.add(editGenerate);
@@ -551,7 +550,7 @@ public class UI extends JFrame{
 		editOption.add(editPostConfiguration);
 		editOption.add(editPostModule);
 		editOption.add(editStartExperiment);
-		
+
 		//Mobility Options.
 		JMenu mobilityOption = new JMenu("Mobility Option");
 		JMenuItem mobilityStatic = new JMenuItem("Static");
@@ -578,7 +577,7 @@ public class UI extends JFrame{
 //		primaryOption.add(primaryGaussian);
 //		primaryOption.add(primaryStatic);
 //		primaryOption.add(primaryOther);
-		
+
 		//Policy Options.
 		JMenu policyOption = new JMenu("Policy Option");
 		JMenuItem privacyGaussian = new JMenuItem("C1-6-11");
@@ -587,7 +586,7 @@ public class UI extends JFrame{
 		policyOption.add(privacyGaussian);
 		policyOption.add(privacyStatic);
 		policyOption.add(privacyOther);
-		
+
 		//Settings.
 		JMenu settingsOption = new JMenu("Settings");
 		JMenuItem ccc = new JMenuItem("CCC settings");
@@ -596,19 +595,19 @@ public class UI extends JFrame{
 			public void mouseReleased(MouseEvent arg0) {
 				CCCSettings c = new CCCSettings(self);
 			}
-			
+
 			@Override
 			public void mousePressed(MouseEvent arg0) {
 			}
-			
+
 			@Override
 			public void mouseExited(MouseEvent arg0) {
 			}
-			
+
 			@Override
 			public void mouseEntered(MouseEvent arg0) {
 			}
-			
+
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 			}
@@ -616,7 +615,7 @@ public class UI extends JFrame{
 		JMenuItem help = new JMenuItem("Help");
 		settingsOption.add(ccc);
 		settingsOption.add(help);
-		
+
 		menuBar.add(fileOption);
 		menuBar.add(editOption);
 		menuBar.add(mobilityOption);
@@ -624,9 +623,8 @@ public class UI extends JFrame{
 //		menuBar.add(primaryOption);
 		menuBar.add(policyOption);
 		menuBar.add(settingsOption);
-		
-		
+
+
 		setJMenuBar(menuBar);
 	}
-	
 }

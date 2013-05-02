@@ -1,8 +1,10 @@
 package AttributePanel;
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 
 import All.Constants;
@@ -47,7 +49,6 @@ public class AttributesPanel extends JPanel{
 		informationPanel.add(primaryAP, Constants.primaryAPCode);
 		
 		chartsPanel = new ChartsPanel(drawingPanel);
-		
 	}
 	
 	public void activeVisualization(){

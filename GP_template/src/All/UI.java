@@ -59,16 +59,13 @@ public class UI extends JFrame{
 
 		add(drawingPanel, BorderLayout.CENTER);
 		add(attributesPanel, BorderLayout.EAST);
+		
+//		JSplitPane splitPane = new JSplitPane();
+////		splitPane.setContinuousLayout(true);
+//		splitPane.setOneTouchExpandable(true);
+//		add(splitPane, BorderLayout.EAST);
 
 		setAllMenus();
-		
-//		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-//				drawingPanel, attributesPanel);
-//		splitPane.setContinuousLayout(true);
-//		splitPane.setOneTouchExpandable(true);
-//		add(splitPane);
-//	    this.pack();
-		repaint();
 
 		setLocationByPlatform(true);
 		setSize(1000, 710);

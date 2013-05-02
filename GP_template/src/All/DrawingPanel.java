@@ -16,6 +16,7 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -50,6 +51,9 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 	public JToggleButton visualizeButton, gridButton;
 	public StatisticsCollector sc;
 	
+	public ButtonGroup modes;
+	public JToggleButton selectionMode, nodesMode, edgesMode;
+	
 	public int maxRange;
 	TreeMap<String, Color> colorMap;
 	public DrawingPanel(UI ui_){
@@ -79,6 +83,28 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		
+		//Editing Modes.
+		JPanel editingModes = new JPanel();
+		editingModes.setBorder(BorderFactory.createTitledBorder(""));
+		
+		selectionMode = new JToggleButton("Select");
+		nodesMode = new JToggleButton("Node");
+		edgesMode = new JToggleButton("Edge");
+		
+		modes = new ButtonGroup();
+		modes.add(selectionMode);
+		modes.add(nodesMode);
+		modes.add(edgesMode);
+		selectionMode.setSelected(true);
+		
+		editingModes.add(selectionMode);
+		editingModes.add(nodesMode);
+		editingModes.add(edgesMode);
+		add(editingModes);
+		
+		JPanel experimentTools = new JPanel();
+		experimentTools.setBorder(BorderFactory.createTitledBorder(""));
+		
 		setSourceButton = new JButton("Set Source");
 		setDestinationButton = new JButton("Set Dest.");
 		
@@ -94,7 +120,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 				}
 			}
 		});
-		add(setSourceButton);
+		experimentTools.add(setSourceButton);
 		
 		setDestinationButton.addActionListener(new ActionListener() {
 			@Override
@@ -108,7 +134,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 				}
 			}
 		});
-		add(setDestinationButton);
+		experimentTools.add(setDestinationButton);
 		
 
 		generate = new JButton("Generate");
@@ -190,7 +216,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 				
 			}
 		});
-		add(generate);
+		experimentTools.add(generate);
 		
 		visualizeButton = new JToggleButton("Visualize");
 		visualizeButton.addActionListener(new ActionListener() {
@@ -247,6 +273,9 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 			
 		});
 		add(gridButton);
+		experimentTools.add(visualizeButton);
+		
+		add(experimentTools);
 	}
 	
 	@Override
@@ -261,22 +290,17 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		g2d.setStroke(new BasicStroke(0.1f, BasicStroke.CAP_BUTT,
 			        BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f));
 		
-<<<<<<< HEAD
-		int drawingPanelHeight = drawingPanel.getHeight();
-		int drawingPanelWidth = drawingPanel.getWidth();
-=======
 		int width = getWidth();
 		int height = getHeight();
-		System.out.println("dimensions: " + width + ", " + height);
 		
 		//Vertical.
 		for(int d = 0; 15 + d * 20 < width - Constants.MARGIN; d++)
-			g2d.drawLine(15 + d * 20, 85, 15 + d * 20, height - Constants.MARGIN);
+			g2d.drawLine(15 + d * 20, 95, 15 + d * 20, height - 10);
 		
 		//Horizental.
 		for(int d = 1; 70 + d * 20 < height - Constants.MARGIN; d++)
 			g2d.drawLine(10, 70 + d * 20, width - Constants.MARGIN, 70 + d * 20);
->>>>>>> 235ce0364be81fb62af8b18895b4f2b15e721c73
+			//g2d.drawLine(10, 80 + d * 20, width - Constants.MARGIN, 80 + d * 20);
 		
 		if(gridButton.isSelected()) {
 			int stX = 20;
@@ -401,52 +425,51 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 //		if(visualizeButton.isSelected())return;
 		
 		selectedIndex = -1;
-		if(SwingUtilities.isRightMouseButton(mouse)){
-			fromNode = getNodeIndex(mouse);
-		}else{
-			if(mouse.getClickCount() == 1){
-				selectedIndex = getNodeIndex(mouse);
-				if(selectedIndex != -1){
-					offX = mouse.getX() - listOfNodes.get(selectedIndex).x;
-					offY = mouse.getY() - listOfNodes.get(selectedIndex).y;
-				}
-			}else if(mouse.getClickCount() == 2){
-				if(getNodeIndex(mouse) == -1){
-					String[] options = new String[]{"Machine", "Primary"};
-					int type = JOptionPane.showOptionDialog(null, "Choose type of the node", "", 1, 2, null, options, options[0]);
-					
-					System.out.println("Creating and adding a new node");
+		if(selectionMode.isSelected()){
+			selectedIndex = getNodeIndex(mouse);
+			if(selectedIndex != -1){
+				offX = mouse.getX() - listOfNodes.get(selectedIndex).x;
+				offY = mouse.getY() - listOfNodes.get(selectedIndex).y;
+			}
+		}else if(nodesMode.isSelected()){
+			if(getNodeIndex(mouse) == -1){
+				String[] options = new String[]{"Machine", "Primary"};
+				int type = JOptionPane.showOptionDialog(null, "Choose type of the node", "", 1, 2, null, options, options[0]);
+				
+				System.out.println("Creating and adding a new node");
 
-					Node node;
-					if(type == 0){
-						//Create a node with a random name.
-						node = new Machine((int)(Math.random() * 100) + "", cap(mouse.getX() - 10, 70, getWidth() - 90), cap(mouse.getY() - 10, 120, getHeight() - 90));
-					}else if(type == 1){
-						//Create a primary user with a random name.
-						node = new Primary((int)(Math.random() * 100) + "", cap(mouse.getX() - 10, 70, getWidth() - 90), cap(mouse.getY() - 10, 120, getHeight() - 90));
-					}else{
-						JOptionPane.showMessageDialog(null, "Not a correct node type.");
-						return;
-					}
-					listOfNodes.add(node);
-					
-					System.out.println("Successfully created the node:\n" + node);
+				Node node;
+				if(type == 0){
+					//Create a node with a random name.
+					node = new Machine((int)(Math.random() * 100) + "", cap(mouse.getX() - 10, 70, getWidth() - 90), cap(mouse.getY() - 10, 120, getHeight() - 90));
+				}else if(type == 1){
+					//Create a primary user with a random name.
+					node = new Primary((int)(Math.random() * 100) + "", cap(mouse.getX() - 10, 70, getWidth() - 90), cap(mouse.getY() - 10, 120, getHeight() - 90));
 				}else{
-					int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this node?");
+					JOptionPane.showMessageDialog(null, "Not a correct node type.");
+					return;
+				}
+				listOfNodes.add(node);
+				
+				System.out.println("Successfully created the node:\n" + node);
+			}else{
+				int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this node?");
+				
+				if(result == 0){//Yes delete the node.
+					Node toDeleteNode = listOfNodes.get(getNodeIndex(mouse));
 					
-					if(result == 0){//Yes delete the node.
-						Node toDeleteNode = listOfNodes.get(getNodeIndex(mouse));
-						
-						listOfNodes.remove(toDeleteNode);
-						
-						for(Node rest : listOfNodes)
-							rest.adjacent.remove(toDeleteNode);
-						
-						System.out.println("Successfully deleted the node:\n" + toDeleteNode);
-					}
+					listOfNodes.remove(toDeleteNode);
+					
+					for(Node rest : listOfNodes)
+						rest.adjacent.remove(toDeleteNode);
+					
+					System.out.println("Successfully deleted the node:\n" + toDeleteNode);
 				}
 			}
+		}else if(edgesMode.isSelected()){
+			fromNode = getNodeIndex(mouse);
 		}
+		
 		repaint();
 	}
 
@@ -454,7 +477,21 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 	public void mouseReleased(MouseEvent mouse) {
 //		if(visualizeButton.isSelected())return;
 		
-		if(SwingUtilities.isRightMouseButton(mouse)){
+		if(selectionMode.isSelected()){
+			if(selectedIndex != -1){
+				if(listOfNodes.get(selectedIndex) instanceof Machine){
+					ui.attributesPanel.machineAP.setInfo((Machine)listOfNodes.get(selectedIndex));
+					ui.attributesPanel.informationPanelCardLayout.show(ui.attributesPanel.informationPanel, Constants.machineAPCode);
+				}else if(listOfNodes.get(selectedIndex) instanceof Primary){
+					ui.attributesPanel.primaryAP.setInfo((Primary)listOfNodes.get(selectedIndex));
+					ui.attributesPanel.informationPanelCardLayout.show(ui.attributesPanel.informationPanel, Constants.primaryAPCode);
+				}else{
+					System.out.println("Unidentified node type.");
+				}
+			}else{
+				ui.attributesPanel.informationPanelCardLayout.show(ui.attributesPanel.informationPanel, Constants.nullAPCode);
+			}
+		}else if(edgesMode.isSelected()){
 			toNode = getNodeIndex(mouse);
 			
 			if(fromNode != -1 && toNode != -1 && fromNode != toNode){
@@ -478,21 +515,8 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 					listOfNodes.get(toNode).addAdjacentEdge(edge2);
 				}
 			}
-		}else{
-			if(selectedIndex != -1){
-				if(listOfNodes.get(selectedIndex) instanceof Machine){
-					ui.attributesPanel.machineAP.setInfo((Machine)listOfNodes.get(selectedIndex));
-					ui.attributesPanel.informationPanelCardLayout.show(ui.attributesPanel.informationPanel, Constants.machineAPCode);
-				}else if(listOfNodes.get(selectedIndex) instanceof Primary){
-					ui.attributesPanel.primaryAP.setInfo((Primary)listOfNodes.get(selectedIndex));
-					ui.attributesPanel.informationPanelCardLayout.show(ui.attributesPanel.informationPanel, Constants.primaryAPCode);
-				}else{
-					System.out.println("Unidentified node type.");
-				}
-			}else{
-				ui.attributesPanel.informationPanelCardLayout.show(ui.attributesPanel.informationPanel, Constants.nullAPCode);
-			}
 		}
+		
 		repaint();
 	}
 	

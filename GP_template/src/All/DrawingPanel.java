@@ -15,12 +15,15 @@ import java.util.Random;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
+
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 
 import AttributePanel.PacketsColorRowEntry;
 import ConfigurationMaker.ModuleMaker;
@@ -50,14 +53,15 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 	public int maxRange;
 	TreeMap<String, Color> colorMap;
 	public DrawingPanel(UI ui_){
+		setBorder(BorderFactory.createTitledBorder("Network topology"));
 		this.drawingPanel = this;
 		this.ui = ui_;
 		colorMap = null;
 		listOfNodes = new ArrayList<Node>();
 		
-		Node node1 = new Machine("1", 100, 150);
-		Node node2 = new Machine("2", 250, 300);
-		Node node3 = new Primary("3", 370, 200);
+		Node node1 = new Machine("1", 100, 100);
+		Node node2 = new Machine("2", 200, 200);
+		Node node3 = new Primary("3", 300, 300);
 		node1.isSource = true;
 		node2.isDestination = true;
 		
@@ -65,8 +69,8 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		node1.WLS_Name.add("wlan0");
 		node2.WLS_HW.add("08:11:96:8B:84:F3");
 		node2.WLS_Name.add("wlan1");
-		node3.WLS_HW.add("08:11:96:8B:84:F7");
-		node3.WLS_Name.add("wlan0");
+		node3.WLS_HW.add("08:11:96:8B:84:F2");
+		node3.WLS_Name.add("wlan1");
 		
 		listOfNodes.add(node1);
 		listOfNodes.add(node2);
@@ -257,8 +261,22 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		g2d.setStroke(new BasicStroke(0.1f, BasicStroke.CAP_BUTT,
 			        BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f));
 		
+<<<<<<< HEAD
 		int drawingPanelHeight = drawingPanel.getHeight();
 		int drawingPanelWidth = drawingPanel.getWidth();
+=======
+		int width = getWidth();
+		int height = getHeight();
+		System.out.println("dimensions: " + width + ", " + height);
+		
+		//Vertical.
+		for(int d = 0; 15 + d * 20 < width - Constants.MARGIN; d++)
+			g2d.drawLine(15 + d * 20, 85, 15 + d * 20, height - Constants.MARGIN);
+		
+		//Horizental.
+		for(int d = 1; 70 + d * 20 < height - Constants.MARGIN; d++)
+			g2d.drawLine(10, 70 + d * 20, width - Constants.MARGIN, 70 + d * 20);
+>>>>>>> 235ce0364be81fb62af8b18895b4f2b15e721c73
 		
 		if(gridButton.isSelected()) {
 			int stX = 20;
@@ -273,17 +291,15 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		}
 
 		//Legend box.
-		int vStringShift = 20;
-		int vRectShift = 35;
-		g2d.drawString("Source", 45, drawingPanelHeight - vStringShift);
-		g2d.drawString("Destination", 175, drawingPanelHeight - vStringShift);
-		g2d.drawString("Selected", 315, drawingPanelHeight - vStringShift);
-		g2d.setColor(Constants.SOURCE_COLOR);
-		g2d.fillRect(15, drawingPanelHeight - vRectShift, 25, 20);
-		g2d.setColor(Constants.DEST_COLOR);
-		g2d.fillRect(145, drawingPanelHeight - vRectShift, 25, 20);
-		g2d.setColor(Constants.SELECTED_COLOR);
-		g2d.fillRect(285, drawingPanelHeight - vRectShift, 25, 20);
+        g2d.drawString("Source", 45, height - Constants.MARGIN);
+        g2d.drawString("Destination", 175, height - Constants.MARGIN);
+        g2d.drawString("Selected", 315, height - Constants.MARGIN);
+        g2d.setColor(Constants.SOURCE_COLOR);
+        g2d.fillRect(15, height - 35, 25, 20);
+        g2d.setColor(Constants.DEST_COLOR);
+        g2d.fillRect(145, height - 35, 25, 20);
+        g2d.setColor(Constants.SELECTED_COLOR);
+        g2d.fillRect(285, height - 35, 25, 20);
 
         g2d.setStroke(new BasicStroke(1));
 		
@@ -345,9 +361,9 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 	public void mouseDragged(MouseEvent mouse) {
 		if(visualizeButton.isSelected()) return;
 		
-		if (selectedIndex != -1) {
-			listOfNodes.get(selectedIndex).x = cap(mouse.getX() - offX, 60, drawingPanel.getWidth() - 80);
-			listOfNodes.get(selectedIndex).y = cap(mouse.getY() - offY, 120, drawingPanel.getHeight() - 120);
+		if(selectedIndex != -1){
+			listOfNodes.get(selectedIndex).x = cap(mouse.getX() - offX, 70, getWidth() - 90);
+			listOfNodes.get(selectedIndex).y = cap(mouse.getY() - offY, 120, getHeight() - 90);
 		}
 		repaint();
 	}
@@ -404,10 +420,10 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 					Node node;
 					if(type == 0){
 						//Create a node with a random name.
-						node = new Machine((int)(Math.random() * 100) + "", cap(mouse.getX() - 10, 70, 300), cap(mouse.getY() - 10, 120, 550));
+						node = new Machine((int)(Math.random() * 100) + "", cap(mouse.getX() - 10, 70, getWidth() - 90), cap(mouse.getY() - 10, 120, getHeight() - 90));
 					}else if(type == 1){
 						//Create a primary user with a random name.
-						node = new Primary((int)(Math.random() * 100) + "", cap(mouse.getX() - 10, 70, 300), cap(mouse.getY() - 10, 120, 550));
+						node = new Primary((int)(Math.random() * 100) + "", cap(mouse.getX() - 10, 70, getWidth() - 90), cap(mouse.getY() - 10, 120, getHeight() - 90));
 					}else{
 						JOptionPane.showMessageDialog(null, "Not a correct node type.");
 						return;

@@ -24,6 +24,7 @@ public class AttributesPanel extends JPanel{
 	
 	public DrawingPanel drawingPanel;
 	public AttributesPanel(DrawingPanel drawingPanel){
+		setSize(100, 100);
 		this.drawingPanel = drawingPanel;
 		
 		informationPanelCardLayout = new CardLayout();

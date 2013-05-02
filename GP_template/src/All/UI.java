@@ -1,5 +1,6 @@
 package All;
-import java.awt.Dimension;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -15,6 +16,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.ParallelGroup;
+import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -45,8 +50,8 @@ public class UI extends JFrame{
 	
 	public UI(){
 		this.self = this;
-		setLayout(new GridLayout());
 		setTitle("CogFrame");
+		setLayout(new BorderLayout());
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		try {
@@ -60,12 +65,10 @@ public class UI extends JFrame{
 		}
 		
 		drawingPanel = new DrawingPanel(this);
-		drawingPanel.setBorder(BorderFactory.createTitledBorder("Network topology"));
-		
 		attributesPanel = new AttributesPanel(drawingPanel);
 		
-		add(drawingPanel);
-		add(attributesPanel);
+		add(drawingPanel, BorderLayout.CENTER);
+		add(attributesPanel, BorderLayout.EAST);
 		
 		setAllMenus();
 
@@ -77,9 +80,9 @@ public class UI extends JFrame{
 	    this.pack();
 		repaint();
 		
-//		setResizable(false);
 		setLocationByPlatform(true);
 		setSize(1000, 710);
+		//setSize(900, 710);
 		setVisible(true);
 	}
 	

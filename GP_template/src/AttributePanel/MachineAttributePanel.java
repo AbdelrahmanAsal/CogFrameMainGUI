@@ -20,7 +20,7 @@ public class MachineAttributePanel extends NodeAttributesPanel{
 	public JButton setData;
 	public Machine selectedNode;
 	public MachineAttributePanel(){
-		setBorder(BorderFactory.createTitledBorder("Machine Attributes Panel"));
+		setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Machine Attributes Panel"));
 		
 		setData = new JButton("Set Data");
 		setData.addActionListener(new ActionListener() {

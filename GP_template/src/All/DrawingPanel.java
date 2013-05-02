@@ -11,9 +11,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -22,9 +22,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
-import javax.swing.SwingUtilities;
-
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 
 import AttributePanel.PacketsColorRowEntry;
 import ConfigurationMaker.ModuleMaker;
@@ -65,7 +62,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		
 		Node node1 = new Machine("1", 400, 400);
 		Node node2 = new Machine("2", 200, 200);
-		Node node3 = new Primary("3", 300, 300);
+		Node node3 = new Machine("3", 300, 300);
 		node1.isSource = true;
 		node2.isDestination = true;
 		

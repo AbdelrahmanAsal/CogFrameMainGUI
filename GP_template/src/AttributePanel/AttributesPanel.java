@@ -24,7 +24,6 @@ public class AttributesPanel extends JPanel{
 	
 	public DrawingPanel drawingPanel;
 	public AttributesPanel(DrawingPanel drawingPanel){
-		setSize(100, 100);
 		this.drawingPanel = drawingPanel;
 		
 		informationPanelCardLayout = new CardLayout();
@@ -57,7 +56,8 @@ public class AttributesPanel extends JPanel{
 		tabbedPane.addTab("Charts", chartsPanel);
 	}
 	public void deactiveVisualization(){
-		tabbedPane.remove(1);
+		tabbedPane.remove(1);//Visualization.
+		tabbedPane.remove(1);//Charts.
 	}
 }
 

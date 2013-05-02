@@ -26,7 +26,7 @@ import Data.Machine;
 import Data.Node;
 import Data.StringPair;
 
-public class UI extends JFrame{
+public class UI extends JFrame {
 	UI self;
 	DrawingPanel drawingPanel;
 	AttributesPanel attributesPanel;
@@ -39,6 +39,7 @@ public class UI extends JFrame{
 	PolicyOption PrivacyOptionChosen = PolicyOption.C1_6_11;
 	String ccc = "Ethernet";
 
+	
 	public UI(){
 		this.self = this;
 		setLayout(new BorderLayout());
@@ -56,7 +57,7 @@ public class UI extends JFrame{
 
 		drawingPanel = new DrawingPanel(this);
 		attributesPanel = new AttributesPanel(drawingPanel);
-
+		
 		add(drawingPanel, BorderLayout.CENTER);
 		add(attributesPanel, BorderLayout.EAST);
 
@@ -64,15 +65,13 @@ public class UI extends JFrame{
 		
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				drawingPanel, attributesPanel);
+		splitPane.setDividerLocation(1300);
 		splitPane.setContinuousLayout(true);
 		splitPane.setOneTouchExpandable(true);
 		add(splitPane);
-	    this.pack();
-		repaint();
 
 		setLocationByPlatform(true);
-		setSize(1000, 710);
-//		setSize(900, 710);
+		setSize(1000, 800);
 		setVisible(true);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 	}
@@ -624,7 +623,7 @@ public class UI extends JFrame{
 		menuBar.add(policyOption);
 		menuBar.add(settingsOption);
 
-
 		setJMenuBar(menuBar);
 	}
+
 }

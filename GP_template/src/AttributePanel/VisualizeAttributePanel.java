@@ -42,7 +42,7 @@ public class VisualizeAttributePanel extends JPanel{
 		player.start();
 		
 		buttons = new ArrayList<JRadioButton>();
-		setBorder(BorderFactory.createTitledBorder("Visualization Attributes Panel"));
+		setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Visualization Attributes Panel"));
 		
 		JRadioButton lossRatio = new JRadioButton("Loss Ratio");
 		lossRatio.setActionCommand("LossRatio");

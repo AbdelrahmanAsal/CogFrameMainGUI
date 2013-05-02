@@ -20,13 +20,8 @@ public class Primary extends Node{
 	
 	@Override
 	public void draw(Graphics2D g2d, DrawingPanel drawingPanel, String drawingOption) {
-		if(drawingPanel.selectedIndex != -1 && this == drawingPanel.listOfNodes.get(drawingPanel.selectedIndex))g2d.setColor(Color.RED);//Color the selected node.
+		if(this == drawingPanel.selectedNode)g2d.setColor(Color.RED);//Color the selected node.
 		else g2d.setColor(Color.MAGENTA);
-		
-//		g2d.setColor(new Color(c.getRed(), c.getGreen() , c.getBlue() - 20));
-		Color color1 = Color.MAGENTA;
-		Color color2 = new Color(59, 185, 255);
-		g2d.setColor(color1);
 		
 		g2d.setStroke(new BasicStroke(1.0f,  BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{10.0f}, 0.0f));
 		g2d.drawOval(x - 50, y - 50, 20 + 100, 20 + 100);

@@ -19,7 +19,7 @@ public class Machine extends Node{
 	public void draw(Graphics2D g2d, DrawingPanel drawingPanel, String drawingOption){
 		if(drawingOption.equals("Init")){
 			// Color the selected node.
-			if(drawingPanel.selectedIndex != -1 && this == drawingPanel.listOfNodes.get(drawingPanel.selectedIndex))g2d.setColor(Constants.SELECTED_COLOR);
+			if(this == drawingPanel.selectedNode)g2d.setColor(Constants.SELECTED_COLOR);
 			else if (this == drawingPanel.source) g2d.setColor(Constants.SOURCE_COLOR); // Color the source.
 			else if(this == drawingPanel.destination) g2d.setColor(Constants.DEST_COLOR); // Color the destination.
 			else g2d.setColor(Constants.HOP_COLOR);

@@ -39,7 +39,7 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 	public Primary selectedNode;
 	public JPanel distPanel;
 	public PrimaryAttributePanel(){
-		setBorder(BorderFactory.createTitledBorder("Primary Attributes Panel"));
+		setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Primary Attributes Panel"));
 		
 		activeDistLabel = new JLabel("Active Distribution");
 		activeDist = new JComboBox(new String[]{"Uniform", "Exponential"});

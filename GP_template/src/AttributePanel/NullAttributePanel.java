@@ -5,6 +5,6 @@ import javax.swing.JPanel;
 
 public class NullAttributePanel extends JPanel{
 	public NullAttributePanel(){
-		setBorder(BorderFactory.createTitledBorder("Empty Attributes Panel"));
+		setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Empty Attributes Panel"));
 	}
 }

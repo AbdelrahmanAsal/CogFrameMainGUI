@@ -37,7 +37,8 @@ import Data.Node;
 import Data.Primary;
 
 
-public class DrawingPanel extends JPanel implements MouseMotionListener, MouseListener, ComponentListener{
+public class DrawingPanel extends JPanel implements MouseMotionListener,
+		MouseListener, ComponentListener {
 	public UI ui;
 	public DrawingPanel drawingPanel;
 	public Edge selectedEdge;
@@ -57,6 +58,9 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 	
 	public int maxRange;
 	TreeMap<String, Color> colorMap;
+	
+	Node currentSelectedNode = null;
+	
 	public DrawingPanel(UI ui_){
 		setBorder(BorderFactory.createTitledBorder("Network topology"));
 		addComponentListener(this);
@@ -296,7 +300,6 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 			}
 			
 		});
-		gridButton.setSelected(true);
 		experimentTools.add(gridButton);
 		
 		add(experimentTools);
@@ -444,6 +447,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 //		if(visualizeButton.isSelected())return;
 		selectedNode = null;
 		selectedEdge = null;
+		currentSelectedNode = getSelectedNode(mouse);
 		if(selectionMode.isSelected()){
 			selectedNode = getSelectedNode(mouse);
 			if(selectedNode != null){
@@ -618,6 +622,8 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		// TODO Auto-generated method stub
 		
 	}
+
+	
 	
 	
 }

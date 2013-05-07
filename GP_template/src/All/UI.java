@@ -2,6 +2,9 @@ package All;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedReader;
@@ -20,6 +23,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
@@ -29,7 +33,7 @@ import Data.Machine;
 import Data.Node;
 import Data.StringPair;
 
-public class UI extends JFrame {
+public class UI extends JFrame  {
 	UI self;
 	DrawingPanel drawingPanel;
 	AttributesPanel attributesPanel;
@@ -67,8 +71,10 @@ public class UI extends JFrame {
 
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				drawingPanel, attributesPanel);
+		
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        splitPane.setDividerLocation(screenSize.width - 500);
+		splitPane.setDividerLocation(screenSize.width - Constants.ATTRIBUTES_PANEL_INIT_WIDTH);
+		
 		splitPane.setContinuousLayout(true);
 		splitPane.setOneTouchExpandable(true);
 		add(splitPane);
@@ -81,17 +87,20 @@ public class UI extends JFrame {
 	}
 
 	private void setAllMenus() {
-		JMenuItem seperator = new JMenuItem("----");
-
 		//Set Menu bars.
 		JMenuBar menuBar = new JMenuBar();
 
 		//Mobility Options.
 		JMenu fileOption = new JMenu("File");
+		fileOption.setMnemonic(KeyEvent.VK_F);
+		
 		JMenuItem fileSave = new JMenuItem("Save");
-		fileSave.addMouseListener(new MouseListener() {
+		fileSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+		        ActionEvent.CTRL_MASK));
+		fileSave.setMnemonic(KeyEvent.VK_S);
+		fileSave.addActionListener(new ActionListener() {
 			@Override
-			public void mouseReleased(MouseEvent arg0) {
+			public void actionPerformed(ActionEvent ev) {
 				try {
 					String fileName = JOptionPane.showInputDialog(null, "Enter the name for the file");
 
@@ -123,22 +132,15 @@ public class UI extends JFrame {
 				}
 				JOptionPane.showMessageDialog(null, "File saved.");
 			}
-
-
-			@Override
-			public void mousePressed(MouseEvent arg0) {}
-			@Override
-			public void mouseExited(MouseEvent arg0) {}
-			@Override
-			public void mouseEntered(MouseEvent arg0) {}
-			@Override
-			public void mouseClicked(MouseEvent arg0) {}
 		});
 
 		JMenuItem fileLoad = new JMenuItem("Load");
-		fileLoad.addMouseListener(new MouseListener() {
+		fileLoad.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L,
+		        ActionEvent.CTRL_MASK));
+		fileLoad.setMnemonic(KeyEvent.VK_L);
+		fileLoad.addActionListener(new ActionListener() {
 			@Override
-			public void mouseReleased(MouseEvent arg0) {
+			public void actionPerformed(ActionEvent ev) {
 				try {
 					drawingPanel.listOfNodes.clear();
 
@@ -200,49 +202,28 @@ public class UI extends JFrame {
 				JOptionPane.showMessageDialog(null, "File Loaded.");
 			}
 
-
-			@Override
-			public void mousePressed(MouseEvent arg0) {}
-			@Override
-			public void mouseExited(MouseEvent arg0) {}
-			@Override
-			public void mouseEntered(MouseEvent arg0) {}
-			@Override
-			public void mouseClicked(MouseEvent arg0) {}
 		});
+		
 		JMenuItem clearButton = new JMenuItem("Clear");
-		clearButton.addMouseListener(new MouseListener() {
+		clearButton.setMnemonic(KeyEvent.VK_C);
+		clearButton.addActionListener(new ActionListener() {
 			@Override
-			public void mouseReleased(MouseEvent arg0) {
+			public void actionPerformed(ActionEvent e) {
 				drawingPanel.listOfNodes.clear();
 				drawingPanel.repaint();
 			}
-
-			@Override
-			public void mousePressed(MouseEvent arg0) {}
-			@Override
-			public void mouseExited(MouseEvent arg0) {}
-			@Override
-			public void mouseEntered(MouseEvent arg0) {}
-			@Override
-			public void mouseClicked(MouseEvent arg0) {}
 		});
+		
 		JMenuItem fileExit = new JMenuItem("Exit");
-		fileExit.addMouseListener(new MouseListener() {
+		fileExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W,
+		        ActionEvent.CTRL_MASK));
+		fileExit.setMnemonic(KeyEvent.VK_X);
+		fileExit.addActionListener(new ActionListener() {
 			@Override
-			public void mouseReleased(MouseEvent arg0) {
+			public void actionPerformed(ActionEvent ev) {
 				//Just exit!.
 				System.exit(0);
 			}
-
-			@Override
-			public void mousePressed(MouseEvent arg0) {}
-			@Override
-			public void mouseExited(MouseEvent arg0) {}
-			@Override
-			public void mouseEntered(MouseEvent arg0) {}
-			@Override
-			public void mouseClicked(MouseEvent arg0) {}
 		});
 		fileOption.add(fileSave);
 		fileOption.add(fileLoad);
@@ -251,6 +232,7 @@ public class UI extends JFrame {
 
 		//Mobility Options.
 		JMenu editOption = new JMenu("Cogframe Agent");
+		editOption.setMnemonic(KeyEvent.VK_E);
 		JMenuItem editSetSource = new JMenuItem("Set Source");
 		editSetSource.addMouseListener(new MouseListener() {
 			@Override
@@ -313,6 +295,35 @@ public class UI extends JFrame {
 			public void mouseEntered(MouseEvent arg0) {}
 			@Override
 			public void mouseClicked(MouseEvent arg0) {}
+		});
+		
+		JMenuItem editDelete = new JMenuItem("Delete");
+		editDelete.setActionCommand("del");
+		editDelete.setMnemonic(KeyEvent.VK_D);
+		editDelete.setAccelerator(KeyStroke.getKeyStroke("DELETE"));
+		editDelete.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) { // delete NODE
+				if (drawingPanel.selectionMode.isSelected()) {
+					if(drawingPanel.currentSelectedNode != null) { // delete node
+						int result = JOptionPane.showConfirmDialog(drawingPanel,
+								"Are you sure you want to delete this node?");
+						
+						if(result == 0){ // Yes delete the node.
+							Node toDeleteNode = drawingPanel.currentSelectedNode;
+							
+							drawingPanel.listOfNodes.remove(toDeleteNode);
+							
+							for(Node rest : drawingPanel.listOfNodes)
+								rest.adjacent.remove(toDeleteNode);
+							
+							System.out.println("Successfully deleted the node:\n" + toDeleteNode);
+							drawingPanel.currentSelectedNode = null;
+						}
+					}
+				}
+				repaint();
+			}
 		});
 		
 		JMenuItem editGetInformation= new JMenuItem("Get Information");
@@ -546,11 +557,13 @@ public class UI extends JFrame {
 			public void mouseClicked(MouseEvent arg0) {}
 		});
 
+		editOption.add(editDelete);
+//		editOption.addSeparator();
 //		editOption.add(editSetSource);
 //		editOption.add(editSetDestination);
 //		editOption.add(editGenerate);
 //		editOption.add(editVisualize);
-//		editOption.add(seperator);
+		editOption.addSeparator();
 		editOption.add(editGetInformation);
 		editOption.add(editGetStatistics);
 		editOption.add(editPostConfiguration);
@@ -559,6 +572,7 @@ public class UI extends JFrame {
 
 		//Mobility Options.
 		JMenu mobilityOption = new JMenu("Mobility Option");
+		mobilityOption.setMnemonic(KeyEvent.VK_M);
 		JMenuItem mobilityStatic = new JMenuItem("Static");
 		JMenuItem mobilityCentralized = new JMenuItem("Centralized node");
 		JMenuItem mobilityBroadcast = new JMenuItem("Broadcast message");
@@ -586,6 +600,7 @@ public class UI extends JFrame {
 
 		//Policy Options.
 		JMenu policyOption = new JMenu("Policy Option");
+		policyOption.setMnemonic(KeyEvent.VK_P);
 		JMenuItem privacyGaussian = new JMenuItem("C1-6-11");
 		JMenuItem privacyStatic = new JMenuItem("C3-6-13");
 		JMenuItem privacyOther = new JMenuItem("Other");
@@ -595,6 +610,7 @@ public class UI extends JFrame {
 
 		//Settings.
 		JMenu settingsOption = new JMenu("Settings");
+		settingsOption.setMnemonic(KeyEvent.VK_S);
 		JMenuItem ccc = new JMenuItem("CCC settings");
 		ccc.addMouseListener(new MouseListener() {
 			@Override
@@ -618,9 +634,14 @@ public class UI extends JFrame {
 			public void mouseClicked(MouseEvent arg0) {
 			}
 		});
-		JMenuItem help = new JMenuItem("Help");
 		settingsOption.add(ccc);
-		settingsOption.add(help);
+		
+		JMenu helpOption = new JMenu("Help");
+		helpOption.setMnemonic(KeyEvent.VK_H);
+		
+		JMenuItem about = new JMenuItem("About");
+		about.setMnemonic(KeyEvent.VK_A);
+		helpOption.add(about);
 
 		menuBar.add(fileOption);
 		menuBar.add(editOption);
@@ -629,8 +650,8 @@ public class UI extends JFrame {
 //		menuBar.add(primaryOption);
 		menuBar.add(policyOption);
 		menuBar.add(settingsOption);
+		menuBar.add(helpOption);
 
 		setJMenuBar(menuBar);
 	}
-
 }

@@ -9,6 +9,8 @@ public class Constants {
 	public static int TEXT_HEIGHT = 1;
 	public static int TEXT_GAP = 10;
 	public static int COMPONENTS_GAP = 30;
+	public static int ATTRIBUTES_PANEL_INIT_WIDTH = 500;
+	
 	public static Color SELECTED_COLOR = new Color(241, 68, 0); // red
 	public static Color SOURCE_COLOR = new Color(151, 229, 27); // green
 	public static Color DEST_COLOR = new Color(0, 156, 255); // blue

@@ -6,6 +6,8 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.geom.*;
 
+import javax.swing.ButtonGroup;
+
 import All.Constants;
 import All.DrawingPanel;
 
@@ -27,9 +29,10 @@ public class Edge {
 		return from == o.from && to == o.to;
 	}
 	
-	public void draw(Graphics2D g2d, DrawingPanel drawingPanel, String drawingOption){
+	public void draw(Graphics2D g2d, DrawingPanel drawingPanel, String drawingOption, boolean selectionOrEdgeMode){
 		if(drawingOption.equals("Init")){
-			if(this == drawingPanel.selectedEdge)g2d.setColor(Constants.SELECTED_COLOR);
+			if(!selectionOrEdgeMode)g2d.setColor(Constants.FROZEN_COLOR);
+			else if(this == drawingPanel.selectedEdge)g2d.setColor(Constants.SELECTED_COLOR);
 			else g2d.setColor(Constants.EDGE_COLOR);
 		}else if(drawingOption.equals("LossRatio")){
 			if (!used)

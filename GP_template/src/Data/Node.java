@@ -151,13 +151,16 @@ public abstract class Node{
 		return ret;
 	}
 	
-	public abstract void draw(Graphics2D g2d, DrawingPanel drawingPanel, String drawingOption);
-	
 	public String type(){
 		return "N/A";
 	}
 	
 	public double distance(Node other){
 		return Math.hypot(x - other.x, y - other.y);
+	}
+
+	public void draw(Graphics2D g2d, DrawingPanel drawingPanel,
+			String drawingOption, boolean selected) {
+		
 	}
 }

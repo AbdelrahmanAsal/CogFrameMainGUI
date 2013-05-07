@@ -22,6 +22,7 @@ import javax.swing.JTextArea;
 import javax.swing.event.TableModelEvent;
 
 import All.Constants;
+import All.DrawingPanel;
 import Data.Machine;
 import Data.Primary;
 import Distributions.ExponentialDistribution;
@@ -38,7 +39,9 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 	public JTextArea selectedChannel;
 	public Primary selectedNode;
 	public JPanel distPanel;
-	public PrimaryAttributePanel(){
+	public DrawingPanel drawingPanel;
+	public PrimaryAttributePanel(DrawingPanel dp){
+		this.drawingPanel = dp;
 		setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Primary Attributes Panel"));
 
 		activeDistLabel = new JLabel("Active Distribution");
@@ -115,6 +118,8 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 
 					selectedNode.activeDist = tempActiveDist;
 					selectedNode.inactiveDist = tempInactiveDist;
+					
+					drawingPanel.repaint();
 
 					System.out.println("Successfully updated the node:\n" + selectedNode);
 				}

@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
+
+import All.Constants;
 import All.DrawingPanel;
 import Distributions.ProbabilityDistribution;
 import Distributions.UniformDistribution;
@@ -19,12 +22,15 @@ public class Primary extends Node{
 	}
 	
 	@Override
-	public void draw(Graphics2D g2d, DrawingPanel drawingPanel, String drawingOption) {
-		if(this == drawingPanel.selectedNode)g2d.setColor(Color.RED);//Color the selected node.
+	public void draw(Graphics2D g2d, DrawingPanel drawingPanel, String drawingOption, boolean selectionOrNodeMode) {
+		if(!selectionOrNodeMode)g2d.setColor(Constants.FROZEN_COLOR);
+		else if(this == drawingPanel.selectedNode)g2d.setColor(Color.RED);//Color the selected node.
 		else g2d.setColor(Color.MAGENTA);
 		
-		g2d.setStroke(new BasicStroke(1.0f,  BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{10.0f}, 0.0f));
-		g2d.drawOval(x - 50, y - 50, 20 + 100, 20 + 100);
+		if(topologyOption.equalsIgnoreCase("Location-based")){
+			g2d.setStroke(new BasicStroke(1.0f,  BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{10.0f}, 0.0f));
+			g2d.drawOval(x - 50, y - 50, 20 + 100, 20 + 100);
+		}
 		
 		g2d.setStroke(new BasicStroke(1.0f,  BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
 		g2d.fillOval(x, y, 20, 20);

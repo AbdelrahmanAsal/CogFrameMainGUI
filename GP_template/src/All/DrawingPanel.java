@@ -93,11 +93,31 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		nodesMode = new JToggleButton("Node");
 		edgesMode = new JToggleButton("Edge");
 		
+		selectionMode.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				repaint();
+			}
+		});
+		nodesMode.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				repaint();
+			}
+		});
+		edgesMode.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				repaint();
+			}
+		});
+		
 		modes = new ButtonGroup();
 		modes.add(selectionMode);
 		modes.add(nodesMode);
 		modes.add(edgesMode);
 		selectionMode.setSelected(true);
+		
 		
 		editingModes.add(selectionMode);
 		editingModes.add(nodesMode);
@@ -325,13 +345,15 @@ public class DrawingPanel extends JPanel implements MouseMotionListener, MouseLi
 		
 		for (Node node : listOfNodes) {
 			// Draw the Node itself.
-			node.draw(g2d, this, drawingOption);
+			node.draw(g2d, this, drawingOption, selectionMode.isSelected() || nodesMode.isSelected());
 		}
 		
 		for(Node node : listOfNodes){
+			if(node.topologyOption.equalsIgnoreCase("Location-based"))continue;
+			
 			// Draw all the edges.
 			for (Edge edge : node.adjacent) {
-				edge.draw(g2d, this, drawingOption);
+				edge.draw(g2d, this, drawingOption, selectionMode.isSelected() || edgesMode.isSelected());
 			}
 		}
 		

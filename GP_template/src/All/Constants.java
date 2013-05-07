@@ -16,6 +16,7 @@ public class Constants {
 	public static Color HOP_COLOR = new Color(80, 80, 80); // gray
 //	public static Color EDGE_COLOR = new Color(70, 130, 180); // steel blue
 	public static Color EDGE_COLOR = new Color(255, 140, 0); // dark orange
+	public static Color FROZEN_COLOR = Color.white; // dark orange
 	
 	public static String machineAPCode = "MACHINE";
 	public static String primaryAPCode = "PRIMARY";

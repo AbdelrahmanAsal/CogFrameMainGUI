@@ -1,5 +1,7 @@
 package All;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedReader;
@@ -39,7 +41,6 @@ public class UI extends JFrame {
 	PrimaryOption primaryOptionChosen = PrimaryOption.STATIC;
 	PolicyOption PrivacyOptionChosen = PolicyOption.C1_6_11;
 	String ccc = "Ethernet";
-
 	
 	public UI(){
 		this.self = this;
@@ -66,7 +67,8 @@ public class UI extends JFrame {
 
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				drawingPanel, attributesPanel);
-		splitPane.setDividerLocation(1300);
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        splitPane.setDividerLocation(screenSize.width - 500);
 		splitPane.setContinuousLayout(true);
 		splitPane.setOneTouchExpandable(true);
 		add(splitPane);
@@ -248,7 +250,7 @@ public class UI extends JFrame {
 		fileOption.add(fileExit);
 
 		//Mobility Options.
-		JMenu editOption = new JMenu("Edit");
+		JMenu editOption = new JMenu("Cogframe Agent");
 		JMenuItem editSetSource = new JMenuItem("Set Source");
 		editSetSource.addMouseListener(new MouseListener() {
 			@Override
@@ -312,6 +314,7 @@ public class UI extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {}
 		});
+		
 		JMenuItem editGetInformation= new JMenuItem("Get Information");
 		editGetInformation.addMouseListener(new MouseListener() {
 			@Override
@@ -543,11 +546,11 @@ public class UI extends JFrame {
 			public void mouseClicked(MouseEvent arg0) {}
 		});
 
-		editOption.add(editSetSource);
-		editOption.add(editSetDestination);
-		editOption.add(editGenerate);
-		editOption.add(editVisualize);
-		editOption.add(seperator);
+//		editOption.add(editSetSource);
+//		editOption.add(editSetDestination);
+//		editOption.add(editGenerate);
+//		editOption.add(editVisualize);
+//		editOption.add(seperator);
 		editOption.add(editGetInformation);
 		editOption.add(editGetStatistics);
 		editOption.add(editPostConfiguration);

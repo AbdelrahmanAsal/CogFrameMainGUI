@@ -13,13 +13,16 @@ import javax.swing.JPanel;
 import javax.swing.event.TableModelEvent;
 
 import All.Constants;
+import All.DrawingPanel;
 import Data.Machine;
 
 
 public class MachineAttributePanel extends NodeAttributesPanel{
 	public JButton setData;
 	public Machine selectedNode;
-	public MachineAttributePanel(){
+	public DrawingPanel drawingPanel;
+	public MachineAttributePanel(DrawingPanel dp){
+		this.drawingPanel = dp;
 		setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Machine Attributes Panel"));
 
 		setData = new JButton("Set Data");
@@ -38,6 +41,8 @@ public class MachineAttributePanel extends NodeAttributesPanel{
 
 					selectedNode.mobilityOption = mobilityOption.getSelectedItem().toString();
 					selectedNode.topologyOption = topologyOption.getSelectedItem().toString();
+					
+					drawingPanel.repaint();
 
 					System.out.println("Successfully updated the node:\n" + selectedNode);
 				}

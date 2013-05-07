@@ -16,16 +16,19 @@ public class Machine extends Node{
 	}
 
 	@Override
-	public void draw(Graphics2D g2d, DrawingPanel drawingPanel, String drawingOption){
+	public void draw(Graphics2D g2d, DrawingPanel drawingPanel, String drawingOption, boolean selectionOrNodeMode){
 		if(drawingOption.equals("Init")){
 			// Color the selected node.
-			if(this == drawingPanel.selectedNode)g2d.setColor(Constants.SELECTED_COLOR);
+			if(!selectionOrNodeMode)g2d.setColor(Constants.FROZEN_COLOR);
+			else if(this == drawingPanel.selectedNode)g2d.setColor(Constants.SELECTED_COLOR);
 			else if (this == drawingPanel.source) g2d.setColor(Constants.SOURCE_COLOR); // Color the source.
 			else if(this == drawingPanel.destination) g2d.setColor(Constants.DEST_COLOR); // Color the destination.
 			else g2d.setColor(Constants.HOP_COLOR);
 			
-			g2d.setStroke(new BasicStroke(1.0f,  BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{10.0f}, 0.0f));
-			g2d.drawOval(x - 50, y - 50, 20 + 100, 20 + 100);
+			if(topologyOption.equalsIgnoreCase("Location-based")){
+				g2d.setStroke(new BasicStroke(1.0f,  BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{10.0f}, 0.0f));
+				g2d.drawOval(x - 50, y - 50, 20 + 100, 20 + 100);
+			}
 		}else if(drawingOption.equals("NodalDelay")){
 			System.out.println("Nodal Delay: "+name+" "+ averageNodalDelay + ", " + Node.maxAverageNodalDelay);
 			g2d.setColor(new Color((int) (255 * (averageNodalDelay / Node.maxAverageNodalDelay)), (int) (255 * (1 - (averageNodalDelay / Node.maxAverageNodalDelay))), 0));

@@ -42,7 +42,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 	public UI ui;
 	public DrawingPanel drawingPanel;
 	public Edge selectedEdge;
-	public Node selectedNode;
+	public Node selectedNode, tempNode;
 	public Node fromNode, toNode;
 	
 	public ArrayList<Node> listOfNodes;
@@ -54,7 +54,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 	public StatisticsCollector sc;
 	
 	public ButtonGroup modes;
-	public JToggleButton selectionMode, nodesMode, edgesMode;
+	public JToggleButton selectionMode, machineMode, primaryMode, edgeMode;
 	
 	public int maxRange;
 	TreeMap<String, Color> colorMap;
@@ -94,8 +94,9 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 		editingModes.setBorder(BorderFactory.createTitledBorder(""));
 		
 		selectionMode = new JToggleButton("Select");
-		nodesMode = new JToggleButton("Node");
-		edgesMode = new JToggleButton("Edge");
+		primaryMode = new JToggleButton("Primary");
+		machineMode = new JToggleButton("Machine");
+		edgeMode = new JToggleButton("Edge");
 		
 		selectionMode.addActionListener(new ActionListener() {
 			@Override
@@ -103,13 +104,19 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 				repaint();
 			}
 		});
-		nodesMode.addActionListener(new ActionListener() {
+		machineMode.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				repaint();
 			}
 		});
-		edgesMode.addActionListener(new ActionListener() {
+		primaryMode.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				repaint();
+			}
+		});
+		edgeMode.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				repaint();
@@ -118,14 +125,16 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 		
 		modes = new ButtonGroup();
 		modes.add(selectionMode);
-		modes.add(nodesMode);
-		modes.add(edgesMode);
+		modes.add(machineMode);
+		modes.add(primaryMode);
+		modes.add(edgeMode);
 		selectionMode.setSelected(true);
 		
 		
 		editingModes.add(selectionMode);
-		editingModes.add(nodesMode);
-		editingModes.add(edgesMode);
+		editingModes.add(machineMode);
+		editingModes.add(primaryMode);
+		editingModes.add(edgeMode);
 		
 		add(editingModes);
 		
@@ -348,7 +357,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 		
 		for (Node node : listOfNodes) {
 			// Draw the Node itself.
-			node.draw(g2d, this, drawingOption, selectionMode.isSelected() || nodesMode.isSelected());
+			node.draw(g2d, this, drawingOption, selectionMode.isSelected() || (node instanceof Machine ? machineMode.isSelected() : primaryMode.isSelected()));
 		}
 		
 		for(Node node : listOfNodes){
@@ -356,9 +365,14 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 			
 			// Draw all the edges.
 			for (Edge edge : node.adjacent) {
-				edge.draw(g2d, this, drawingOption, selectionMode.isSelected() || edgesMode.isSelected());
+				edge.draw(g2d, this, drawingOption, selectionMode.isSelected() || edgeMode.isSelected());
 			}
 		}
+		
+		
+		//if an insertion mode is activeted. Draw temp node for the user.
+		if(tempNode != null)
+			tempNode.draw(g2d, drawingPanel, drawingOption, true);
 		
 		// Draw simulation of the packets.
 		if(!drawingOption.equals("Init")){
@@ -419,9 +433,25 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+	public void mouseMoved(MouseEvent mouse) {
+		//if an insertion mode is activeted. Draw temp node for the user.
+		if(machineMode.isSelected()){
+			if(!(tempNode instanceof Machine))
+				tempNode = new Machine((int)(Math.random() * 100) + "", cap(mouse.getX() - 10, 70, getWidth() - 90), cap(mouse.getY() - 10, 120, getHeight() - 90));
+			
+			tempNode.x = cap(mouse.getX() - 10, 70, getWidth() - 90);
+			tempNode.y = cap(mouse.getY() - 10, 120, getHeight() - 90);
+		}else if(primaryMode.isSelected()){
+			if(!(tempNode instanceof Primary))
+				tempNode = new Primary((int)(Math.random() * 100) + "", cap(mouse.getX() - 10, 70, getWidth() - 90), cap(mouse.getY() - 10, 120, getHeight() - 90));
+			
+			tempNode.x = cap(mouse.getX() - 10, 70, getWidth() - 90);
+			tempNode.y = cap(mouse.getY() - 10, 120, getHeight() - 90);
+		}else{
+			tempNode = null;
+		}
 		
+		repaint();
 	}
 
 	@Override
@@ -456,24 +486,19 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 			}else{
 				selectedEdge = getSelectedEdge(mouse);
 			}
-		}else if(nodesMode.isSelected()){
+		}else if(machineMode.isSelected() || primaryMode.isSelected()){
 			if(getSelectedNode(mouse) == null){
-				String[] options = new String[]{"Machine", "Primary"};
-				int type = JOptionPane.showOptionDialog(null, "Choose type of the node", "", 1, 2, null, options, options[0]);
-				
 				System.out.println("Creating and adding a new node");
 
 				Node node;
-				if(type == 0){
+				if(machineMode.isSelected()){
 					//Create a node with a random name.
 					node = new Machine((int)(Math.random() * 100) + "", cap(mouse.getX() - 10, 70, getWidth() - 90), cap(mouse.getY() - 10, 120, getHeight() - 90));
-				}else if(type == 1){
+				}else {// primaryMode.isSelected == true
 					//Create a primary user with a random name.
 					node = new Primary((int)(Math.random() * 100) + "", cap(mouse.getX() - 10, 70, getWidth() - 90), cap(mouse.getY() - 10, 120, getHeight() - 90));
-				}else{
-					JOptionPane.showMessageDialog(null, "Not a correct node type.");
-					return;
 				}
+				
 				listOfNodes.add(node);
 				
 				System.out.println("Successfully created the node:\n" + node);
@@ -485,13 +510,13 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 					
 					listOfNodes.remove(toDeleteNode);
 					
-					for(Node rest : listOfNodes)
-						rest.adjacent.remove(toDeleteNode);
+					for(Edge e : toDeleteNode.adjacent)
+						e.to.adjacent.remove(new Edge(e.to, toDeleteNode));
 					
 					System.out.println("Successfully deleted the node:\n" + toDeleteNode);
 				}
 			}
-		}else if(edgesMode.isSelected()){
+		}else if(edgeMode.isSelected()){
 			fromNode = getSelectedNode(mouse);
 		}
 		
@@ -519,7 +544,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 			}else{
 				ui.attributesPanel.informationPanelCardLayout.show(ui.attributesPanel.informationPanel, Constants.nullAPCode);
 			}
-		}else if(edgesMode.isSelected()){
+		}else if(edgeMode.isSelected()){
 			toNode = getSelectedNode(mouse);
 			
 			if(fromNode != null && toNode != null && fromNode != toNode){

@@ -81,11 +81,11 @@ public class Edge {
 		double dx2 = -dy;
 		double dy2 = dx; 
 		
-		dx *= 60;
-		dy *= 60;
+		dx *= 40;
+		dy *= 40;
 		
-		dx2 *= 10;
-		dy2 *= 10;
+		dx2 *= 5;
+		dy2 *= 5;
 		
 		return new Line2D.Double(from.x + 10 + dx2 + dx, from.y + 10 + dy2 + dy, to.x+10+dx2 - dx , to.y + 10 + dy2 - dy);
 	}

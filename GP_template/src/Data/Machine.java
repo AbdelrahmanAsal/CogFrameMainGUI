@@ -26,7 +26,7 @@ public class Machine extends Node{
 			else g2d.setColor(Constants.HOP_COLOR);
 			
 			if(topologyOption.equalsIgnoreCase("Location-based")){
-				g2d.setStroke(new BasicStroke(1.0f,  BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{10.0f}, 0.0f));
+				g2d.setStroke(new BasicStroke(1.0f,  BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{5.0f}, 0.0f));
 				g2d.drawOval(x - 50, y - 50, 20 + 100, 20 + 100);
 			}
 		}else if(drawingOption.equals("NodalDelay")){

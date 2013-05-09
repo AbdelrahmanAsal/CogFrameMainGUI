@@ -42,7 +42,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 	public UI ui;
 	public DrawingPanel drawingPanel;
 	public Edge selectedEdge;
-	public Node selectedNode, tempNode;
+	public Node selectedNode, cursorNode;
 	public Node fromNode, toNode;
 	
 	public ArrayList<Node> listOfNodes;
@@ -69,22 +69,22 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 		colorMap = null;
 		listOfNodes = new ArrayList<Node>();
 		
-		Node node1 = new Machine("1", 200, 200);
-		Node node2 = new Machine("2", 300, 300);
-		Node node3 = new Primary("3", 400, 400);
-		node1.isSource = true;
-		node2.isDestination = true;
-		
-		node1.WLS_HW.add("08:11:96:8B:84:F4");
-		node1.WLS_Name.add("wlan0");
-		node2.WLS_HW.add("08:11:96:8B:84:F3");
-		node2.WLS_Name.add("wlan1");
-		node3.WLS_HW.add("08:11:96:8B:84:F2");
-		node3.WLS_Name.add("wlan1");
-		
-		listOfNodes.add(node1);
-		listOfNodes.add(node2);
-		listOfNodes.add(node3);
+//		Node node1 = new Machine("1", 200, 200);
+//		Node node2 = new Machine("2", 300, 300);
+//		Node node3 = new Primary("3", 400, 400);
+//		node1.isSource = true;
+//		node2.isDestination = true;
+//		
+//		node1.WLS_HW.add("08:11:96:8B:84:F4");
+//		node1.WLS_Name.add("wlan0");
+//		node2.WLS_HW.add("08:11:96:8B:84:F3");
+//		node2.WLS_Name.add("wlan1");
+//		node3.WLS_HW.add("08:11:96:8B:84:F2");
+//		node3.WLS_Name.add("wlan1");
+//		
+//		listOfNodes.add(node1);
+//		listOfNodes.add(node2);
+//		listOfNodes.add(node3);
 		
 		addMouseListener(this);
 		addMouseMotionListener(this);
@@ -344,12 +344,15 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
         g2d.drawString("Source", 45, height - Constants.MARGIN);
         g2d.drawString("Destination", 175, height - Constants.MARGIN);
         g2d.drawString("Selected", 315, height - Constants.MARGIN);
+        g2d.drawString("Primary", 440, height - Constants.MARGIN);
         g2d.setColor(Constants.SOURCE_COLOR);
         g2d.fillRect(15, height - 35, 25, 20);
         g2d.setColor(Constants.DEST_COLOR);
         g2d.fillRect(145, height - 35, 25, 20);
         g2d.setColor(Constants.SELECTED_COLOR);
         g2d.fillRect(285, height - 35, 25, 20);
+        g2d.setColor(Constants.PRIMARY_COLOR);
+        g2d.fillRect(410, height - 35, 25, 20);
 
         g2d.setStroke(new BasicStroke(1));
 		
@@ -371,8 +374,8 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 		
 		
 		//if an insertion mode is activeted. Draw temp node for the user.
-		if(tempNode != null)
-			tempNode.draw(g2d, drawingPanel, drawingOption, true);
+		if(cursorNode != null)
+			cursorNode.draw(g2d, drawingPanel, drawingOption, true);
 		
 		// Draw simulation of the packets.
 		if(!drawingOption.equals("Init")){
@@ -436,19 +439,19 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 	public void mouseMoved(MouseEvent mouse) {
 		//if an insertion mode is activeted. Draw temp node for the user.
 		if(machineMode.isSelected()){
-			if(!(tempNode instanceof Machine))
-				tempNode = new Machine((int)(Math.random() * 100) + "", cap(mouse.getX() - 10, 70, getWidth() - 90), cap(mouse.getY() - 10, 120, getHeight() - 90));
+			if(!(cursorNode instanceof Machine))
+				cursorNode = new Machine((int)(Math.random() * 100) + "", cap(mouse.getX() - 10, 70, getWidth() - 90), cap(mouse.getY() - 10, 120, getHeight() - 90));
 			
-			tempNode.x = cap(mouse.getX() - 10, 70, getWidth() - 90);
-			tempNode.y = cap(mouse.getY() - 10, 120, getHeight() - 90);
+			cursorNode.x = cap(mouse.getX() - 10, 70, getWidth() - 90);
+			cursorNode.y = cap(mouse.getY() - 10, 120, getHeight() - 90);
 		}else if(primaryMode.isSelected()){
-			if(!(tempNode instanceof Primary))
-				tempNode = new Primary((int)(Math.random() * 100) + "", cap(mouse.getX() - 10, 70, getWidth() - 90), cap(mouse.getY() - 10, 120, getHeight() - 90));
+			if(!(cursorNode instanceof Primary))
+				cursorNode = new Primary((int)(Math.random() * 100) + "", cap(mouse.getX() - 10, 70, getWidth() - 90), cap(mouse.getY() - 10, 120, getHeight() - 90));
 			
-			tempNode.x = cap(mouse.getX() - 10, 70, getWidth() - 90);
-			tempNode.y = cap(mouse.getY() - 10, 120, getHeight() - 90);
+			cursorNode.x = cap(mouse.getX() - 10, 70, getWidth() - 90);
+			cursorNode.y = cap(mouse.getY() - 10, 120, getHeight() - 90);
 		}else{
-			tempNode = null;
+			cursorNode = null;
 		}
 		
 		repaint();

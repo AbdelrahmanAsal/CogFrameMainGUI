@@ -1,33 +1,32 @@
 package AttributePanel;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.TreeMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.event.TableModelEvent;
 
 import All.Constants;
 import All.DrawingPanel;
-import Data.Machine;
+import All.DynamicClassLoader;
 import Data.Primary;
-import Distributions.ExponentialDistribution;
+//import Distributions.ExponentialDistribution;
 import Distributions.ProbabilityDistribution;
-import Distributions.UniformDistribution;
+//import Distributions.UniformDistribution;
 
 
 public class PrimaryAttributePanel extends NodeAttributesPanel{
@@ -40,24 +39,26 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 	public Primary selectedNode;
 	public JPanel distPanel;
 	public DrawingPanel drawingPanel;
+	public TreeMap<String, Constructor<ProbabilityDistribution>> distConstructorMap;
+	
 	public PrimaryAttributePanel(DrawingPanel dp){
 		this.drawingPanel = dp;
 		setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Primary Attributes Panel"));
-
+		distConstructorMap = new TreeMap<String, Constructor<ProbabilityDistribution>>();
 		activeDistLabel = new JLabel("Active Distribution");
-		activeDist = new JComboBox(new String[]{"Uniform", "Exponential"});
+		String[] avalDistributions = getAvalDistributions();
+		activeDist = new JComboBox(avalDistributions);
 		activeDist.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				String s = (String) e.getItem();
+				System.out.println(s);
 				if(e.getStateChange() == e.SELECTED){
-					if(s.equals("Uniform")){
-						tempActiveDist = new UniformDistribution();
-					}else if(s.equals("Exponential")){
-						tempActiveDist = new ExponentialDistribution();
-					}else{
-						System.out.println("Can't found distribution handler");
-					}
+					try {
+						tempActiveDist = distConstructorMap.get((String)activeDist.getSelectedItem()).newInstance();
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					} 
 				}
 			}
 		});
@@ -65,24 +66,28 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 		editActiveDist.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				if(tempActiveDist == null)
+					try {
+						tempActiveDist = distConstructorMap.get((String)activeDist.getSelectedItem()).newInstance();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} 
 				tempActiveDist.showPanel();
 			}
 		});
 
 		inactiveDistLabel = new JLabel("Inactive Distribution");
-		inactiveDist = new JComboBox(new String[]{"Uniform", "Exponential"});
+		inactiveDist = new JComboBox(avalDistributions);
 		inactiveDist.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				String s = (String) e.getItem();
 				if(e.getStateChange() == e.SELECTED){
-					if(s.equals("Uniform")){
-						tempInactiveDist = new UniformDistribution();
-					}else if(s.equals("Exponential")){
-						tempInactiveDist = new ExponentialDistribution();
-					}else{
-						System.out.println("Can't found distribution handler");
-					}
+					try {
+						tempInactiveDist = distConstructorMap.get((String)inactiveDist.getSelectedItem()).newInstance();
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					} 
 				}
 			}
 		});
@@ -90,6 +95,13 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 		editInactiveDist.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				if(tempInactiveDist == null){
+					try {
+						tempInactiveDist = distConstructorMap.get((String)inactiveDist.getSelectedItem()).newInstance();
+					} catch (Exception e) {
+						e.printStackTrace();
+					} 
+				}
 				tempInactiveDist.showPanel();
 			}
 		});
@@ -218,6 +230,33 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 		);
 	}
 
+	private String[] getAvalDistributions() {
+		String currDir = System.getProperty("user.dir");
+		System.out.println(currDir);
+		File[] files = new File(currDir).listFiles();
+		DynamicClassLoader classLoader = new DynamicClassLoader();
+	    for (File file : files) {
+	    	if(file.isDirectory())
+	    		continue;
+	    	if(!file.getName().endsWith(".class"))
+	    		continue;
+	    	String fileName = file.getName().substring(0,file.getName().indexOf('.'));
+            Class<ProbabilityDistribution> myClass = classLoader.Load(currDir+"\\"+file.getName(), "Distributions."+fileName);
+            if(myClass != null && !fileName.contains("$")) {
+            	try {
+					distConstructorMap.put(fileName, myClass.getConstructor());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+            }
+	    }
+	    String[] arr = new String[distConstructorMap.size()];
+	    int index = 0;
+	    for(String s: distConstructorMap.keySet()) 
+	    	arr[index++] = s;
+		return arr;
+	}
+
 	public void setInfo(Primary node){
 		selectedNode = node;
 
@@ -240,9 +279,15 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 
 		mobilityOption.setSelectedItem(node.mobilityOption);
 		topologyOption.setSelectedItem(node.topologyOption);
-
-		activeDist.setSelectedItem(((Primary)node).activeDist.type());
-		inactiveDist.setSelectedItem(((Primary)node).inactiveDist.type());
+		
+		if ((node).activeDist != null) {
+			activeDist.setSelectedItem((node).activeDist.type()+"Distribution");
+			System.out.println("TTTT");
+		}
+		if ((node).inactiveDist != null) {
+			System.out.println("T@");
+			inactiveDist.setSelectedItem((node).inactiveDist.type()+"Distribution");
+		}
 
 		//Delayed Setting. NEED TO BE CLONED.
 		tempActiveDist = (node).activeDist;

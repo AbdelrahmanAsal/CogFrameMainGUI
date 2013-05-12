@@ -38,6 +38,8 @@ public class UI extends JFrame  {
 	DrawingPanel drawingPanel;
 	AttributesPanel attributesPanel;
 	JSplitPane splitPane;
+	public boolean nodeSelection;
+	public ArrayList<Node> nodeSubset;
 
 	//TO BE DELETED !!!!!!!.
 	MobilityOption mobilityOptionChosen = MobilityOption.STATIC; 
@@ -50,6 +52,7 @@ public class UI extends JFrame  {
 		this.self = this;
 		setLayout(new BorderLayout());
 		setTitle("CogFrame");
+		nodeSubset = new ArrayList<Node>();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		try {
 			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
@@ -326,43 +329,13 @@ public class UI extends JFrame  {
 			}
 		});
 		
-		JMenuItem editGetInformation= new JMenuItem("Get Information");
+		JMenu editGetInformation= new JMenu("Get Information");
 		editGetInformation.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				for(Node node : drawingPanel.listOfNodes){
-					Socket echoSocket = null;
-					PrintWriter out = null;
-					BufferedReader in = null;
-
-					try {
-						echoSocket = new Socket(node.ETH_IP, 7);
-						out = new PrintWriter(echoSocket.getOutputStream(), true);
-						in = new BufferedReader(new InputStreamReader(
-								echoSocket.getInputStream()));
-
-						System.out.println("Getting information of the node");
-						String command = "GET Information\n";
-						out.println(command);
-
-						node.name = in.readLine();
-						node.ETH_HW = in.readLine();
-						int numberOfWireless = Integer.parseInt(in.readLine());
-						node.WLS_HW.clear();
-						node.WLS_Name.clear();
-						for(int i = 0; i < numberOfWireless; i++){
-							node.WLS_Name.add(in.readLine());
-							node.WLS_HW.add(in.readLine());
-						}
-						Collections.reverse(node.WLS_HW);
-						Collections.reverse(node.WLS_Name);
-						
-						out.close();
-						in.close();
-						echoSocket.close();
-					}catch(Exception ex){
-						ex.printStackTrace();
-					}
+					CogAgent cogAgent = new CogAgent(node);
+					cogAgent.getInformation();
 				}
 			}
 
@@ -375,41 +348,60 @@ public class UI extends JFrame  {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {}
 		});
+		
+		JMenuItem scanIPOption = new JMenuItem("Discover the network automatically");
+		scanIPOption.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				IPScanner i = new IPScanner();
+				String[] avalIP = i.getReachableIP();
+				for(String ip: avalIP) {
+					CogAgent cogAgent = new CogAgent(ip, drawingPanel.listOfNodes);
+					cogAgent.getInformation();
+				}
+			}
+
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+		});
+		
+		JMenuItem scanIPOption2 = new JMenuItem("Discover the network using IPs");
+		scanIPOption.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				for(Node node : drawingPanel.listOfNodes){
+					CogAgent cogAgent = new CogAgent(node);
+					cogAgent.getInformation();
+				}
+			}
+
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+		});
+		
+		editGetInformation.add(scanIPOption);
+		editGetInformation.add(scanIPOption2);
+		
 
 		JMenuItem editGetStatistics= new JMenuItem("Get Statistics");
 		editGetStatistics.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				for(Node node : drawingPanel.listOfNodes){
-					Socket echoSocket = null;
-					PrintWriter out = null;
-					BufferedReader in = null;
-
-					try {
-						echoSocket = new Socket(node.ETH_IP, 7);
-						out = new PrintWriter(echoSocket.getOutputStream(), true);
-						in = new BufferedReader(new InputStreamReader(
-								echoSocket.getInputStream()));
-						PrintWriter fileWriter = new PrintWriter("Statistics_" + node.name + ".txt");
-
-						System.out.println("Getting statistics of the node");
-						String command = "GET Statistics";
-						out.println(command);
-
-						while(true){
-							String line = in.readLine();
-							if(line == null)break;
-
-							fileWriter.println(line);
-						}
-
-						fileWriter.close();
-						out.close();
-						in.close();
-						echoSocket.close();
-					}catch(Exception ex){
-						ex.printStackTrace();
-					}
+					CogAgent cogAgent = new CogAgent(node);
+					cogAgent.getStatistics();
 				}
 			}
 
@@ -423,41 +415,13 @@ public class UI extends JFrame  {
 			public void mouseClicked(MouseEvent arg0) {}
 		});
 
-		JMenuItem editPostConfiguration = new JMenuItem("Post Configuration");
+		JMenuItem editPostConfiguration = new JMenuItem("Post Configuration ");
 		editPostConfiguration .addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				for(Node node : drawingPanel.listOfNodes){
-					Socket echoSocket = null;
-					PrintWriter out = null;
-					BufferedReader in = null;
-
-					try {
-						echoSocket = new Socket(node.ETH_IP, 7);
-						out = new PrintWriter(echoSocket.getOutputStream(), true);
-						in = new BufferedReader(new InputStreamReader(
-								echoSocket.getInputStream()));
-						BufferedReader fileReader = new BufferedReader(new FileReader("Configuration_" + node.name + ".click"));
-
-						System.out.println("Posting Configuration of the node");
-						String command = "Post Configuration";
-						out.println(command);
-
-						while(true){
-							String line = fileReader.readLine();
-							if(line == null)break;
-
-							out.println(line);
-						}
-						out.println();
-
-						fileReader.close();
-						out.close();
-						in.close();
-						echoSocket.close();
-					}catch(Exception ex){
-						ex.printStackTrace();
-					}
+					CogAgent cogAgent = new CogAgent(node);
+					cogAgent.postConfiguration();
 				}
 			}
 
@@ -476,36 +440,8 @@ public class UI extends JFrame  {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				for(Node node : drawingPanel.listOfNodes){
-					Socket echoSocket = null;
-					PrintWriter out = null;
-					BufferedReader in = null;
-
-					try {
-						echoSocket = new Socket(node.ETH_IP, 7);
-						out = new PrintWriter(echoSocket.getOutputStream(), true);
-						in = new BufferedReader(new InputStreamReader(
-								echoSocket.getInputStream()));
-						BufferedReader fileReader = new BufferedReader(new FileReader("Module_" + node.name + ".txt"));
-
-						System.out.println("Posting Module of the node");
-						String command = "Post Module";
-						out.println(command);
-
-						while(true){
-							String line = fileReader.readLine();
-							if(line == null)break;
-
-							out.println(line);
-						}
-						out.println();
-
-						fileReader.close();
-						out.close();
-						in.close();
-						echoSocket.close();
-					}catch(Exception ex){
-						ex.printStackTrace();
-					}
+					CogAgent cogAgent = new CogAgent(node);
+					cogAgent.postModule();
 				}
 			}
 
@@ -523,28 +459,30 @@ public class UI extends JFrame  {
 		editStartExperiment.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
-				for(Node node : drawingPanel.listOfNodes){
-					Socket echoSocket = null;
-					PrintWriter out = null;
-					BufferedReader in = null;
-
-					try {
-						echoSocket = new Socket(node.ETH_IP, 7);
-						out = new PrintWriter(echoSocket.getOutputStream(), true);
-						in = new BufferedReader(new InputStreamReader(
-								echoSocket.getInputStream()));
-
-						System.out.println("Start Experiment");
-						String command = "Start";
-						out.println(command);
-
-						out.close();
-						in.close();
-						echoSocket.close();
-					}catch(Exception ex){
-						ex.printStackTrace();
-					}
+				nodeSelection = false;
+				for(Node node : nodeSubset){
+					CogAgent cogAgent = new CogAgent(node);
+					cogAgent.startExperiment();
 				}
+			}
+
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+		});
+		
+		JMenuItem chooseNodes = new JMenuItem("Choose Nodes");
+		chooseNodes.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				nodeSelection = true;
+				drawingPanel.selectedNode = null;
+				nodeSubset = new ArrayList<Node>();
 			}
 
 			@Override
@@ -569,6 +507,7 @@ public class UI extends JFrame  {
 		editOption.add(editPostConfiguration);
 		editOption.add(editPostModule);
 		editOption.add(editStartExperiment);
+		editOption.add(chooseNodes);
 
 		//Mobility Options.
 		JMenu mobilityOption = new JMenu("Mobility Option");
@@ -654,4 +593,5 @@ public class UI extends JFrame  {
 
 		setJMenuBar(menuBar);
 	}
+	
 }

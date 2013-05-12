@@ -2,14 +2,10 @@ package Data;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
-
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 
 import All.Constants;
 import All.DrawingPanel;
 import Distributions.ProbabilityDistribution;
-import Distributions.UniformDistribution;
 
 
 public class Primary extends Node{
@@ -17,8 +13,8 @@ public class Primary extends Node{
 	public Primary(String name, int x, int y) {
 		super(name, x, y);
 		
-		activeDist = new UniformDistribution();
-		inactiveDist = new UniformDistribution();
+//		activeDist = new UniformDistribution();
+//		inactiveDist = new UniformDistribution();
 	}
 	
 	@Override

@@ -483,6 +483,11 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 		currentSelectedNode = getSelectedNode(mouse);
 		if(selectionMode.isSelected()){
 			selectedNode = getSelectedNode(mouse);
+			if(ui.nodeSelection) {
+				ui.nodeSubset.add(selectedNode);
+				System.out.println(selectedNode.name);
+				return;
+			}
 			if(selectedNode != null){
 				offX = mouse.getX() - selectedNode.x;
 				offY = mouse.getY() - selectedNode.y;

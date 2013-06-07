@@ -158,6 +158,17 @@ public class CogAgent {
 		}
 	}
 	
+	public void stopExperiment() {
+		try {
+			System.out.println("Stop Experiment");
+			String command = "Stop";
+			out.println(command);
+			close();
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
+	
 	private void close() throws IOException {
 		out.close();
 		in.close();

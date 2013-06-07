@@ -382,7 +382,8 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 			long currentTime = ui.attributesPanel.visualizationPanel.currentSimulationTime;
 			System.out.println("Current Simulation time: " + currentTime);
 			for(Interval interval : sc.timeline){
-				if(interval.fromTime <= currentTime + sc.minTimestamp && currentTime + sc.minTimestamp <= interval.toTime){
+				String intervalMessage = interval.packetID == -1 ? interval.message : "WirelessPacket";
+				if(interval.fromTime <= currentTime + sc.minTimestamp && currentTime + sc.minTimestamp <= interval.toTime && canShow(intervalMessage)){
 					int fromX = interval.fromNode.x;
 					int fromY = interval.fromNode.y;
 					
@@ -625,10 +626,10 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 			}
 		}
 		for (Entry<String, Color> e : colorMap.entrySet()) {
-			ui.attributesPanel.visualizationPanel.packetsColorModel.current.add(new PacketsColorRowEntry(e.getKey(), e.getValue()));
+			ui.attributesPanel.visualizationPanel.packetsColorModel.current.add(new PacketsColorRowEntry(e.getKey(), e.getValue(), true));
 			ui.attributesPanel.visualizationPanel.packetsColorTable.repaint();
 		}
-		ui.attributesPanel.visualizationPanel.packetsColorModel.current.add(new PacketsColorRowEntry("WirelessPacket", Constants.SELECTED_COLOR));
+		ui.attributesPanel.visualizationPanel.packetsColorModel.current.add(new PacketsColorRowEntry("WirelessPacket", Constants.SELECTED_COLOR, true));
 	}
 
 	@Override
@@ -656,7 +657,14 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 		
 	}
 
-	
+	private boolean canShow(String packetName) {
+		ArrayList<PacketsColorRowEntry> rows = ui.attributesPanel.visualizationPanel.packetsColorModel.current;
+		for(PacketsColorRowEntry r: rows) {
+			if(r.type.equals(packetName))
+				return r.show;
+		}
+		return false;
+	}
 	
 	
 }

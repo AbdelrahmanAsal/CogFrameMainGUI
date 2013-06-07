@@ -7,14 +7,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 import javax.swing.JFrame;
@@ -28,6 +24,7 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import AttributePanel.AttributesPanel;
+import AttributePanel.TerminationConditionPanel;
 import Data.Edge;
 import Data.Machine;
 import Data.Node;
@@ -40,6 +37,8 @@ public class UI extends JFrame  {
 	JSplitPane splitPane;
 	public boolean nodeSelection;
 	public ArrayList<Node> nodeSubset;
+	public int terminationOption;
+	public int terminationValue;
 
 	//TO BE DELETED !!!!!!!.
 	MobilityOption mobilityOptionChosen = MobilityOption.STATIC; 
@@ -460,10 +459,14 @@ public class UI extends JFrame  {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				nodeSelection = false;
+				EndExperiemntHandler endHandler = new EndExperiemntHandler(terminationValue);
 				for(Node node : nodeSubset){
 					CogAgent cogAgent = new CogAgent(node);
+					endHandler.nodeList.add(node);
 					cogAgent.startExperiment();
 				}
+				if(terminationOption == 0) 
+					endHandler.start();
 			}
 
 			@Override
@@ -573,7 +576,34 @@ public class UI extends JFrame  {
 			public void mouseClicked(MouseEvent arg0) {
 			}
 		});
+		
+		JMenuItem terminationCondition = new JMenuItem("Termination Condition");
+		terminationCondition.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				TerminationConditionPanel terminationPanel = new TerminationConditionPanel(self);
+				terminationPanel.setVisible(true);
+			}
+
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+			}
+		});
+		
 		settingsOption.add(ccc);
+		settingsOption.add(terminationCondition);
 		
 		JMenu helpOption = new JMenu("Help");
 		helpOption.setMnemonic(KeyEvent.VK_H);
@@ -594,4 +624,25 @@ public class UI extends JFrame  {
 		setJMenuBar(menuBar);
 	}
 	
+	class EndExperiemntHandler extends Thread {
+		
+		long value;
+		public ArrayList<Node> nodeList;
+		
+		public EndExperiemntHandler(int val) {
+			value = val;
+		}
+		
+		public void run() {
+			try {
+				sleep(value);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			for(Node node: nodeList) {
+				CogAgent agent = new CogAgent(node);
+				agent.stopExperiment();
+			}
+		}
+	}
 }

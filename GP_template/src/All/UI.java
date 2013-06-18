@@ -37,15 +37,15 @@ public class UI extends JFrame  {
 	JSplitPane splitPane;
 	public boolean nodeSelection;
 	public ArrayList<Node> nodeSubset;
-	public int terminationOption;
+	public String terminationOption;
 	public int terminationValue;
+	public String ccc = "Ethernet";
 
 	//TO BE DELETED !!!!!!!.
 	MobilityOption mobilityOptionChosen = MobilityOption.STATIC; 
 	TopologyOption topologyOptionChosen = TopologyOption.STATIC;
 	PrimaryOption primaryOptionChosen = PrimaryOption.STATIC;
 	PolicyOption PrivacyOptionChosen = PolicyOption.C1_6_11;
-	String ccc = "Ethernet";
 	
 	public UI(){
 		this.self = this;
@@ -184,11 +184,12 @@ public class UI extends JFrame  {
 						String isSource = r.next();
 						String isDest = r.next();
 						if (isSource.equals("true")){
-							drawingPanel.source = node;
+//							drawingPanel.source = node;
 							node.isSource = true;
+							node.isDestination = false;
 						}
 						if (isDest.equals("true")){
-							drawingPanel.destination = node;
+//							drawingPanel.destination = node;
 							node.isDestination = true;
 						}
 						drawingPanel.listOfNodes.add(node);
@@ -465,7 +466,7 @@ public class UI extends JFrame  {
 					endHandler.nodeList.add(node);
 					cogAgent.startExperiment();
 				}
-				if(terminationOption == 0) 
+				if (terminationOption.equalsIgnoreCase("time")) 
 					endHandler.start();
 			}
 

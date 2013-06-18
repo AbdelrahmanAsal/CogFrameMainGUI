@@ -28,6 +28,8 @@ public class NodeAttributesPanel extends JPanel{
 	public JButton setData;
 	JTable WLS_HW_Table;
 	JScrollPane ps;
+	
+	
 	public NodeAttributesPanel(){
 		setLayout(new FlowLayout());
 		

@@ -5,10 +5,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import All.UI;
 import Data.Machine;
 import Data.Node;
 
@@ -39,6 +41,7 @@ public class NodeMaker extends TemplateMaker {
 	static final String MODULE_SUFFIX = "#module_end";
 	static final String COMMENT_SIGN = "//";
 	static final String BROADCAST_HW = "ff:ff:ff:ff:ff:ff";
+	UI _ui;
 
 	private enum F2addressType {
 		A, B
@@ -50,8 +53,8 @@ public class NodeMaker extends TemplateMaker {
 	private String getF2Address(String mac, F2addressType type) {
 		// ************************************ for testing only to handle N/A
 //		mac = "00:27:10:a0:f6:b4"; // mac = BROADCAST_HW;
-
 		String sp[] = mac.split(":");
+		
 		String ret = "";
 		if (type.equals(F2addressType.A)) {
 			ret = "0/" + sp[0] + sp[1] + " 2/" + sp[2] + sp[3] + " 4/" + sp[4]
@@ -63,7 +66,7 @@ public class NodeMaker extends TemplateMaker {
 		return ret;
 	}
 
-	private void fillMap(Node src, Node dest, Node thisNode, Node[] hops) {
+	private void fillMap(Node dest, Node thisNode, Node[] hops) {
 		// BROADCAST
 		templateValues.put("BROADCAST_F1", BROADCAST_HW);
 		templateValues.put("BROADCAST_F2_A",
@@ -71,22 +74,6 @@ public class NodeMaker extends TemplateMaker {
 		templateValues.put("BROADCAST_F2_B",
 				getF2Address(BROADCAST_HW, F2addressType.B));
 
-		// SRC
-		templateValues.put("SRC_IP", src.ETH_IP);
-		templateValues.put("SRC_ETH_HW_F1", src.ETH_HW);
-		templateValues.put("SRC_ETH_HW_F2_A",
-				getF2Address(src.ETH_HW, F2addressType.A));
-		templateValues.put("SRC_ETH_HW_F2_B",
-				getF2Address(src.ETH_HW, F2addressType.B));
-		// 1-indexed
-		for (int id = 1; id <= src.WLS_HW.size(); ++id) {
-			templateValues.put("SRC_WLS_HW_" + id + "_F1",
-					src.WLS_HW.get(id - 1));
-			templateValues.put("SRC_WLS_HW_" + id + "_F2_A",
-					getF2Address(src.WLS_HW.get(id - 1), F2addressType.A));
-			templateValues.put("SRC_WLS_HW_" + id + "_F2_B",
-					getF2Address(src.WLS_HW.get(id - 1), F2addressType.B));
-		}
 		// DEST
 		templateValues.put("DEST_IP", dest.ETH_IP);
 		templateValues.put("DEST_ETH_HW_F1", dest.ETH_HW);
@@ -145,13 +132,19 @@ public class NodeMaker extends TemplateMaker {
 			templateValues.put("THIS_WLS_HW_" + id + "_F2_B",
 					getF2Address(thisNode.WLS_HW.get(id - 1), F2addressType.B));
 		}
-
-		// TODO: PU_ID
+		
+		// Exp End Conditions
+		templateValues.put("EXP_END_TYPE", _ui.terminationOption + "");
+		templateValues.put("EXP_END_VAL", _ui.terminationValue + "");
+		
+		// FLOW_ID - Only in Source Template
+		templateValues.put("FLOW_ID", thisNode.flowID + "");
 	}
 
 	// TODO: err handling for files that are not in the required format.
-	public void parseTemplateFile(String templateFilePath, Node src, Node dest,
+	public void parseTemplateFile(UI ui, String templateFilePath, Node dest,
 			Node thisNode, Node[] hops) throws Exception {
+		_ui = ui;
 		BufferedReader bfd = new BufferedReader(
 				new FileReader(templateFilePath));
 		int dotIndex = templateFilePath.lastIndexOf('.');
@@ -236,8 +229,10 @@ public class NodeMaker extends TemplateMaker {
 							for (int i = 0; i < newParams.size() - 1; ++i) {
 								out.write(newParams.get(i).trim() + ", ");
 							}
-							out.write(newParams.get(newParams.size() - 1)
-									+ ")\n");
+							if(newParams.size() > 0) {
+								out.write(newParams.get(newParams.size() - 1)
+										+ ")\n");
+							}
 
 							ArrayList<String> mOutputsLinesL = new ArrayList<String>();
 							s = bfd.readLine();
@@ -316,7 +311,7 @@ public class NodeMaker extends TemplateMaker {
 		bfd.close();
 		templateValues = new TreeMap<String, String>();
 		// Filling templateValues Map
-		fillMap(src, dest, thisNode, hops);
+		fillMap(dest, thisNode, hops);
 		// Another Pass for replacement with values and formatting.
 		fillFormat();
 		replaceInTemplate(outputFilePath, thisNode);
@@ -356,7 +351,7 @@ public class NodeMaker extends TemplateMaker {
 
 		// Method to call.
 		String templateFilePath = "/media/D/ClickWork/launch_main.click";
-		parseTemplateFile(templateFilePath, src, dest, thisNode, hops);
+//		parseTemplateFile(templateFilePath, src, dest, thisNode, hops);
 	}
 
 	public static void main(String[] args) throws Exception {

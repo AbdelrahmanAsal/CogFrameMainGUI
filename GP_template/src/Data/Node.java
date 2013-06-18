@@ -25,23 +25,44 @@ public abstract class Node{
 	public int totalSwitches;
 	public static int maxTotalSwitches = 0;
 	public TreeMap<Integer, PacketInfo> inPackets, outPackets;
+	
+	public Node destination; // Destination node corresponding to the Source node in the flow, NULL if destination node
+	public int flowID; // only needed for source nodes
+	
+	public void setFlowID(int flowID) {
+		if(isSource) {
+			this.flowID = flowID;
+		}
+	}
+	
+	public void setSource(boolean isSource) {
+		this.isSource = isSource;
+		this.isDestination = false;
+	}
+
+	public void setDestination(boolean isDestination) {
+		this.isDestination = isDestination;
+		this.isSource = false;
+	}
+
 	public Node(String name, int x, int y){
 		this.x = x;
 		this.y = y;
 		isSource = isDestination = false;
+		destination = null;
 		
 		this.name = name;
 		
 		this.ETH_IP = "10.0.0.21";
 		this.ETH_HW = " ";
 		this.WLS_HW = new ArrayList<String>();
-		WLS_HW.add(" ");
+//		WLS_HW.add(" ");
 //		WLS_HW.add("11:12:13:14:15:19");
 		this.WLS_IP = new ArrayList<String>();
-		WLS_IP.add(" ");
+//		WLS_IP.add(" ");
 //		WLS_IP.add("192.168.1.2");
 		this.WLS_Name = new ArrayList<String>();
-		WLS_Name.add(" ");
+//		WLS_Name.add(" ");
 		
 		this.adjacent = new ArrayList<Edge>();
 		this.channels = new ArrayList<Channel>();

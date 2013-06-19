@@ -34,8 +34,12 @@ public class TerminationConditionPanel extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				int terminationOption = terminationConditionChoices.getSelectedIndex();
 				int val = new Integer(value.getText());
-				System.out.println(terminationOption+" "+val);
-				_ui.terminationOption = terminationOption;
+				System.out.println(terminationOption + " " + val);
+				if(terminationOption == 0) {
+					_ui.terminationOption = "time";
+				} else {
+					_ui.terminationOption = "numPackets";
+				}
 				_ui.terminationValue = val;
 			}
 		});

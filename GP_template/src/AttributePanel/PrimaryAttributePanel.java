@@ -1,5 +1,4 @@
 package AttributePanel;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -8,26 +7,24 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.TreeMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.event.TableModelEvent;
 
-import All.CogAgent;
 import All.Constants;
 import All.DrawingPanel;
 import All.DynamicClassLoader;
-import Data.Edge;
-import Data.Node;
 import Data.Primary;
+//import Distributions.ExponentialDistribution;
 import Distributions.ProbabilityDistribution;
 //import Distributions.UniformDistribution;
 
@@ -43,9 +40,6 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 	public JPanel distPanel;
 	public DrawingPanel drawingPanel;
 	public TreeMap<String, Constructor<ProbabilityDistribution>> distConstructorMap;
-	public JCheckBox virtualCheckBox;
-	public JButton onOffButton;
-	public JComboBox channelList;
 	
 	public PrimaryAttributePanel(DrawingPanel dp){
 		this.drawingPanel = dp;
@@ -143,48 +137,8 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 				}
 			}
 		});
-		
-		String[] channelsList = {"1", "6", "11"};
-		channelList = new JComboBox(channelsList);
+
 		JPanel all = new JPanel();
-		virtualCheckBox = new JCheckBox("Virtual");
-		onOffButton = new JButton("Off");
-		onOffButton.setBackground(Color.red);
-		onOffButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				String text = onOffButton.getText();
-				String selectedChannel = (String) channelList.getSelectedItem();
-				for(Edge edge: selectedNode.adjacent) {
-					Node node = edge.to;
-					CogAgent agent = new CogAgent(node);
-					if(text.equals("On")) {
-						agent.setPrimaryUser(selectedChannel, 0);
-						onOffButton.setText("Off");
-						onOffButton.setBackground(Color.red);
-					} else {
-						agent.setPrimaryUser(selectedChannel, 1);
-						onOffButton.setText("On");
-						onOffButton.setBackground(Color.green);
-					}
-				}
-			}
-		});
-		
-		onOffButton.setEnabled(false);
-		virtualCheckBox.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if(virtualCheckBox.isSelected()) {
-					System.out.println("Checked");
-					onOffButton.setEnabled(true);
-				} else {
-					onOffButton.setEnabled(false);
-				}
-			}
-		});
 
 		GroupLayout layout = new GroupLayout(all);
 		layout.setAutoCreateGaps(true);
@@ -228,10 +182,7 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 			      	   			.addComponent(inactiveDist)
 			      	   			.addComponent(editInactiveDist))
 			      	   	   .addComponent(selectedChannel)
-			      	   	   .addComponent(setData)
-			      	   	   .addComponent(virtualCheckBox)
-			      	   	   .addComponent(onOffButton)
-			      	   	   .addComponent(channelList))
+			      	   	   .addComponent(setData))
 		   			  )
 		);
 
@@ -276,9 +227,6 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 		    	   .addComponent(selectedChannelLabel)
 		    	   .addComponent(selectedChannel))
 		       .addComponent(setData)
-		       .addComponent(virtualCheckBox)
-		       .addComponent(onOffButton)
-		       .addComponent(channelList)
 		);
 	}
 

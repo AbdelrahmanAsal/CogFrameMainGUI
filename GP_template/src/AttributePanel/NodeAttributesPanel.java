@@ -35,7 +35,7 @@ public class NodeAttributesPanel extends JPanel{
 		
 		nameLabel = new JLabel("Name:");
 		name = new JTextArea("");
-		name.setEnabled(false);
+//		name.setEnabled(false);
 		name.addKeyListener(new KeyListener() {
 		    public void keyPressed(KeyEvent e) {
 		    	if(e.getKeyCode() == KeyEvent.VK_TAB) {

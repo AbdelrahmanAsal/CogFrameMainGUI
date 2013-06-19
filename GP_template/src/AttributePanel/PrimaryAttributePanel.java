@@ -46,7 +46,7 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 	public JCheckBox virtualCheckBox;
 	public JButton onOffButton;
 	public JComboBox channelList;
-	
+
 	public PrimaryAttributePanel(DrawingPanel dp){
 		this.drawingPanel = dp;
 		setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Primary Attributes Panel"));
@@ -136,14 +136,14 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 
 					selectedNode.activeDist = tempActiveDist;
 					selectedNode.inactiveDist = tempInactiveDist;
-					
+
 					drawingPanel.repaint();
 
 					System.out.println("Successfully updated the node:\n" + selectedNode);
 				}
 			}
 		});
-		
+
 		String[] channelsList = {"1", "6", "11"};
 		channelList = new JComboBox(channelsList);
 		JPanel all = new JPanel();
@@ -151,7 +151,7 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 		onOffButton = new JButton("Off");
 		onOffButton.setBackground(Color.red);
 		onOffButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String text = onOffButton.getText();
@@ -171,10 +171,10 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 				}
 			}
 		});
-		
+
 		onOffButton.setEnabled(false);
 		virtualCheckBox.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(virtualCheckBox.isSelected()) {
@@ -331,7 +331,7 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 
 		mobilityOption.setSelectedItem(node.mobilityOption);
 		topologyOption.setSelectedItem(node.topologyOption);
-		
+
 		if ((node).activeDist != null) {
 			activeDist.setSelectedItem((node).activeDist.type()+"Distribution");
 			System.out.println("TTTT");
@@ -346,4 +346,3 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 		tempInactiveDist = (node).inactiveDist;
 	}
 }
-

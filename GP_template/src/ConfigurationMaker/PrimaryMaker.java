@@ -14,19 +14,19 @@ import Data.Primary;
 
 public class PrimaryMaker extends TemplateMaker {
 	public void parseTemplateFile(String templateFilePath, Primary thisNode) throws Exception {
-		System.out.println("ENETRED PU TEMP");
 		BufferedReader bfd = new BufferedReader(
 				new FileReader(templateFilePath));
 		int dotIndex = templateFilePath.lastIndexOf('.');
 //		String outputFilePath = templateFilePath.substring(0, dotIndex)
 //				+ "_intermediate" + templateFilePath.substring(dotIndex);
-		String outputFilePath = "Configuration_" + thisNode.name + "_intermediate" + templateFilePath.substring(dotIndex);
+		String outputFilePath = "Configuration_" + thisNode.name + templateFilePath.substring(dotIndex);
 		BufferedWriter out = new BufferedWriter(new FileWriter(outputFilePath));
 
 		String s;
 		while ((s = bfd.readLine()) != null) {
 			out.write(s + "\n");
 		}
+		out.flush();
 		out.close();
 		bfd.close();
 		templateValues = new TreeMap<String, String>();

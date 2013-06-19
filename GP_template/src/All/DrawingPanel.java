@@ -9,39 +9,28 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.TreeMap;
 
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.ComponentInputMap;
-import javax.swing.InputMap;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.plaf.ActionMapUIResource;
 
 import AttributePanel.PacketsColorRowEntry;
 import ConfigurationMaker.ModuleMaker;
 import ConfigurationMaker.NodeMaker;
 import ConfigurationMaker.PrimaryMaker;
 import Data.Edge;
-import Data.Flow;
 import Data.Interval;
 import Data.Machine;
 import Data.Node;
@@ -57,6 +46,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 	public Node fromNode, toNode;
 	
 	public ArrayList<Node> listOfNodes;
+	public Node source, destination;
 	public int offX, offY;
 	
 	public JButton setSourceButton, setDestinationButton, generate;
@@ -68,26 +58,8 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 	
 	public int maxRange;
 	TreeMap<String, Color> colorMap;
-//	public Node source, destination;
-	
-	ArrayList<Flow> listOfFlows;
-	ArrayList<Node> sourceNodes, destNodes;
 	
 	Node currentSelectedNode = null;
-	Node lastSelectedSourceNode;
-	int currFlowID;
-	
-	
-	class SelectionAction extends AbstractAction {
-		public SelectionAction() {}
-	    
-	    public void actionPerformed(ActionEvent e) {
-	    	selectionMode.setSelected(true);
-//	    	selectionMode.setBorderPainted(true);
-//	    	selectionMode.setToolTipText(text);
-	    	repaint();
-	    }
-	}
 	
 	public DrawingPanel(UI ui_){
 		setBorder(BorderFactory.createTitledBorder("Network topology"));
@@ -96,11 +68,6 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 		this.ui = ui_;
 		colorMap = null;
 		listOfNodes = new ArrayList<Node>();
-		listOfFlows = new ArrayList<Flow>();
-		sourceNodes = new ArrayList<Node>();
-		destNodes = new ArrayList<Node>();
-		
-		currFlowID = 1;
 		
 //		Node node1 = new Machine("1", 200, 200);
 //		Node node2 = new Machine("2", 300, 300);
@@ -110,21 +77,10 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 //		
 //		node1.WLS_HW.add("08:11:96:8B:84:F4");
 //		node1.WLS_Name.add("wlan0");
-//		node1.ETH_IP = "00:11:22:33:44:55";
-//		node1.ETH_HW = "08:11:22:33:44:55";
-//		
 //		node2.WLS_HW.add("08:11:96:8B:84:F3");
 //		node2.WLS_Name.add("wlan1");
-//		node2.ETH_IP = "00:11:22:33:44:56";
-//		node2.ETH_HW = "08:11:22:33:44:56";
-//		
 //		node3.WLS_HW.add("08:11:96:8B:84:F2");
 //		node3.WLS_Name.add("wlan1");
-//		node3.ETH_IP = "00:11:22:33:44:57";
-//		node3.ETH_HW = "08:11:22:33:44:57";
-//		
-//		source = node1;
-//		destination = node2;
 //		
 //		listOfNodes.add(node1);
 //		listOfNodes.add(node2);
@@ -142,40 +98,24 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 		machineMode = new JToggleButton("Machine");
 		edgeMode = new JToggleButton("Edge");
 		
-		InputMap keyMap = new ComponentInputMap(selectionMode);
-		keyMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "selectionAction");
-
-		ActionMap actionMap = new ActionMapUIResource();
-		actionMap.put("selectionAction", new SelectionAction());
-
-		SwingUtilities.replaceUIActionMap(selectionMode, actionMap);
-		SwingUtilities.replaceUIInputMap(selectionMode, JComponent.WHEN_IN_FOCUSED_WINDOW, keyMap);
-
-		selectionMode.setToolTipText("Normal mode");
 		selectionMode.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				repaint();
 			}
 		});
-		
-		machineMode.setToolTipText("Add a machine node");
 		machineMode.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				repaint();
 			}
 		});
-		
-		primaryMode.setToolTipText("Add a primary user node");
 		primaryMode.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				repaint();
 			}
 		});
-		
-		edgeMode.setToolTipText("To add edge between 2 nodes, drag from a node to the other one");
 		edgeMode.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -202,56 +142,48 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 		experimentTools.setBorder(BorderFactory.createTitledBorder(""));
 		
 		setSourceButton = new JButton("Set Source");
-		setSourceButton.setToolTipText("Set the selected node as a source node");
-		
-		setDestinationButton = new JButton("Set Destination");
-		setDestinationButton.setToolTipText("Set the selected node as a destination node");
+		setDestinationButton = new JButton("Set Dest.");
 		
 		setSourceButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(selectedNode != null && selectedNode instanceof Machine){
-					sourceNodes.add(selectedNode);
-					lastSelectedSourceNode = selectedNode;
-					selectedNode.setSource(true);
+					if(source != null)source.isSource = false;
+					
+					source = selectedNode;
+					source.isSource = true;
 					repaint();
 				}
 			}
 		});
-		
 		experimentTools.add(setSourceButton);
 		
 		setDestinationButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(selectedNode != null && selectedNode instanceof Machine){
-					destNodes.add(selectedNode);
-					selectedNode.setDestination(true);
-					lastSelectedSourceNode.destination = selectedNode;
-					listOfFlows.add(new Flow(currFlowID, lastSelectedSourceNode, selectedNode));
-					lastSelectedSourceNode.setFlowID(currFlowID);
-					System.out.println(currFlowID + " --- " + lastSelectedSourceNode.name + " --- " + selectedNode.name + "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ");
-					++currFlowID;
+					if(destination != null)destination.isDestination = false;
+					
+					destination = selectedNode;
+					destination.isDestination = true;
 					repaint();
 				}
 			}
 		});
 		experimentTools.add(setDestinationButton);
 		
+
 		generate = new JButton("Generate");
-		generate.setToolTipText("Generate Configuration & module files for all nodes");
 		generate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-//				if(source == null){
-				if(sourceNodes.isEmpty()){
-					JOptionPane.showMessageDialog(drawingPanel, "Missing source node(s).");
+				if(source == null){
+					JOptionPane.showMessageDialog(drawingPanel, "Missing source node.");
 					return;
 				}
 				
-//				if(destination == null){
-				if(destNodes.isEmpty()){
-					JOptionPane.showMessageDialog(drawingPanel, "Missing destination node(s).");
+				if(destination == null){
+					JOptionPane.showMessageDialog(drawingPanel, "Missing destination node.");
 					return;
 				}
 				
@@ -264,6 +196,13 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 				}
 				String sourceTemplate = fc.getSelectedFile().getAbsolutePath();
 				
+				ret = fc.showDialog(drawingPanel, "Choose the destination template");
+				if(ret != JFileChooser.APPROVE_OPTION){
+					JOptionPane.showMessageDialog(drawingPanel, "Missing destination template.");
+					return;
+				}
+				String destinationTemplate = fc.getSelectedFile().getAbsolutePath();
+				
 				ret = fc.showDialog(drawingPanel, "Choose the hop template");
 				if(ret != JFileChooser.APPROVE_OPTION){
 					JOptionPane.showMessageDialog(drawingPanel, "Missing hop template.");
@@ -271,13 +210,6 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 				}
 				String hopTemplate = fc.getSelectedFile().getAbsolutePath();
 				
-				ret = fc.showDialog(drawingPanel, "Choose the destination template");
-				if(ret != JFileChooser.APPROVE_OPTION){
-					JOptionPane.showMessageDialog(drawingPanel, "Missing destination template.");
-					return;
-				}
-				String destinationTemplate = fc.getSelectedFile().getAbsolutePath();
-
 				ret = fc.showDialog(drawingPanel, "Choose the primary template");
 				if(ret != JFileChooser.APPROVE_OPTION){
 					JOptionPane.showMessageDialog(drawingPanel, "Missing primary template.");
@@ -300,25 +232,17 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 							Node[] adjacentNodes = new Node[node.adjacent.size()];
 							for(int i = 0; i < node.adjacent.size(); i++)
 								adjacentNodes[i] = node.adjacent.get(i).to;
-//							if(node == source){//Special treatment for the source node.
-							if(node.isSource){//Special treatment for the source node.
-//								nodeMaker.parseTemplateFile(ui, sourceTemplate, source, destination, node, adjacentNodes);
-								// #SRC is not needed any more
-								// #DEST is only in source template, and is for the destination corresponding to this source
-								
-								nodeMaker.parseTemplateFile(ui, sourceTemplate, node.destination, node, adjacentNodes);
-//							}else if(node == destination){//Special treatment for the destination node.
-							}else if(node.isDestination){//Special treatment for the destination node.
-//								nodeMaker.parseTemplateFile(ui, destinationTemplate, destination, node, adjacentNodes);
-								
-								nodeMaker.parseTemplateFile(ui, destinationTemplate, null, node, adjacentNodes);
+							if(node == source){//Special treatment for the source node.
+								nodeMaker.parseTemplateFile(sourceTemplate, source, destination, node, adjacentNodes);
+							}else if(node == destination){//Special treatment for the destination node.
+								nodeMaker.parseTemplateFile(destinationTemplate, source, destination, node, adjacentNodes);
 							}else{//Rest of the nodes treated as hops.
-								nodeMaker.parseTemplateFile(ui, hopTemplate, null, node, adjacentNodes);
+								nodeMaker.parseTemplateFile(hopTemplate, source, destination, node, adjacentNodes);
 							}
 						}
 						
 						//Generate
-						moduleMaker.generateModuleFile(node, listOfNodes, ui);
+						moduleMaker.generateModuleFile(node, listOfNodes, ui.ccc);
 					}
 				}catch(Exception ex){
 					ex.printStackTrace();
@@ -331,7 +255,6 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 		experimentTools.add(generate);
 		
 		visualizeButton = new JToggleButton("Visualize");
-		visualizeButton.setToolTipText("Visualize experiment and show statistics - Requires getting statistics first");
 		visualizeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -378,7 +301,6 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 		experimentTools.add(visualizeButton);
 		
 		gridButton = new JToggleButton("Show grid");
-		gridButton.setToolTipText("Show grid to easily align nodes");
 		gridButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -407,29 +329,29 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 		int width = getWidth();
 		int height = getHeight();
 
-		if (gridButton.isSelected()) {
+		if(gridButton.isSelected()) {
 			int stX = 20;
-			// Vertical.
-			for (int d = 0; stX + d * 20 < width - 20; d++)
+			//Vertical.
+			for(int d = 0; stX + d * 20 < width - 20; d++)
 				g2d.drawLine(stX + d * 20, 115, stX + d * 20, height - 55);
 
-			// Horizontal.
-			for (int d = 2; 70 + d * 20 < height - 60; d++)
+			//Horizental.
+			for(int d = 2; 70 + d * 20 < height - 60; d++)
 				g2d.drawLine(stX - 5, 80 + d * 20, width - 25, 80 + d * 20);
 		}
 
 		//Legend box.
         g2d.drawString("Source", 45, height - Constants.MARGIN);
         g2d.drawString("Destination", 175, height - Constants.MARGIN);
-        g2d.drawString("Primary", 315, height - Constants.MARGIN);
-        g2d.drawString("Selected", 440, height - Constants.MARGIN);
+        g2d.drawString("Selected", 315, height - Constants.MARGIN);
+        g2d.drawString("Primary", 440, height - Constants.MARGIN);
         g2d.setColor(Constants.SOURCE_COLOR);
         g2d.fillRect(15, height - 35, 25, 20);
         g2d.setColor(Constants.DEST_COLOR);
         g2d.fillRect(145, height - 35, 25, 20);
-        g2d.setColor(Constants.PRIMARY_COLOR);
-        g2d.fillRect(285, height - 35, 25, 20);
         g2d.setColor(Constants.SELECTED_COLOR);
+        g2d.fillRect(285, height - 35, 25, 20);
+        g2d.setColor(Constants.PRIMARY_COLOR);
         g2d.fillRect(410, height - 35, 25, 20);
 
         g2d.setStroke(new BasicStroke(1));
@@ -451,7 +373,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 		}
 		
 		
-		//if an insertion mode is activated. Draw temp node for the user.
+		//if an insertion mode is activeted. Draw temp node for the user.
 		if(cursorNode != null)
 			cursorNode.draw(g2d, drawingPanel, drawingOption, true);
 		

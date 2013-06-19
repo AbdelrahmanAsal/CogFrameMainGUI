@@ -15,8 +15,10 @@ public class IPScanner {
 			String ip = String.format("10.0.0.%d", i);
 			try {
 				InetAddress address = InetAddress.getByName(ip);
-				if (address.isReachable(10))
+				if (address.isReachable(5)) {
+					System.out.println(ip);
 					list.add(ip);
+				}
 			} catch (Exception e) {
 
 			}

@@ -1,7 +1,6 @@
 package ConfigurationMaker;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -38,6 +37,9 @@ public class TemplateMaker {
 		BufferedReader bfd = new BufferedReader(
 				new FileReader(templateFilePath));
 		int dotIndex = templateFilePath.lastIndexOf('.');
+//		String outputFilePath = templateFilePath.substring(0,
+//				templateFilePath.indexOf("_inter"))
+//				+ "_out_" + thisNode.name + templateFilePath.substring(dotIndex);
 		String outputFilePath = "Configuration_" + thisNode.name + templateFilePath.substring(dotIndex);
 		BufferedWriter out = new BufferedWriter(new FileWriter(outputFilePath));
 		System.out.println("Starting replacement by values..");
@@ -54,8 +56,5 @@ public class TemplateMaker {
 		System.out.println("Ended replacement phase successfully!");
 		bfd.close();
 		out.close();
-		// deleting the intermediate file
-		File intermediateFile  = new File(templateFilePath);
-		intermediateFile.delete();
 	}
 }

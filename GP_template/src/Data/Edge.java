@@ -14,7 +14,7 @@ import All.DrawingPanel;
 public class Edge {
 	public Node from, to;
 	//Additional data to be added.
-	public double linkDelay, lossRatio, throughput, snr, linkQuality, dataRate;
+	public double linkDelay, lossRatio, throughput;
 	public int packetCount;
 	public static double maxLinkDelay;
 	public boolean used;

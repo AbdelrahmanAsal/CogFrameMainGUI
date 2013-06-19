@@ -48,7 +48,7 @@ public class AttributesPanel extends JPanel implements ComponentListener {
 		machineAP = new MachineAttributePanel(drawingPanel);
 		primaryAP = new PrimaryAttributePanel(drawingPanel);
 		nullAP = new NullAttributePanel();
-		edgeAP = new EdgeAttributePanel(drawingPanel);
+		edgeAP = new EdgeAttributePanel();
 		
 		informationPanel.add(nullAP, Constants.nullAPCode);
 		informationPanel.add(machineAP, Constants.machineAPCode);

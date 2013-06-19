@@ -11,7 +11,6 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import All.Channel;
-import All.UI;
 import Data.Edge;
 import Data.Node;
 import Data.Primary;
@@ -19,7 +18,7 @@ import Data.Primary;
 
 public class ModuleMaker {
 
-	public void generateModuleFile(Node thisNode, ArrayList<Node> listOfNodes, UI ui) throws IOException {
+	public void generateModuleFile(Node thisNode, ArrayList<Node> listOfNodes, String ccc) throws IOException {
 		//NOTES:
 		//	Assuming single ethernet interface for each node.
 		
@@ -30,9 +29,6 @@ public class ModuleMaker {
 			wirelessEdges += x.WLS_HW.size() * edge.to.WLS_HW.size();
 			ethernetEdges += 1;
 		}
-		
-		int machineEthernetEdges = 0;
-		
 		
 		for(Node node : listOfNodes)
 			if(node instanceof Primary){
@@ -61,7 +57,7 @@ public class ModuleMaker {
 		//Wireless.
 		out.printf("%d\n", thisNode.WLS_HW.size());
 		for(int i = 0; i < thisNode.WLS_HW.size(); i++)
-			out.printf("%s %s %s\n", thisNode.WLS_Name.get(i), thisNode.WLS_HW.get(i), "192.168.1.1");
+			out.printf("%s %s\n", thisNode.WLS_HW.get(i), "192.168.1.1");
 
 		//Channels.
 		out.printf("%d\n", thisNode.channels.size());
@@ -87,15 +83,15 @@ public class ModuleMaker {
 		//Overall Topology.
 		//Ethernet overall topology.
 		out.printf("%d\n", ethernetEdges);
-		for(Node x : listOfNodes)if(!(x instanceof Primary))
-		for(Edge edge : x.adjacent)if(!(edge.to instanceof Primary)){
+		for(Node x : listOfNodes)
+		for(Edge edge : x.adjacent){
 			out.printf("%s %s\n", x.ETH_HW, edge.to.ETH_HW);
 		}
 		
 		//Wirless overall topology.
 		out.printf("%d\n", wirelessEdges);
-		for(Node x : listOfNodes)if(!(x instanceof Primary))
-		for(Edge edge : x.adjacent)if(!(edge.to instanceof Primary))
+		for(Node x : listOfNodes)
+		for(Edge edge : x.adjacent)
 			for(String wlsX : x.WLS_HW)
 			for(String wlsY : edge.to.WLS_HW){
 				out.printf("%s %s\n", wlsX, wlsY);
@@ -103,7 +99,7 @@ public class ModuleMaker {
 		
 		//Location overall.
 		out.printf("%d\n", wirelessNodes + numberOfNodes);
-		for(Node node : listOfNodes)if(!(node instanceof Primary)){
+		for(Node node : listOfNodes){
 			out.printf("%s %d %d\n", node.ETH_HW, node.x, node.y);
 			for(String wls : node.WLS_HW)
 				out.printf("%s %d %d\n", wls, node.x, node.y);
@@ -111,16 +107,12 @@ public class ModuleMaker {
 		
 		//Primary users wireless macs.
 		out.printf("%d\n", primaryWirelessNodes);
-		for(Edge edge : thisNode.adjacent)if(edge.to instanceof Primary)
-			for(String wls : edge.to.WLS_HW)
+		for(Node node : listOfNodes)if(node instanceof Primary)
+			for(String wls : node.WLS_HW)
 				out.printf("%s\n", wls);
 
 		//Print the CCC.
-		out.println(ui.ccc);
-		
-		//Print the termination option and value.
-		out.println(ui.terminationOption);
-		out.println(ui.terminationValue);
+		out.println(ccc);
 		
 		out.close();
 	}

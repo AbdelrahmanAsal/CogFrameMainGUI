@@ -44,6 +44,16 @@ public class CogAgent {
 		} 
 	}
 	
+	public void setPrimaryUser(String channel, int state) {
+		try {
+			System.out.println("PU Function Agent");
+			out.println("primaryuser "+channel+" "+state);
+			close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void getInformation() {
 		try {
 			System.out.println("Getting information of the node");

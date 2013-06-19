@@ -9,7 +9,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.TableModelEvent;
 
@@ -22,8 +21,6 @@ public class MachineAttributePanel extends NodeAttributesPanel{
 	public JButton setData;
 	public Machine selectedNode;
 	public DrawingPanel drawingPanel;
-	private JLabel averageSwitchingTimeLabel, averageNodalDelayLabel, totalSwitchesLabel, averageSwitchingTime, averageNodalDelay,
-	totalSwitches;
 	public MachineAttributePanel(DrawingPanel dp){
 		this.drawingPanel = dp;
 		setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Machine Attributes Panel"));
@@ -52,13 +49,6 @@ public class MachineAttributePanel extends NodeAttributesPanel{
 			}
 		});
 
-		averageSwitchingTimeLabel = new JLabel("Link Delay");
-		averageNodalDelayLabel = new JLabel("Loss Ratio");
-		totalSwitchesLabel = new JLabel("Throughput");
-
-		averageSwitchingTime = new JLabel();
-		averageNodalDelay = new JLabel();
-		totalSwitches = new JLabel();
 
 		JPanel all = new JPanel();
 
@@ -80,10 +70,7 @@ public class MachineAttributePanel extends NodeAttributesPanel{
 				      	   .addComponent(WLS_HWLabel)
 				      	   .addComponent(channelsLabel)
 				      	   .addComponent(mobilityOptionLabel)
-				      	   .addComponent(topologyOptionLabel)
-				      	   .addComponent(averageNodalDelayLabel)
-				      	   .addComponent(averageSwitchingTimeLabel)
-				      	   .addComponent(totalSwitchesLabel))
+				      	   .addComponent(topologyOptionLabel))
 			          .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 		        		   .addComponent(name)
 				      	   .addComponent(ETH_IP)
@@ -93,9 +80,6 @@ public class MachineAttributePanel extends NodeAttributesPanel{
 				      	   .addComponent(channels)
 				      	   .addComponent(mobilityOption)
 				      	   .addComponent(topologyOption)
-				      	   .addComponent(averageNodalDelay)
-				      	   .addComponent(averageSwitchingTime)
-				      	   .addComponent(totalSwitches)
 				      	   .addComponent(setData))
 
 		);
@@ -126,15 +110,6 @@ public class MachineAttributePanel extends NodeAttributesPanel{
 		      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 		           .addComponent(topologyOptionLabel)
 		           .addComponent(topologyOption))
-		      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-		           .addComponent(averageNodalDelayLabel)
-		           .addComponent(averageNodalDelay))
-		      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-		           .addComponent(averageSwitchingTimeLabel)
-		           .addComponent(averageSwitchingTime))
-		      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-		           .addComponent(totalSwitchesLabel)
-		           .addComponent(totalSwitches))
 		      .addComponent(setData)
 		);
 	}
@@ -160,11 +135,6 @@ public class MachineAttributePanel extends NodeAttributesPanel{
 
 		mobilityOption.setSelectedItem(node.mobilityOption);
 		topologyOption.setSelectedItem(node.topologyOption);
-		
-		averageNodalDelay.setText(node.averageNodalDelay + " ms");
-		averageSwitchingTime.setText(node.averageSwitchingTime + " ms");
-		totalSwitches.setText(node.totalSwitches + " switches");
-		
 	}
 
 }

@@ -28,14 +28,12 @@ public class NodeAttributesPanel extends JPanel{
 	public JButton setData;
 	JTable WLS_HW_Table;
 	JScrollPane ps;
-	
-	
 	public NodeAttributesPanel(){
 		setLayout(new FlowLayout());
 		
 		nameLabel = new JLabel("Name:");
 		name = new JTextArea("");
-		name.setEnabled(false);
+//		name.setEnabled(false);
 		name.addKeyListener(new KeyListener() {
 		    public void keyPressed(KeyEvent e) {
 		    	if(e.getKeyCode() == KeyEvent.VK_TAB) {

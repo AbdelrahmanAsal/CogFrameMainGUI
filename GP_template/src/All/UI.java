@@ -28,6 +28,7 @@ import AttributePanel.TerminationConditionPanel;
 import Data.Edge;
 import Data.Machine;
 import Data.Node;
+import Data.Primary;
 import Data.StringPair;
 
 public class UI extends JFrame  {
@@ -334,6 +335,11 @@ public class UI extends JFrame  {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				for(Node node : drawingPanel.listOfNodes){
+					if(node instanceof Data.Primary) {
+						Primary primaryNode = (Primary) node;
+						if(primaryNode.isVirtual)
+							continue;
+					}
 					CogAgent cogAgent = new CogAgent(node);
 					cogAgent.getInformation();
 				}
@@ -376,6 +382,11 @@ public class UI extends JFrame  {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				for(Node node : drawingPanel.listOfNodes){
+					if(node instanceof Data.Primary) {
+						Primary primaryNode = (Primary) node;
+						if(primaryNode.isVirtual)
+							continue;
+					}
 					CogAgent cogAgent = new CogAgent(node);
 					cogAgent.getInformation();
 				}
@@ -400,6 +411,11 @@ public class UI extends JFrame  {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				for(Node node : drawingPanel.listOfNodes){
+					if(node instanceof Data.Primary) {
+						Primary primaryNode = (Primary) node;
+						if(primaryNode.isVirtual)
+							continue;
+					}
 					CogAgent cogAgent = new CogAgent(node);
 					cogAgent.getStatistics();
 				}
@@ -420,6 +436,11 @@ public class UI extends JFrame  {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				for(Node node : drawingPanel.listOfNodes){
+					if(node instanceof Data.Primary) {
+						Primary primaryNode = (Primary) node;
+						if(primaryNode.isVirtual)
+							continue;
+					}
 					CogAgent cogAgent = new CogAgent(node);
 					cogAgent.postConfiguration();
 				}
@@ -440,6 +461,11 @@ public class UI extends JFrame  {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				for(Node node : drawingPanel.listOfNodes){
+					if(node instanceof Data.Primary) {
+						Primary primaryNode = (Primary) node;
+						if(primaryNode.isVirtual)
+							continue;
+					}
 					CogAgent cogAgent = new CogAgent(node);
 					cogAgent.postModule();
 				}
@@ -460,14 +486,10 @@ public class UI extends JFrame  {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				nodeSelection = false;
-				EndExperiemntHandler endHandler = new EndExperiemntHandler(terminationValue);
 				for(Node node : nodeSubset){
 					CogAgent cogAgent = new CogAgent(node);
-					endHandler.nodeList.add(node);
 					cogAgent.startExperiment();
 				}
-				if (terminationOption.equalsIgnoreCase("time")) 
-					endHandler.start();
 			}
 
 			@Override
@@ -625,25 +647,4 @@ public class UI extends JFrame  {
 		setJMenuBar(menuBar);
 	}
 	
-	class EndExperiemntHandler extends Thread {
-		
-		long value;
-		public ArrayList<Node> nodeList;
-		
-		public EndExperiemntHandler(int val) {
-			value = val;
-		}
-		
-		public void run() {
-			try {
-				sleep(value);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			for(Node node: nodeList) {
-				CogAgent agent = new CogAgent(node);
-				agent.stopExperiment();
-			}
-		}
-	}
 }

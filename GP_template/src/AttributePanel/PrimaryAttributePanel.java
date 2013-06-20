@@ -47,7 +47,8 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 	public TreeMap<String, Constructor<ProbabilityDistribution>> distConstructorMap;
 	public JCheckBox virtualCheckBox;
 	public JButton onOffButton;
-	
+
+
 	public PrimaryAttributePanel(DrawingPanel dp){
 		this.drawingPanel = dp;
 		setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Primary Attributes Panel"));
@@ -140,19 +141,20 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 					
 					selectedNode.activeChannel  =  selectedChannel.getText();
 					
+
 					drawingPanel.repaint();
 
 					System.out.println("Successfully updated the node:\n" + selectedNode);
 				}
 			}
 		});
-		
+
 		JPanel all = new JPanel();
 		virtualCheckBox = new JCheckBox("Virtual");
 		onOffButton = new JButton("Off");
 		onOffButton.setBackground(Color.red);
 		onOffButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String text = onOffButton.getText();
@@ -177,10 +179,10 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 				}
 			}
 		});
-		
+
 		onOffButton.setEnabled(false);
 		virtualCheckBox.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(virtualCheckBox.isSelected()) {
@@ -339,7 +341,7 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 
 		mobilityOption.setSelectedItem(node.mobilityOption);
 		topologyOption.setSelectedItem(node.topologyOption);
-		
+
 		if ((node).activeDist != null) {
 			activeDist.setSelectedItem((node).activeDist.type()+"Distribution");
 			System.out.println("TTTT");
@@ -394,4 +396,3 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 	}
 	
 }
-

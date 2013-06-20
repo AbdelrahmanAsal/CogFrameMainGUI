@@ -52,9 +52,9 @@ public class MachineAttributePanel extends NodeAttributesPanel{
 			}
 		});
 
-		averageSwitchingTimeLabel = new JLabel("Link Delay");
-		averageNodalDelayLabel = new JLabel("Loss Ratio");
-		totalSwitchesLabel = new JLabel("Throughput");
+		averageSwitchingTimeLabel = new JLabel("Switching time");
+		averageNodalDelayLabel = new JLabel("Nodal delay");
+		totalSwitchesLabel = new JLabel("No. of switches");
 
 		averageSwitchingTime = new JLabel();
 		averageNodalDelay = new JLabel();

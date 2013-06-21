@@ -99,21 +99,21 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 		
 		currFlowID = 1;
 		
-		Node node1 = new Machine("1", 200, 200);
-		Node node2 = new Machine("2", 300, 300);
+//		Node node1 = new Machine("1", 200, 200);
+//		Node node2 = new Machine("2", 300, 300);
 //		Node node3 = new Primary("3", 400, 400);
-		node1.isSource = true;
-		node2.isDestination = true;
+//		node1.isSource = true;
+//		node2.isDestination = true;
 //		
-		node1.WLS_HW.add("08:11:96:8B:84:F4");
-		node1.WLS_Name.add("wlan0");
-		node1.ETH_IP = "00:11:22:33:44:55";
-		node1.ETH_HW = "08:11:22:33:44:55";
+//		node1.WLS_HW.add("08:11:96:8B:84:F4");
+//		node1.WLS_Name.add("wlan0");
+//		node1.ETH_IP = "00:11:22:33:44:55";
+//		node1.ETH_HW = "08:11:22:33:44:55";
 //		
-		node2.WLS_HW.add("08:11:96:8B:84:F3");
-		node2.WLS_Name.add("wlan1");
-		node2.ETH_IP = "00:11:22:33:44:56";
-		node2.ETH_HW = "08:11:22:33:44:56";
+//		node2.WLS_HW.add("08:11:96:8B:84:F3");
+//		node2.WLS_Name.add("wlan1");
+//		node2.ETH_IP = "00:11:22:33:44:56";
+//		node2.ETH_HW = "08:11:22:33:44:56";
 //		
 //		node3.WLS_HW.add("08:11:96:8B:84:F2");
 //		node3.WLS_Name.add("wlan1");
@@ -123,8 +123,8 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 //		source = node1;
 //		destination = node2;
 //		
-		listOfNodes.add(node1);
-		listOfNodes.add(node2);
+//		listOfNodes.add(node1);
+//		listOfNodes.add(node2);
 //		listOfNodes.add(node3);
 		
 		addMouseListener(this);
@@ -229,7 +229,6 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 					lastSelectedSourceNode.setFlowID(currFlowID);
 					selectedNode.setFlowID(currFlowID);
 					System.out.println(currFlowID + " --- " + lastSelectedSourceNode.name + " --- " + selectedNode.name + "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ");
-					System.out.println(selectedNode.flowID);
 					++currFlowID;
 					repaint();
 				}
@@ -264,6 +263,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 				ret = fc.showDialog(drawingPanel, "Choose the hop template");
 				if(ret != JFileChooser.APPROVE_OPTION){
 					JOptionPane.showMessageDialog(drawingPanel, "Missing hop template.");
+
 					return;
 				}
 				String hopTemplate = fc.getSelectedFile().getAbsolutePath();
@@ -402,6 +402,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 		float dash[] = { 10.0f };
 		g2d.setStroke(new BasicStroke(0.1f, BasicStroke.CAP_BUTT,
 			        BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f));
+
 		
 		int width = getWidth();
 		int height = getHeight();
@@ -539,6 +540,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 			
 			cursorNode.x = cap(mouse.getX() - 10, 70, getWidth() - 90);
 			cursorNode.y = cap(mouse.getY() - 10, 120, getHeight() - 90);
+
 		}else{
 			cursorNode = null;
 		}
@@ -755,3 +757,5 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 	}
 	
 }
+
+

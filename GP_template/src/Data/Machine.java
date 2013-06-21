@@ -46,7 +46,6 @@ public class Machine extends Node{
 
 		// Flow Number
 		g2d.setColor(Color.BLACK);
-//		g2d.drawChars(("1").toCharArray(), 0, 0, x, y);
 		String flowIdText = "";
 		if(flowID != -1) {
 			flowIdText = flowID + "";
@@ -54,11 +53,7 @@ public class Machine extends Node{
 			flowIdText = "";
 		}
 		
-//		g2d.drawString(flowIdText, x + 7, y + 14);
 		g2d.drawString(flowIdText, x - 10, y - 5);
-//		g2d.drawLine(x - 10, y + 10, x + 30, y + 10);
-//		g2d.drawLine(x + 10, y - 10, x + 10, y + 30);
-//		g2d.drawRect(x, y, 20, 20);
 		
 		// Anchors.
 		g2d.setColor(Color.BLACK);
@@ -66,9 +61,6 @@ public class Machine extends Node{
 		g2d.drawLine(x + 10, y - 10, x + 10, y + 30);
 		g2d.drawRect(x, y, 20, 20);
 	}
-	
-
-	
 	
 	@Override
 	public String type(){

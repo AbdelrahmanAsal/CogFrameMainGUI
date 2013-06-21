@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -98,21 +99,21 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 		
 		currFlowID = 1;
 		
-//		Node node1 = new Machine("1", 200, 200);
-//		Node node2 = new Machine("2", 300, 300);
+		Node node1 = new Machine("1", 200, 200);
+		Node node2 = new Machine("2", 300, 300);
 //		Node node3 = new Primary("3", 400, 400);
-//		node1.isSource = true;
-//		node2.isDestination = true;
+		node1.isSource = true;
+		node2.isDestination = true;
 //		
-//		node1.WLS_HW.add("08:11:96:8B:84:F4");
-//		node1.WLS_Name.add("wlan0");
-//		node1.ETH_IP = "00:11:22:33:44:55";
-//		node1.ETH_HW = "08:11:22:33:44:55";
+		node1.WLS_HW.add("08:11:96:8B:84:F4");
+		node1.WLS_Name.add("wlan0");
+		node1.ETH_IP = "00:11:22:33:44:55";
+		node1.ETH_HW = "08:11:22:33:44:55";
 //		
-//		node2.WLS_HW.add("08:11:96:8B:84:F3");
-//		node2.WLS_Name.add("wlan1");
-//		node2.ETH_IP = "00:11:22:33:44:56";
-//		node2.ETH_HW = "08:11:22:33:44:56";
+		node2.WLS_HW.add("08:11:96:8B:84:F3");
+		node2.WLS_Name.add("wlan1");
+		node2.ETH_IP = "00:11:22:33:44:56";
+		node2.ETH_HW = "08:11:22:33:44:56";
 //		
 //		node3.WLS_HW.add("08:11:96:8B:84:F2");
 //		node3.WLS_Name.add("wlan1");
@@ -122,8 +123,8 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 //		source = node1;
 //		destination = node2;
 //		
-//		listOfNodes.add(node1);
-//		listOfNodes.add(node2);
+		listOfNodes.add(node1);
+		listOfNodes.add(node2);
 //		listOfNodes.add(node3);
 		
 		addMouseListener(this);
@@ -459,6 +460,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 			System.out.println("Current Simulation time: " + currentTime);
 			for(Interval interval : sc.timeline){
 				String intervalMessage = interval.packetID == -1 ? interval.message : "WirelessPacket";
+
 				if(interval.fromTime <= currentTime + sc.minTimestamp && currentTime + sc.minTimestamp <= interval.toTime && canShow(intervalMessage)){
 					int fromX = interval.fromNode.x;
 					int fromY = interval.fromNode.y;
@@ -493,6 +495,16 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 					g2d.drawOval(packetX + 5, packetY + 5, 10, 10);
 				}
 			}
+			
+			for(FallingPacketPosition p: sc.fallingPackets){
+				if(p.fromTime <= sc.maxTimestamp && p.toTime <= sc.maxTimestamp && p.fromTime <= currentTime + sc.minTimestamp && currentTime + sc.minTimestamp <= p.toTime && canShow("WirelessPacket")){
+					g2d.setColor(Constants.SELECTED_COLOR);
+					g2d.fillOval(p.x + 5, p.y + 5, 10, 10);
+					g2d.setColor(Color.BLACK);
+					g2d.drawOval(p.x + 5, p.y + 5, 10, 10);
+				}
+			}
+			
 		}
 	}
 
@@ -741,6 +753,5 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 		}
 		return false;
 	}
-	
 	
 }

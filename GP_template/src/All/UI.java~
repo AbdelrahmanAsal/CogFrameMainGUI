@@ -22,8 +22,11 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import AttributePanel.AttributesPanel;
 import AttributePanel.TerminationConditionPanel;
 import Data.Node;
+<<<<<<< HEAD
+=======
 import Data.Primary;
 import Data.StringPair;
+>>>>>>> c6b01b7ee889537029ac88ee76451192c337f982
 
 public class UI extends JFrame  {
 	UI self;

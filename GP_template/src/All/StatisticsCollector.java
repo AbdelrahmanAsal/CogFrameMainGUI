@@ -1,5 +1,6 @@
 package All;
 
+import java.awt.Point;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +23,7 @@ public class StatisticsCollector {
 	public ArrayList<ArrayList<Double>> primaryActiveDist;
 	public ArrayList<ArrayList<Double>> primaryInactiveDist;
 	public ArrayList<String> primaryNames;
+	public ArrayList<FallingPacketPosition> fallingPackets;
 	public Node src, dest;
 
 	public StatisticsCollector(ArrayList<Node> listOfNodes){
@@ -30,6 +32,7 @@ public class StatisticsCollector {
 		this.listOfNodes = listOfNodes;
 		nodes = new TreeMap<String, Node>();
 		switchingTimeSet = new ArrayList<Long>();
+		fallingPackets = new ArrayList<FallingPacketPosition>();
 
 		for(Node node: listOfNodes){
 			nodes.put(node.ETH_HW.toUpperCase(), node);
@@ -158,7 +161,14 @@ public class StatisticsCollector {
 				AccessPair fromAP = accessList.get(i);
 				AccessPair toAP = accessList.get(i + 1);
 				timeline.add(new Interval(packetID, fromAP.node, toAP.node, fromAP.timestamp, toAP.timestamp, ""));
-			}	
+			}
+			AccessPair lastAccess = accessList.get(accessList.size()-1);
+			if(!lastAccess.node.isDestination) {
+//				Node node = lastAccess.node;
+//				PacketInfo info = node.outPackets.get(packetID);
+//				timeline.add(new Interval(packetID, node, info.to, lastAccess.timestamp, -1, ""));
+				addLostPacketToTimeline(packetID, lastAccess);
+			}
 		}
 
 		System.out.println(timeline);
@@ -213,6 +223,28 @@ public class StatisticsCollector {
 			}
 		}
 
+	}
+	private void addLostPacketToTimeline(int packetID, AccessPair lastAccess) {
+		Node node = lastAccess.node;
+		PacketInfo info = node.outPackets.get(packetID);
+		int count = 1;
+		int iterations = 10;
+		int dx,dy;
+		int currX = node.x;
+		int currY = node.y;
+		long fromTime = lastAccess.timestamp;
+		int currDisp = 1;
+		while(iterations -- > 0) {
+			dx = count;
+			dy = count * count;
+			currX += dx;
+			currY += dy;
+			count++;
+			fallingPackets.add(new FallingPacketPosition(fromTime+currDisp, fromTime+currDisp+1, currX, currY));
+			System.out.println((fromTime+currDisp)+" "+(fromTime+currDisp+1));
+			currDisp+=2;
+		}
+		timeline.add(new Interval(packetID, node, info.to, lastAccess.timestamp, -1, ""));
 	}
 }
 

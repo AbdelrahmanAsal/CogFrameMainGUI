@@ -21,6 +21,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.event.TableModelEvent;
 
+import com.sun.java.swing.plaf.nimbus.SliderPainter;
+
 import All.CogAgent;
 import All.Constants;
 import All.DrawingPanel;
@@ -45,7 +47,7 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 	public TreeMap<String, Constructor<ProbabilityDistribution>> distConstructorMap;
 	public JCheckBox virtualCheckBox;
 	public JButton onOffButton;
-	public JComboBox channelList;
+
 
 	public PrimaryAttributePanel(DrawingPanel dp){
 		this.drawingPanel = dp;
@@ -136,6 +138,9 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 
 					selectedNode.activeDist = tempActiveDist;
 					selectedNode.inactiveDist = tempInactiveDist;
+					
+					selectedNode.activeChannel  =  selectedChannel.getText();
+					
 
 					drawingPanel.repaint();
 
@@ -144,8 +149,6 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 			}
 		});
 
-		String[] channelsList = {"1", "6", "11"};
-		channelList = new JComboBox(channelsList);
 		JPanel all = new JPanel();
 		virtualCheckBox = new JCheckBox("Virtual");
 		onOffButton = new JButton("Off");
@@ -155,19 +158,24 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String text = onOffButton.getText();
-				String selectedChannel = (String) channelList.getSelectedItem();
+				String selectedChannelText = selectedChannel.getText();
 				for(Edge edge: selectedNode.adjacent) {
 					Node node = edge.to;
 					CogAgent agent = new CogAgent(node);
 					if(text.equals("On")) {
-						agent.setPrimaryUser(selectedChannel, 0);
-						onOffButton.setText("Off");
-						onOffButton.setBackground(Color.red);
+						agent.setPrimaryUser(selectedChannelText, 0);
 					} else {
-						agent.setPrimaryUser(selectedChannel, 1);
-						onOffButton.setText("On");
-						onOffButton.setBackground(Color.green);
+						agent.setPrimaryUser(selectedChannelText, 1);
 					}
+				}
+				if(text.equals("On")) {
+					selectedNode.virtualState = false;
+					onOffButton.setText("Off");
+					onOffButton.setBackground(Color.red);
+				} else {
+					selectedNode.virtualState = true;
+					onOffButton.setText("On");
+					onOffButton.setBackground(Color.green);
 				}
 			}
 		});
@@ -179,8 +187,12 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 			public void actionPerformed(ActionEvent arg0) {
 				if(virtualCheckBox.isSelected()) {
 					System.out.println("Checked");
+					disableFields();
+					selectedNode.isVirtual = true;
 					onOffButton.setEnabled(true);
 				} else {
+					enableFields();
+					selectedNode.isVirtual = false;
 					onOffButton.setEnabled(false);
 				}
 			}
@@ -230,8 +242,7 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 			      	   	   .addComponent(selectedChannel)
 			      	   	   .addComponent(setData)
 			      	   	   .addComponent(virtualCheckBox)
-			      	   	   .addComponent(onOffButton)
-			      	   	   .addComponent(channelList))
+			      	   	   .addComponent(onOffButton))
 		   			  )
 		);
 
@@ -278,7 +289,6 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 		       .addComponent(setData)
 		       .addComponent(virtualCheckBox)
 		       .addComponent(onOffButton)
-		       .addComponent(channelList)
 		);
 	}
 
@@ -344,5 +354,45 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 		//Delayed Setting. NEED TO BE CLONED.
 		tempActiveDist = (node).activeDist;
 		tempInactiveDist = (node).inactiveDist;
+		
+		if(!node.isVirtual) {
+			enableFields();
+			virtualCheckBox.setSelected(false);
+			onOffButton.setEnabled(false);
+		} else {
+			disableFields();
+			virtualCheckBox.setSelected(true);
+			onOffButton.setEnabled(true);
+		}
+		
+		if(node.virtualState) {
+			onOffButton.setText("On");
+			onOffButton.setBackground(Color.green);
+		} else {
+			onOffButton.setText("Off");
+			onOffButton.setBackground(Color.red);
+		}
+		 selectedChannel.setText(node.activeChannel);
 	}
+	
+	public void enableFields() {
+		name.setEnabled(true);
+		ETH_IP.setEnabled(true);
+		ETH_HW.setEnabled(true);
+		WLS_IP.setEnabled(true);
+		channels.setEnabled(true);
+		mobilityOption.setEnabled(true);
+		topologyOption.setEnabled(true);
+	}
+	
+	public void disableFields() {
+		name.setEnabled(false);
+		ETH_IP.setEnabled(false);
+		ETH_HW.setEnabled(false);
+		WLS_IP.setEnabled(false);
+		channels.setEnabled(false);
+		mobilityOption.setEnabled(false);
+		topologyOption.setEnabled(false);
+	}
+	
 }

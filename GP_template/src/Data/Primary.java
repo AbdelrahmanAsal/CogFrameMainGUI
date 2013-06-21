@@ -10,9 +10,13 @@ import Distributions.ProbabilityDistribution;
 
 public class Primary extends Node{
 	public ProbabilityDistribution activeDist, inactiveDist;
+	public boolean isVirtual;
+	public String activeChannel;
+	public boolean virtualState;
+	
 	public Primary(String name, int x, int y) {
 		super(name, x, y);
-		
+		isVirtual = false;
 //		activeDist = new UniformDistribution();
 //		inactiveDist = new UniformDistribution();
 	}

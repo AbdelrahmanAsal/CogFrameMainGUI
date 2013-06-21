@@ -21,9 +21,9 @@ import javax.swing.UIManager.LookAndFeelInfo;
 
 import AttributePanel.AttributesPanel;
 import AttributePanel.TerminationConditionPanel;
+import Data.Edge;
 import Data.Node;
 import Data.Primary;
-import Data.StringPair;
 
 public class UI extends JFrame  {
 	UI self;
@@ -226,12 +226,30 @@ public class UI extends JFrame  {
 							
 							drawingPanel.listOfNodes.remove(toDeleteNode);
 							
-							for(Node rest : drawingPanel.listOfNodes)
-								rest.adjacent.remove(toDeleteNode);
+							for(Node rest : drawingPanel.listOfNodes) {
+								for(Edge ed : rest.adjacent) {
+									if(ed.to.equals(toDeleteNode)) {
+										rest.adjacent.remove(ed);
+										break;
+									}
+								}
+							}
 							
 							System.out.println("Successfully deleted the node:\n" + toDeleteNode);
 							drawingPanel.currentSelectedNode = null;
 						}
+					} else if (drawingPanel.selectedEdge != null) { // delete edge
+						int result = JOptionPane.showConfirmDialog(drawingPanel, "Are you sure you want to delete this edge?");
+						
+						if(result == 0){ // Yes delete the edge.
+							Node fromNode = drawingPanel.selectedEdge.from;
+							Node toNode = drawingPanel.selectedEdge.to;
+							System.out.println("Removing the edge between " + fromNode + " -> " + toNode);
+							
+							fromNode.adjacent.remove(new Edge(fromNode, toNode));
+							toNode.adjacent.remove(new Edge(toNode, fromNode));
+						}
+						
 					}
 				}
 				repaint();

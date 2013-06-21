@@ -72,6 +72,8 @@ public class Edge {
 		g2d.setStroke(new BasicStroke(2));
 		g2d.drawLine((int)line.x1, (int)line.y1, (int)line.x2, (int)line.y2);
 		g2d.setStroke(new BasicStroke(1));
+		
+		drawingPanel.repaint();
 	}
 	
 	public Line2D.Double getRepLine(){

@@ -603,7 +603,6 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 				System.out.println("Successfully created the node:\n" + node);
 			}else{
 				int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this node?");
-				
 				if(result == 0){//Yes delete the node.
 					Node toDeleteNode = getSelectedNode(mouse);
 					
@@ -647,17 +646,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 			toNode = getSelectedNode(mouse);
 			
 			if(fromNode != null && toNode != null && fromNode != toNode){
-				if(fromNode.adjacent.contains(new Edge(fromNode, toNode))){
-					int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this edge?");
-					
-					if(result == 0){ // Yes delete the edge.
-						System.out.println("Removing the edge between " + fromNode + " -> " + toNode);
-						
-						fromNode.adjacent.remove(new Edge(fromNode, toNode));
-						toNode.adjacent.remove(new Edge(toNode, fromNode));
-					}
-					
-				}else{
+				if(!fromNode.adjacent.contains(new Edge(fromNode, toNode))){
 					System.out.println("Adding a new edge between " + fromNode + " -> " + toNode);
 					
 					Edge edge1 = new Edge(fromNode, toNode);

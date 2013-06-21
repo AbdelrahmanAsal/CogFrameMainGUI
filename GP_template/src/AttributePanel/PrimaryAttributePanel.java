@@ -21,7 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.event.TableModelEvent;
 
-import com.sun.java.swing.plaf.nimbus.SliderPainter;
+//import com.sun.java.swing.plaf.nimbus.SliderPainter;
 
 import All.CogAgent;
 import All.Constants;

@@ -15,7 +15,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.TreeMap;
@@ -68,7 +67,6 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 	
 	public int maxRange;
 	TreeMap<String, Color> colorMap;
-//	public Node source, destination;
 	
 	ArrayList<Flow> listOfFlows;
 	ArrayList<Node> sourceNodes, destNodes;
@@ -83,8 +81,6 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 	    
 	    public void actionPerformed(ActionEvent e) {
 	    	selectionMode.setSelected(true);
-//	    	selectionMode.setBorderPainted(true);
-//	    	selectionMode.setToolTipText(text);
 	    	repaint();
 	    }
 	}
@@ -230,7 +226,9 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 					lastSelectedSourceNode.destination = selectedNode;
 					listOfFlows.add(new Flow(currFlowID, lastSelectedSourceNode, selectedNode));
 					lastSelectedSourceNode.setFlowID(currFlowID);
+					selectedNode.setFlowID(currFlowID);
 					System.out.println(currFlowID + " --- " + lastSelectedSourceNode.name + " --- " + selectedNode.name + "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ");
+					System.out.println(selectedNode.flowID);
 					++currFlowID;
 					repaint();
 				}
@@ -243,13 +241,11 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 		generate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-//				if(source == null){
 				if(sourceNodes.isEmpty()){
 					JOptionPane.showMessageDialog(drawingPanel, "Missing source node(s).");
 					return;
 				}
 				
-//				if(destination == null){
 				if(destNodes.isEmpty()){
 					JOptionPane.showMessageDialog(drawingPanel, "Missing destination node(s).");
 					return;
@@ -311,9 +307,11 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 							}else if(node.isDestination){//Special treatment for the destination node.
 //								nodeMaker.parseTemplateFile(ui, destinationTemplate, destination, node, adjacentNodes);
 								
-								nodeMaker.parseTemplateFile(ui, destinationTemplate, null, node, adjacentNodes);
+//								nodeMaker.parseTemplateFile(ui, destinationTemplate, null, node, adjacentNodes);
+								nodeMaker.parseTemplateFile(ui, destinationTemplate, node, node, adjacentNodes);
 							}else{//Rest of the nodes treated as hops.
-								nodeMaker.parseTemplateFile(ui, hopTemplate, null, node, adjacentNodes);
+//								nodeMaker.parseTemplateFile(ui, hopTemplate, null, node, adjacentNodes);
+								nodeMaker.parseTemplateFile(ui, hopTemplate, node, node, adjacentNodes);
 							}
 						}
 						
@@ -516,7 +514,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener,
 
 	@Override
 	public void mouseMoved(MouseEvent mouse) {
-		//if an insertion mode is activeted. Draw temp node for the user.
+		// if an insertion mode is activated. Draw temp node for the user.
 		if(machineMode.isSelected()){
 			if(!(cursorNode instanceof Machine))
 				cursorNode = new Machine((int)(Math.random() * 100) + "", cap(mouse.getX() - 10, 70, getWidth() - 90), cap(mouse.getY() - 10, 120, getHeight() - 90));

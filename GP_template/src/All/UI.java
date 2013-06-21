@@ -7,11 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -25,10 +21,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 
 import AttributePanel.AttributesPanel;
 import AttributePanel.TerminationConditionPanel;
-import Data.Edge;
-import Data.Machine;
 import Data.Node;
-import Data.StringPair;
 
 public class UI extends JFrame  {
 	UI self;
@@ -103,36 +96,8 @@ public class UI extends JFrame  {
 		fileSave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ev) {
-				try {
-					String fileName = JOptionPane.showInputDialog(null, "Enter the name for the file");
-
-					if(fileName == null){
-						System.out.println("Saving cancelled");
-						return;
-					}
-
-					PrintWriter out = new PrintWriter(new FileWriter(fileName));
-					out.println(drawingPanel.listOfNodes.size());
-					for (Node n : drawingPanel.listOfNodes) {
-						out.println(n.name + " " + n.x + " " + n.y);
-						out.println(n.ETH_IP);
-						out.println(n.ETH_HW);
-						out.println(n.WLS_HW.size());
-						for (String w : n.WLS_HW)
-							out.println(w);
-						out.println(n.adjacent.size());
-						for (Edge edge: n.adjacent)
-							out.println(edge.to.name);
-						out.println(n.channels.size());
-						for (Channel c : n.channels)
-							out.printf("%s %s\n", c.channel, c.probability);
-						out.println(n.isSource + " " + n.isDestination);
-					}
-					out.close();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				JOptionPane.showMessageDialog(null, "File saved.");
+				Saver sv = new Saver(drawingPanel);
+				sv.save();
 			}
 		});
 
@@ -143,66 +108,8 @@ public class UI extends JFrame  {
 		fileLoad.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ev) {
-				try {
-					drawingPanel.listOfNodes.clear();
-
-					String fileName = JOptionPane.showInputDialog(null, "Enter the name of the saved file.");
-
-					InputReader r = new InputReader(new FileReader(fileName));
-					HashMap<String, Node> map = new HashMap<String, Node>();
-					ArrayList<StringPair> pairs = new ArrayList<StringPair>();
-					int noOfNodes = r.nextInt();
-					for (int i = 0; i < noOfNodes; i++) {
-						String nodeName = r.next();
-						int nodeX = r.nextInt();
-						int nodeY = r.nextInt();
-						Node node = new Machine(nodeName, nodeX, nodeY);
-						map.put(nodeName, node);
-						String ip = r.next();
-						node.ETH_IP = ip;
-						String eth_hw = r.next();
-						node.ETH_HW = eth_hw;
-						node.WLS_HW = new ArrayList<String>();
-						int wls_hw_count = r.nextInt();
-						for (int j = 0; j < wls_hw_count; j++) {
-							String wls_hw = r.next();
-							node.WLS_HW.add(wls_hw);
-						}
-						node.adjacent = new ArrayList<Edge>();
-						int adjacent = r.nextInt();
-						for (int j = 0; j < adjacent; j++) {
-							String next = r.next();
-							pairs.add(new StringPair(nodeName, next));
-						}
-						node.channels = new ArrayList<Channel>();
-						int channels = r.nextInt();
-						for (int j = 0; j < channels; j++) {
-							int channel = r.nextInt();
-							double prob = r.nextDouble();
-							node.channels.add(new Channel(channel, prob));
-						}
-						String isSource = r.next();
-						String isDest = r.next();
-						if (isSource.equals("true")){
-//							drawingPanel.source = node;
-							node.isSource = true;
-							node.isDestination = false;
-						}
-						if (isDest.equals("true")){
-//							drawingPanel.destination = node;
-							node.isDestination = true;
-						}
-						drawingPanel.listOfNodes.add(node);
-					}
-					for (StringPair e : pairs) {
-						Edge edge = new Edge(map.get(e.n1), map.get(e.n2));
-						map.get(e.n1).adjacent.add(edge);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				drawingPanel.repaint();
-				JOptionPane.showMessageDialog(null, "File Loaded.");
+				Loader ld = new Loader(drawingPanel);
+				ld.load();
 			}
 
 		});

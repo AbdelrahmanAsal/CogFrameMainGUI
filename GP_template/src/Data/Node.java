@@ -11,13 +11,14 @@ import All.DrawingPanel;
 
 public abstract class Node{
 	public int x, y;
-	public boolean isSource, isDestination;
 	public String name, ETH_IP, ETH_HW, mobilityOption, topologyOption;
 	public ArrayList<String> WLS_HW;
 	public ArrayList<String> WLS_Name;
-	public ArrayList<String> WLS_IP;
+	public ArrayList<String> WLS_IP; // To be removed
 	public ArrayList<Edge> adjacent;
 	public ArrayList<Channel> channels;
+	
+	public boolean isSource, isDestination;
 	
 	//Additional data to be added.
 	public static double maxAverageNodalDelay; 
@@ -27,10 +28,10 @@ public abstract class Node{
 	public TreeMap<Integer, PacketInfo> inPackets, outPackets;
 	
 	public Node destination; // Destination node corresponding to the Source node in the flow, NULL if destination node
-	public int flowID; // only needed for source nodes
+	public int flowID; // only needed for source & dest nodes
 	
 	public void setFlowID(int flowID) {
-		if(isSource) {
+		if(isSource || isDestination) {
 			this.flowID = flowID;
 		}
 	}
@@ -52,9 +53,10 @@ public abstract class Node{
 		destination = null;
 		
 		this.name = name;
-		
+		// Never make any of those an empty String - For save & load
+		// to work properly
 		this.ETH_IP = "10.0.0.21";
-		this.ETH_HW = " ";
+		this.ETH_HW = "N/A";
 		this.WLS_HW = new ArrayList<String>();
 //		WLS_HW.add(" ");
 //		WLS_HW.add("11:12:13:14:15:19");
@@ -75,6 +77,8 @@ public abstract class Node{
 		
 		inPackets = new TreeMap<Integer, PacketInfo>();
 		outPackets = new TreeMap<Integer, PacketInfo>();
+		
+		flowID = -1; // initially
 	}
 	
 	public String getIP(){

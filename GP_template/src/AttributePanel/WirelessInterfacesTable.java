@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
 public class WirelessInterfacesTable extends AbstractTableModel {
-	String[] colNames = { "Name", "H/W" };
+	String[] colNames = { "Name", "Hardware Address" };
 	ArrayList<WirelessTableRowEntry> current;
 	protected int columnsCount = colNames.length;
 

@@ -8,7 +8,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.HashSet;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -45,6 +47,7 @@ public class UI extends JFrame  {
 	public UI(){
 		this.self = this;
 		setLayout(new BorderLayout());
+//		setTitle("CRESCENT");
 		setTitle("CogFrame");
 		nodeSubset = new ArrayList<Node>();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -82,7 +85,7 @@ public class UI extends JFrame  {
 		setVisible(true);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 	}
-
+	
 	private void setAllMenus() {
 		//Set Menu bars.
 		JMenuBar menuBar = new JMenuBar();
@@ -116,16 +119,6 @@ public class UI extends JFrame  {
 
 		});
 		
-		JMenuItem clearButton = new JMenuItem("Clear");
-		clearButton.setMnemonic(KeyEvent.VK_C);
-		clearButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				drawingPanel.listOfNodes.clear();
-				drawingPanel.repaint();
-			}
-		});
-		
 		JMenuItem fileExit = new JMenuItem("Exit");
 		fileExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W,
 		        ActionEvent.CTRL_MASK));
@@ -137,76 +130,21 @@ public class UI extends JFrame  {
 				System.exit(0);
 			}
 		});
-		fileOption.add(fileSave);
 		fileOption.add(fileLoad);
-		fileOption.add(clearButton);
+		fileOption.add(fileSave);
 		fileOption.add(fileExit);
 
-		//Mobility Options.
-		JMenu editOption = new JMenu("Cogframe Agent");
+		JMenu editOption = new JMenu("Edit");
 		editOption.setMnemonic(KeyEvent.VK_E);
-		JMenuItem editSetSource = new JMenuItem("Set Source");
-		editSetSource.addMouseListener(new MouseListener() {
+		
+		JMenuItem editClearButton = new JMenuItem("Clear");
+		editClearButton.setMnemonic(KeyEvent.VK_C);
+		editClearButton.addActionListener(new ActionListener() {
 			@Override
-			public void mouseReleased(MouseEvent arg0) {
-
+			public void actionPerformed(ActionEvent e) {
+				drawingPanel.listOfNodes.clear();
+				drawingPanel.repaint();
 			}
-			@Override
-			public void mousePressed(MouseEvent arg0) {}
-			@Override
-			public void mouseExited(MouseEvent arg0) {}
-			@Override
-			public void mouseEntered(MouseEvent arg0) {}
-			@Override
-			public void mouseClicked(MouseEvent arg0) {}
-		});
-
-		JMenuItem editSetDestination = new JMenuItem("Set Destination");
-		editSetDestination.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-
-			}
-			@Override
-			public void mousePressed(MouseEvent arg0) {}
-			@Override
-			public void mouseExited(MouseEvent arg0) {}
-			@Override
-			public void mouseEntered(MouseEvent arg0) {}
-			@Override
-			public void mouseClicked(MouseEvent arg0) {}
-		});
-		JMenuItem editGenerate = new JMenuItem("Generate");
-		editGenerate.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-			}
-
-			@Override
-			public void mousePressed(MouseEvent arg0) {}
-			@Override
-			public void mouseExited(MouseEvent arg0) {}
-			@Override
-			public void mouseEntered(MouseEvent arg0) {}
-			@Override
-			public void mouseClicked(MouseEvent arg0) {}
-		});
-		JMenuItem editVisualize = new JMenuItem("Visualize");
-		editVisualize.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-				//Just exit!.
-				System.exit(0);
-			}
-
-			@Override
-			public void mousePressed(MouseEvent arg0) {}
-			@Override
-			public void mouseExited(MouseEvent arg0) {}
-			@Override
-			public void mouseEntered(MouseEvent arg0) {}
-			@Override
-			public void mouseClicked(MouseEvent arg0) {}
 		});
 		
 		JMenuItem editDelete = new JMenuItem("Delete");
@@ -235,7 +173,7 @@ public class UI extends JFrame  {
 								}
 							}
 							
-							System.out.println("Successfully deleted the node:\n" + toDeleteNode);
+//							System.out.println("Successfully deleted the node:\n" + toDeleteNode);
 							drawingPanel.currentSelectedNode = null;
 						}
 					} else if (drawingPanel.selectedEdge != null) { // delete edge
@@ -244,7 +182,7 @@ public class UI extends JFrame  {
 						if(result == 0){ // Yes delete the edge.
 							Node fromNode = drawingPanel.selectedEdge.from;
 							Node toNode = drawingPanel.selectedEdge.to;
-							System.out.println("Removing the edge between " + fromNode + " -> " + toNode);
+//							System.out.println("Removing the edge between " + fromNode + " -> " + toNode);
 							
 							fromNode.adjacent.remove(new Edge(fromNode, toNode));
 							toNode.adjacent.remove(new Edge(toNode, fromNode));
@@ -255,9 +193,158 @@ public class UI extends JFrame  {
 				repaint();
 			}
 		});
+		editOption.add(editClearButton);
+		editOption.add(editDelete);		
+
+		JMenu viewOption = new JMenu("View");
+		viewOption.setMnemonic(KeyEvent.VK_V);
+		final JCheckBoxMenuItem viewShowGrid = new JCheckBoxMenuItem("Show grid");
+		viewShowGrid.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				if(viewShowGrid.isSelected()) {
+					drawingPanel.showGridFlag = true;
+				} else {
+					drawingPanel.showGridFlag = false;
+				}
+				repaint();
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+			
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+			
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+			
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+		});
+		viewOption.add(viewShowGrid);
 		
-		JMenu editGetInformation= new JMenu("Get Information");
-		editGetInformation.addMouseListener(new MouseListener() {
+		final JCheckBoxMenuItem viewShowNodesNames = new JCheckBoxMenuItem("Show nodes names");
+		viewShowNodesNames.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				if(viewShowNodesNames.isSelected()) {
+					drawingPanel.showNodesNamesFlag = true;
+				} else {
+					drawingPanel.showNodesNamesFlag = false;
+				}
+				repaint();
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+			
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+			
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+			
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+		});
+		viewOption.add(viewShowNodesNames);
+
+		final JCheckBoxMenuItem viewShowFlowNumbers = new JCheckBoxMenuItem("Show flows numbers");
+		viewShowFlowNumbers.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				if(viewShowFlowNumbers.isSelected()) {
+					drawingPanel.showFlowsNumsFlag = true;
+				} else {
+					drawingPanel.showFlowsNumsFlag = false;
+				}
+				repaint();
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+			
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+			
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+			
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+		});
+		viewOption.add(viewShowFlowNumbers);
+		
+		JMenu agentOption = new JMenu("Agent");
+		agentOption.setMnemonic(KeyEvent.VK_A);
+		JMenuItem agentSetSource = new JMenuItem("Set Source");
+		agentSetSource.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+			}
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+		});
+
+		JMenuItem agentSetDestination = new JMenuItem("Set Destination");
+		agentSetDestination.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+			}
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+		});
+		JMenuItem agentGenerate = new JMenuItem("Generate");
+		agentGenerate.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+			}
+
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+		});
+		JMenuItem agentVisualize = new JMenuItem("Visualize");
+		agentVisualize.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				//Just exit!.
+				System.exit(0);
+			}
+
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+		});
+		
+		JMenu agentGetInformation= new JMenu("Get Information");
+		agentGetInformation.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				for(Node node : drawingPanel.listOfNodes){
@@ -285,6 +372,27 @@ public class UI extends JFrame  {
 		scanIPOption.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
+				HashSet<String> nodeNames = new HashSet<String>();
+				// First, check that all nodes have unique not-empty names
+				for (Node n: drawingPanel.listOfNodes) {
+					String nodeName = n.name;
+					if (n.name.equals("")) {
+						JOptionPane.showMessageDialog(drawingPanel,
+								"You must fill all nodes names before using automatic " +
+								"discovery.");
+						return;
+					}
+						
+					if(!nodeNames.contains(nodeName))
+						nodeNames.add(n.name);
+					else {
+						JOptionPane.showMessageDialog(drawingPanel,
+								"Node names are not unique!");
+						return;
+					}
+				}
+				
+				
 				IPScanner i = new IPScanner();
 				String[] avalIP = i.getReachableIP();
 				for(String ip: avalIP) {
@@ -307,8 +415,8 @@ public class UI extends JFrame  {
 		scanIPOption.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
-				for(Node node : drawingPanel.listOfNodes){
-					if(node instanceof Data.Primary) {
+				for (Node node : drawingPanel.listOfNodes) {
+					if (node instanceof Data.Primary) {
 						Primary primaryNode = (Primary) node;
 						if(primaryNode.isVirtual)
 							continue;
@@ -328,12 +436,12 @@ public class UI extends JFrame  {
 			public void mouseClicked(MouseEvent arg0) {}
 		});
 		
-		editGetInformation.add(scanIPOption);
-		editGetInformation.add(scanIPOption2);
+		agentGetInformation.add(scanIPOption);
+		agentGetInformation.add(scanIPOption2);
 		
 
-		JMenuItem editGetStatistics= new JMenuItem("Get Statistics");
-		editGetStatistics.addMouseListener(new MouseListener() {
+		JMenuItem agentGetStatistics= new JMenuItem("Get Statistics");
+		agentGetStatistics.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				for(Node node : drawingPanel.listOfNodes){
@@ -357,8 +465,35 @@ public class UI extends JFrame  {
 			public void mouseClicked(MouseEvent arg0) {}
 		});
 
-		JMenuItem editPostConfiguration = new JMenuItem("Post Configuration ");
-		editPostConfiguration .addMouseListener(new MouseListener() {
+//		JMenuItem agentPostConfiguration = new JMenuItem("Post Configuration & Module files");
+//		agentPostConfiguration.addMouseListener(new MouseListener() {
+//			@Override
+//			public void mouseReleased(MouseEvent arg0) {
+//				for(Node node : drawingPanel.listOfNodes){
+//					if(node instanceof Data.Primary) {
+//						Primary primaryNode = (Primary) node;
+//						if(primaryNode.isVirtual)
+//							continue;
+//					}
+//					CogAgent cogAgent = new CogAgent(node);
+//					cogAgent.postConfiguration();
+//					cogAgent = new CogAgent(node);
+//					cogAgent.postModule();
+//				}
+//			}
+//
+//			@Override
+//			public void mousePressed(MouseEvent arg0) {}
+//			@Override
+//			public void mouseExited(MouseEvent arg0) {}
+//			@Override
+//			public void mouseEntered(MouseEvent arg0) {}
+//			@Override
+//			public void mouseClicked(MouseEvent arg0) {}
+//		});
+
+		JMenuItem agentPostConfiguration = new JMenuItem("Post Configuration & Nodes properties Files");
+		agentPostConfiguration.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				for(Node node : drawingPanel.listOfNodes){
@@ -370,22 +505,6 @@ public class UI extends JFrame  {
 					CogAgent cogAgent = new CogAgent(node);
 					cogAgent.postConfiguration();
 				}
-			}
-
-			@Override
-			public void mousePressed(MouseEvent arg0) {}
-			@Override
-			public void mouseExited(MouseEvent arg0) {}
-			@Override
-			public void mouseEntered(MouseEvent arg0) {}
-			@Override
-			public void mouseClicked(MouseEvent arg0) {}
-		});
-
-		JMenuItem editPostModule = new JMenuItem("Post Module");
-		editPostModule.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
 				for(Node node : drawingPanel.listOfNodes){
 					if(node instanceof Data.Primary) {
 						Primary primaryNode = (Primary) node;
@@ -407,8 +526,33 @@ public class UI extends JFrame  {
 			public void mouseClicked(MouseEvent arg0) {}
 		});
 
-		JMenuItem editStartExperiment = new JMenuItem("Start Experiment");
-		editStartExperiment.addMouseListener(new MouseListener() {
+		JMenuItem agentNTPSync = new JMenuItem("Synchronize machines via NTP");
+		agentNTPSync.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				for(Node node : drawingPanel.listOfNodes) {
+					if(node instanceof Data.Primary) {
+						Primary primaryNode = (Primary) node;
+						if(primaryNode.isVirtual)
+							continue;
+					}
+					CogAgent cogAgent = new CogAgent(node);
+					cogAgent.synch();
+				}
+				
+			}
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+			@Override
+			public void mouseClicked(MouseEvent arg0) {}
+		});
+		
+		JMenuItem agentStartExperiment = new JMenuItem("Start Experiment");
+		agentStartExperiment.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				nodeSelection = false;
@@ -447,19 +591,18 @@ public class UI extends JFrame  {
 			public void mouseClicked(MouseEvent arg0) {}
 		});
 
-		editOption.add(editDelete);
 //		editOption.addSeparator();
 //		editOption.add(editSetSource);
 //		editOption.add(editSetDestination);
 //		editOption.add(editGenerate);
 //		editOption.add(editVisualize);
-		editOption.addSeparator();
-		editOption.add(editGetInformation);
-		editOption.add(editGetStatistics);
-		editOption.add(editPostConfiguration);
-		editOption.add(editPostModule);
-		editOption.add(editStartExperiment);
-		editOption.add(chooseNodes);
+//		agentOption.addSeparator();
+		agentOption.add(agentGetInformation);
+		agentOption.add(agentGetStatistics);
+		agentOption.add(agentPostConfiguration);
+		agentOption.add(agentNTPSync);
+		agentOption.add(agentStartExperiment);
+		agentOption.add(chooseNodes);
 
 		//Mobility Options.
 		JMenu mobilityOption = new JMenu("Mobility Option");
@@ -563,6 +706,8 @@ public class UI extends JFrame  {
 
 		menuBar.add(fileOption);
 		menuBar.add(editOption);
+		menuBar.add(viewOption);
+		menuBar.add(agentOption);
 		menuBar.add(mobilityOption);
 //		menuBar.add(topologyOption);
 //		menuBar.add(primaryOption);

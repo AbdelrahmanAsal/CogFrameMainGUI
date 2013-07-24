@@ -52,10 +52,11 @@ public abstract class Node{
 		isSource = isDestination = false;
 		destination = null;
 		
-		this.name = name;
 		// Never make any of those an empty String - For save & load
 		// to work properly
-		this.ETH_IP = "10.0.0.21";
+		this.name = name;
+//		this.ETH_IP = "10.0.0.21";
+		this.ETH_IP = "N/A";
 		this.ETH_HW = "N/A";
 		this.WLS_HW = new ArrayList<String>();
 //		WLS_HW.add(" ");
@@ -101,7 +102,7 @@ public abstract class Node{
 				
 				return ret;
 			}else return "N/A";
-		}catch(Exception ex){//Already showing N/A.
+		}catch(Exception ex){ //Already showing N/A.
 			return "N/A";
 		}
 	} 

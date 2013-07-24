@@ -36,7 +36,6 @@ public class StatisticsCollector {
 
 		for(Node node: listOfNodes){
 			nodes.put(node.ETH_HW.toUpperCase(), node);
-			System.out.println(node.ETH_HW+"         -> ");
 			for(String hw: node.WLS_HW) {
 				nodes.put(hw.toUpperCase(), node);
 			}
@@ -54,7 +53,7 @@ public class StatisticsCollector {
 		}
 		String name = r.next().toUpperCase();
 		Node currentNode = null;
-		System.out.println(name);
+//		System.out.println(name);
 		currentNode = nodes.get(name);
 		primaryNames.add(currentNode.name);
 
@@ -83,63 +82,76 @@ public class StatisticsCollector {
 		} catch(Exception ex) {
 
 		}
-
-		String name = r.next().toUpperCase();
+		String name = r.next().toUpperCase(); // MAC
 		Node currentNode = null;
-		System.out.println(name);
 		currentNode = nodes.get(name);
-		System.out.println(currentNode);
+//		System.out.println(currentNode);
 //		String role = r.next();
 
-		//Sent packets table.
-		int sentCount = r.nextInt();
-		for(int i = 0; i < sentCount; i++){
-			int packetID = r.nextInt();
-			long timeStamp = r.nextLong();
-			String to = r.next().toUpperCase();
-			Node toNode = nodes.get(to);
+		while(true) {
+			try {
+				// flow number
+				int flowNum = r.nextInt();
+				
+				// Sent packets table.
+				int sentCount = r.nextInt();
+				for (int i = 0; i < sentCount; i++) {
+					int packetID = r.nextInt();
+					long timeStamp = r.nextLong();
+					String to = r.next().toUpperCase();
+					Node toNode = nodes.get(to);
 
-			currentNode.outPackets.put(packetID, new PacketInfo(packetID, timeStamp, toNode));
-			insertAccessPair(new AccessPair(timeStamp, currentNode), packetID);
-		}
+					currentNode.outPackets.put(packetID, new PacketInfo(
+							packetID, timeStamp, toNode));
+					insertAccessPair(new AccessPair(timeStamp, currentNode),
+							packetID);
+				}
 
-		//Received packets table.
-		int receviedCount = r.nextInt();
-		for(int i = 0; i < receviedCount; i++){
-			int packetID = r.nextInt();
-			long timeStamp = r.nextLong();
+				// Received packets table.
+				int receviedCount = r.nextInt();
+				for (int i = 0; i < receviedCount; i++) {
+					int packetID = r.nextInt();
+					long timeStamp = r.nextLong();
 
-			currentNode.inPackets.put(packetID, new PacketInfo(packetID, timeStamp, currentNode));		
-			insertAccessPair(new AccessPair(timeStamp, currentNode), packetID);
-		}
+					currentNode.inPackets.put(packetID, new PacketInfo(
+							packetID, timeStamp, currentNode));
+					insertAccessPair(new AccessPair(timeStamp, currentNode),
+							packetID);
+				}
 
-		int switchCount = r.nextInt();
-		for(int i = 0; i < switchCount; i++){
-			String interfaceName = r.next();
-			long timeStamp = r.nextLong();
-			long switchingTime = r.nextLong();
-			int channelFrom = r.nextInt();
-			int channelTo = r.nextInt();
+				int switchCount = r.nextInt();
+				for (int i = 0; i < switchCount; i++) {
+					String interfaceName = r.next();
+					long timeStamp = r.nextLong();
+					long switchingTime = r.nextLong();
+					int channelFrom = r.nextInt();
+					int channelTo = r.nextInt();
 
-			switchingTimeSet.add(switchingTime);
+					switchingTimeSet.add(switchingTime);
 
-			currentNode.totalSwitches++;
-			currentNode.averageSwitchingTime += switchingTime;
-		}
+					currentNode.totalSwitches++;
+					currentNode.averageSwitchingTime += switchingTime;
+				}
+				Node.maxTotalSwitches = Math.max(Node.maxTotalSwitches,
+						switchCount);
+				currentNode.averageSwitchingTime /= switchCount;
 
-		Node.maxTotalSwitches = Math.max(Node.maxTotalSwitches, switchCount);
-		currentNode.averageSwitchingTime /= switchCount;
-
-		int noOfProtocolPackets = r.nextInt();
-		for(int i = 0; i < noOfProtocolPackets; i++) {
-			String message = r.next();
-			String fromMac = r.next().toUpperCase();
-			String toMac = r.next().toUpperCase();
-			long fromTime = r.nextLong();
-			long toTime = r.nextLong();
-			minTimestamp = Math.min(fromTime, minTimestamp);
-			maxTimestamp = Math.max(toTime, maxTimestamp);
-			timeline.add(new Interval(-1, nodes.get(fromMac), nodes.get(toMac), fromTime, toTime, message));
+				int noOfProtocolPackets = r.nextInt();
+				for (int i = 0; i < noOfProtocolPackets; i++) {
+					String message = r.next();
+					String fromMac = r.next().toUpperCase();
+					String toMac = r.next().toUpperCase();
+					long fromTime = r.nextLong();
+					long toTime = r.nextLong();
+					minTimestamp = Math.min(fromTime, minTimestamp);
+					maxTimestamp = Math.max(toTime, maxTimestamp);
+					timeline.add(new Interval(-1, nodes.get(fromMac), nodes
+							.get(toMac), fromTime, toTime, message));
+				}
+			} catch (Exception ex) {
+				System.out.println("CATCH: Stats file ended");
+				break;
+			}
 		}
 	}
 
@@ -162,18 +174,18 @@ public class StatisticsCollector {
 				AccessPair toAP = accessList.get(i + 1);
 				timeline.add(new Interval(packetID, fromAP.node, toAP.node, fromAP.timestamp, toAP.timestamp, ""));
 			}
-			AccessPair lastAccess = accessList.get(accessList.size()-1);
-			if(!lastAccess.node.isDestination) {
-//				Node node = lastAccess.node;
-//				PacketInfo info = node.outPackets.get(packetID);
-//				timeline.add(new Interval(packetID, node, info.to, lastAccess.timestamp, -1, ""));
-				addLostPacketToTimeline(packetID, lastAccess);
-			}
+//			AccessPair lastAccess = accessList.get(accessList.size()-1);
+//			if(!lastAccess.node.isDestination) {
+////				Node node = lastAccess.node;
+////				PacketInfo info = node.outPackets.get(packetID);
+////				timeline.add(new Interval(packetID, node, info.to, lastAccess.timestamp, -1, ""));
+//
+//				addLostPacketToTimeline(packetID, lastAccess);
+//			}
 		}
 
-		System.out.println(timeline);
 		for(Node node : listOfNodes){
-			System.out.println(node + " <->");
+//			System.out.println(node + " <->");
 			if (node.isSource)
 				src = node;
 			if (node.isDestination) {
@@ -193,7 +205,7 @@ public class StatisticsCollector {
 			else node.averageNodalDelay /= node.outPackets.size();
 
 			Node.maxAverageNodalDelay = Math.max(Node.maxAverageNodalDelay, node.averageNodalDelay);
-
+			//EOF
 			for(Edge edge : node.adjacent)if(node == edge.from){
 				System.out.println("Calculating the statistics for the " + edge.from.name + " -> " + edge.to.name);
 				int toBeSent = 0, lost = 0;
@@ -203,7 +215,7 @@ public class StatisticsCollector {
 					if(edge.to.inPackets.containsKey(packetID)){
 						long timeDiff = edge.to.inPackets.get(packetID).timeStamp - edge.from.outPackets.get(packetID).timeStamp;
 						timeDiff = Math.abs(timeDiff);
-						System.out.println("Adding to the link delay " + edge.from.name + " -> " + edge.to.name + ", " + timeDiff);
+//						System.out.println("Adding to the link delay " + edge.from.name + " -> " + edge.to.name + ", " + timeDiff);
 						edge.linkDelay += timeDiff;
 					}else{
 						lost++;
@@ -211,40 +223,42 @@ public class StatisticsCollector {
 				}
 
 				edge.lossRatio = lost * 1.0 / toBeSent;
-
+				
+				
 				if(toBeSent == 0 || toBeSent - lost == 0)edge.linkDelay = 0;
 				else edge.linkDelay /= (toBeSent - lost);
 
 				if(toBeSent - lost > 0)
 					Edge.maxLinkDelay = Math.max(edge.linkDelay, Edge.maxLinkDelay);
-				System.out.println("------>   "+edge.linkDelay);
+				System.out.println("------>   " + edge.linkDelay);
 				edge.throughput += toBeSent - lost;
 				edge.packetCount = toBeSent - lost;
+				// EOF
 			}
 		}
 
 	}
 	private void addLostPacketToTimeline(int packetID, AccessPair lastAccess) {
-		Node node = lastAccess.node;
-		PacketInfo info = node.outPackets.get(packetID);
-		int count = 1;
-		int iterations = 10;
-		int dx,dy;
-		int currX = node.x;
-		int currY = node.y;
-		long fromTime = lastAccess.timestamp;
-		int currDisp = 1;
-		while(iterations -- > 0) {
-			dx = count;
-			dy = count * count;
-			currX += dx;
-			currY += dy;
-			count++;
-			fallingPackets.add(new FallingPacketPosition(fromTime+currDisp, fromTime+currDisp+1, currX, currY));
-			System.out.println((fromTime+currDisp)+" "+(fromTime+currDisp+1));
-			currDisp+=2;
-		}
-		timeline.add(new Interval(packetID, node, info.to, lastAccess.timestamp, -1, ""));
+//		Node node = lastAccess.node;
+//		PacketInfo info = node.outPackets.get(packetID);
+//		int count = 1;
+//		int iterations = 10;
+//		int dx,dy;
+//		int currX = node.x;
+//		int currY = node.y;
+//		long fromTime = lastAccess.timestamp;
+//		int currDisp = 1;
+//		while(iterations -- > 0) {
+//			dx = count;
+//			dy = count * count;
+//			currX += dx;
+//			currY += dy;
+//			count++;
+//			fallingPackets.add(new FallingPacketPosition(fromTime+currDisp, fromTime+currDisp+1, currX, currY));
+//			System.out.println((fromTime+currDisp)+" "+(fromTime+currDisp+1));
+//			currDisp+=2;
+//		}
+//		timeline.add(new Interval(packetID, node, info.to, lastAccess.timestamp, -1, ""));
 	}
 }
 

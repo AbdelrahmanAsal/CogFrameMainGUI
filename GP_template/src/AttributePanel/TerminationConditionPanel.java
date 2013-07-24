@@ -27,7 +27,7 @@ public class TerminationConditionPanel extends JFrame{
 		panel = new JPanel();
 		terminationConditionChoices = new JComboBox(terminationConditions);
 		value = new JTextField();
-		set = new JButton("Set Condtion");
+		set = new JButton("Set Condition");
 		set.addActionListener(new ActionListener(){
 
 			@Override

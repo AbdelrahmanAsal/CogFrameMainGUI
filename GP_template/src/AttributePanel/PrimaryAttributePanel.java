@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.TreeMap;
@@ -48,7 +50,32 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 	public JCheckBox virtualCheckBox;
 	public JButton onOffButton;
 
+	@Override
+	public void setNodeData() {
+		if (selectedNode != null) {
+			selectedNode.name = name.getText().replace(" ", "");
 
+			selectedNode.ETH_IP = ETH_IP.getText();
+			selectedNode.ETH_HW = ETH_HW.getText();
+			selectedNode.WLS_IP = parseSeparatedString(WLS_IP.getText());
+	//		selectedNode.WLS_HW = parseSeparatedString(WLS_HW.getText());
+
+			selectedNode.channels = parseChannels(channels.getText());
+
+			selectedNode.mobilityOption = mobilityOption.getSelectedItem().toString();
+			selectedNode.topologyOption = topologyOption.getSelectedItem().toString();
+
+			selectedNode.activeDist = tempActiveDist;
+			selectedNode.inactiveDist = tempInactiveDist;
+
+			selectedNode.activeChannel = selectedChannel.getText();
+
+			drawingPanel.repaint();
+
+//			System.out.println("Successfully updated the node:\n" + selectedNode);
+		}
+	}
+	
 	public PrimaryAttributePanel(DrawingPanel dp){
 		this.drawingPanel = dp;
 		setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Primary Attributes Panel"));
@@ -68,6 +95,7 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 						e1.printStackTrace();
 					} 
 				}
+				setNodeData();
 			}
 		});
 		editActiveDist = new JButton("Edit");
@@ -82,6 +110,7 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 						e.printStackTrace();
 					} 
 				tempActiveDist.showPanel();
+				setNodeData();
 			}
 		});
 
@@ -97,6 +126,7 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 						e1.printStackTrace();
 					} 
 				}
+				setNodeData();
 			}
 		});
 		editInactiveDist = new JButton("Edit");
@@ -111,6 +141,7 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 					} 
 				}
 				tempInactiveDist.showPanel();
+				setNodeData();
 			}
 		});
 
@@ -118,36 +149,34 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 		selectedChannel = new JTextArea();
 		selectedChannel.setLineWrap(true);
 		selectedChannel.setBorder(BorderFactory.createLoweredBevelBorder());
-
-		setData = new JButton("Set Data");
-		setData.addActionListener(new ActionListener() {
+		selectedChannel.addKeyListener(new KeyListener() {
+			
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if(selectedNode != null){
-					selectedNode.name = name.getText();
-
-					selectedNode.ETH_IP = ETH_IP.getText();
-					selectedNode.ETH_HW = ETH_HW.getText();
-					selectedNode.WLS_IP = parseSeparatedString(WLS_IP.getText());
-//					selectedNode.WLS_HW = parseSeparatedString(WLS_HW.getText());
-
-					selectedNode.channels = parseChannels(channels.getText());
-
-					selectedNode.mobilityOption = mobilityOption.getSelectedItem().toString();
-					selectedNode.topologyOption = topologyOption.getSelectedItem().toString();
-
-					selectedNode.activeDist = tempActiveDist;
-					selectedNode.inactiveDist = tempInactiveDist;
-					
-					selectedNode.activeChannel  =  selectedChannel.getText();
-					
-
-					drawingPanel.repaint();
-
-					System.out.println("Successfully updated the node:\n" + selectedNode);
-				}
+			public void keyTyped(KeyEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent arg0) {
+				// TODO Auto-generated method stub
+				setNodeData();
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				// TODO Auto-generated method stub
+				
 			}
 		});
+		
+
+//		setData = new JButton("Set Data");
+//		setData.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent arg0) {
+//			}
+//		});
 
 		JPanel all = new JPanel();
 		virtualCheckBox = new JCheckBox("Virtual");
@@ -161,21 +190,23 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 				String selectedChannelText = selectedChannel.getText();
 				for(Edge edge: selectedNode.adjacent) {
 					Node node = edge.to;
-					CogAgent agent = new CogAgent(node);
+//					CogAgent agent = new CogAgent(node);
 					if(text.equals("On")) {
-						agent.setPrimaryUser(selectedChannelText, 0);
+//						agent.setPrimaryUser(selectedChannelText, 0);
 					} else {
-						agent.setPrimaryUser(selectedChannelText, 1);
+//						agent.setPrimaryUser(selectedChannelText, 1);
 					}
 				}
 				if(text.equals("On")) {
 					selectedNode.virtualState = false;
 					onOffButton.setText("Off");
 					onOffButton.setBackground(Color.red);
+					selectedNode.isON = false;
 				} else {
 					selectedNode.virtualState = true;
 					onOffButton.setText("On");
 					onOffButton.setBackground(Color.green);
+					selectedNode.isON = true;
 				}
 			}
 		});
@@ -195,6 +226,7 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 					selectedNode.isVirtual = false;
 					onOffButton.setEnabled(false);
 				}
+//				setNodeData();
 			}
 		});
 
@@ -214,7 +246,7 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 				    	   .addComponent(nameLabel)
 				      	   .addComponent(ETH_IPLabel)
 				      	   .addComponent(ETH_HWLabel)
-				      	   .addComponent(WLS_IPLabel)
+//				      	   .addComponent(WLS_IPLabel)
 				      	   .addComponent(WLS_HWLabel)
 				      	   .addComponent(channelsLabel)
 				      	   .addComponent(mobilityOptionLabel)
@@ -227,7 +259,7 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 		        		   .addComponent(name)
 				      	   .addComponent(ETH_IP)
 				      	   .addComponent(ETH_HW)
-				      	   .addComponent(WLS_IP)
+//				      	   .addComponent(WLS_IP)
 				      	   .addComponent(ps)
 				      	   .addComponent(channels)
 				      	   .addComponent(mobilityOption)
@@ -240,7 +272,7 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 			      	   			.addComponent(inactiveDist)
 			      	   			.addComponent(editInactiveDist))
 			      	   	   .addComponent(selectedChannel)
-			      	   	   .addComponent(setData)
+//			      	   	   .addComponent(setData)
 			      	   	   .addComponent(virtualCheckBox)
 			      	   	   .addComponent(onOffButton))
 		   			  )
@@ -257,10 +289,10 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 	          .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 		           .addComponent(ETH_HWLabel)
 		           .addComponent(ETH_HW))
-	          .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-		           .addComponent(WLS_IPLabel)
-		           .addComponent(WLS_IP)
-		           )
+//	          .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+//		           .addComponent(WLS_IPLabel)
+//		           .addComponent(WLS_IP)
+//		           )
 	          .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 		           .addComponent(WLS_HWLabel)
 		           .addComponent(ps)
@@ -286,7 +318,7 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 		       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 		    	   .addComponent(selectedChannelLabel)
 		    	   .addComponent(selectedChannel))
-		       .addComponent(setData)
+//		       .addComponent(setData)
 		       .addComponent(virtualCheckBox)
 		       .addComponent(onOffButton)
 		);
@@ -386,7 +418,7 @@ public class PrimaryAttributePanel extends NodeAttributesPanel{
 	}
 	
 	public void disableFields() {
-		name.setEnabled(false);
+//		name.setEnabled(false);
 		ETH_IP.setEnabled(false);
 		ETH_HW.setEnabled(false);
 		WLS_IP.setEnabled(false);

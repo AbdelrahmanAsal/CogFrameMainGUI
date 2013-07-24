@@ -37,27 +37,26 @@ public class Edge {
 		}else if(drawingOption.equals("LossRatio")){
 			if (!used)
 				return;
-			System.out.println("Loss Ratio: "+ lossRatio);
 			g2d.setColor(new Color((int) (255 * lossRatio), (int) (255 * (1 - lossRatio)), 0));
 		}else if(drawingOption.equals("LinkDelay")){
 			if (!used)
 				return;
-			System.out.println("Link Delay: "+ from.name + " -> " + to.name + ": " + linkDelay + ", " + maxLinkDelay);
-			g2d.setColor(new Color((int) (255 * (linkDelay / maxLinkDelay)), (int) (255 * (1 - ((linkDelay) / maxLinkDelay))), 0));
+//			System.out.println("Link Delay: "+ from.name + " -> " + to.name + ": " + linkDelay + ", " + maxLinkDelay);
+			int percent = (int) (linkDelay / maxLinkDelay);
+			g2d.setColor(new Color(255 * percent, 255 * (1 - percent), 0));
 		}else if(drawingOption.equals("Throughput")){
 //			g2d.setColor(new Color((int) (255 * throughput), (int) (255 * (1 - throughput)), 0));
 		}else{
-			System.out.println("EDGE");
 			g2d.setColor(Constants.EDGE_COLOR);
 		}
 		
 		AffineTransform tx = new AffineTransform();
 		
 		Polygon arrowHead = new Polygon();  
-		arrowHead.addPoint( 0,5);
-		arrowHead.addPoint( -5, -5);
-		arrowHead.addPoint( 5,-5);
-		  
+		arrowHead.addPoint(0, 5);
+		arrowHead.addPoint(-5, -5);
+		arrowHead.addPoint(5, -5);
+  
 	    tx.setToIdentity();
 	    Line2D.Double line = getRepLine();
 		double angle = Math.atan2(line.y2-line.y1, line.x2-line.x1);
@@ -91,4 +90,5 @@ public class Edge {
 		
 		return new Line2D.Double(from.x + 10 + dx2 + dx, from.y + 10 + dy2 + dy, to.x+10+dx2 - dx , to.y + 10 + dy2 - dy);
 	}
+	
 }

@@ -2,6 +2,8 @@ package AttributePanel;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
@@ -20,8 +22,7 @@ import javax.swing.table.TableColumn;
 import All.Channel;
 import All.Constants;
 
-
-public class NodeAttributesPanel extends JPanel{
+public abstract class NodeAttributesPanel extends JPanel{
 	public JLabel nameLabel, ETH_IPLabel, ETH_HWLabel, WLS_IPLabel, WLS_HWLabel, channelsLabel, mobilityOptionLabel, topologyOptionLabel;
 	public JTextArea name, ETH_IP, ETH_HW, WLS_IP, channels;
 	public JComboBox mobilityOption, topologyOption;
@@ -29,6 +30,7 @@ public class NodeAttributesPanel extends JPanel{
 	JTable WLS_HW_Table;
 	JScrollPane ps;
 	
+	public abstract void setNodeData();
 	
 	public NodeAttributesPanel(){
 		setLayout(new FlowLayout());
@@ -46,7 +48,9 @@ public class NodeAttributesPanel extends JPanel{
 		    }
 
 			@Override
-			public void keyReleased(KeyEvent e) {}
+			public void keyReleased(KeyEvent e) {
+				setNodeData();
+			}
 
 			@Override
 			public void keyTyped(KeyEvent e) {}
@@ -66,13 +70,16 @@ public class NodeAttributesPanel extends JPanel{
 		    }
 
 			@Override
-			public void keyReleased(KeyEvent e) {}
+			public void keyReleased(KeyEvent e) {
+				setNodeData();
+			}
 
 			@Override
 			public void keyTyped(KeyEvent e) {}
 		});
 		ETH_IP.setLineWrap(true);
 		ETH_IP.setBorder(BorderFactory.createLoweredBevelBorder());
+		
 		
 		ETH_HWLabel = new JLabel("Ethernet hardware:");
 		ETH_HW = new JTextArea("");
@@ -87,7 +94,9 @@ public class NodeAttributesPanel extends JPanel{
 		    }
 
 			@Override
-			public void keyReleased(KeyEvent e) {}
+			public void keyReleased(KeyEvent e) {
+				setNodeData();
+			}
 
 			@Override
 			public void keyTyped(KeyEvent e) {}
@@ -110,7 +119,9 @@ public class NodeAttributesPanel extends JPanel{
 		    }
 
 			@Override
-			public void keyReleased(KeyEvent e) {}
+			public void keyReleased(KeyEvent e) {
+				setNodeData();
+			}
 
 			@Override
 			public void keyTyped(KeyEvent e) {}
@@ -145,7 +156,9 @@ public class NodeAttributesPanel extends JPanel{
 		    }
 
 			@Override
-			public void keyReleased(KeyEvent e) {}
+			public void keyReleased(KeyEvent e) {
+				setNodeData();
+			}
 
 			@Override
 			public void keyTyped(KeyEvent e) {}
@@ -155,9 +168,22 @@ public class NodeAttributesPanel extends JPanel{
 
 		mobilityOptionLabel = new JLabel("Mobility Option");
 		mobilityOption = new JComboBox(new String[]{"GPS", "Static"});
+		mobilityOption.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent arg0) {
+				setNodeData();
+			}
+		});
 		
 		topologyOptionLabel = new JLabel("Topology Option");
-		topologyOption = new JComboBox(new String[]{"Location-based", "Static"});
+//		topologyOption = new JComboBox(new String[]{"Location-based", "Static"});
+		topologyOption = new JComboBox(new String[]{"Static", "Location-based"});
+		topologyOption.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent arg0) {
+				setNodeData();
+			}
+		});
 	}
 	
 	protected ArrayList<String> parseSeparatedString(String input) {

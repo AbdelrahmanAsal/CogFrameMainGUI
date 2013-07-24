@@ -75,8 +75,8 @@ public class EdgeAttributePanel extends JPanel {
 		
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
-			.addGroup(layout.createParallelGroup().addComponent(snrLabel).addComponent(linkQualityLabel).addComponent(dataRateLabel).addComponent(linkDelayLabel).addComponent(lossRatioLabel).addComponent(throughputLabel).addComponent(packetCountLabel).addComponent(setData))
-			.addGroup(layout.createParallelGroup().addComponent(snr).addComponent(linkQuality).addComponent(dataRate).addComponent(linkDelay).addComponent(lossRatio).addComponent(throughput).addComponent(packetCount))
+			.addGroup(layout.createParallelGroup().addComponent(snrLabel).addComponent(linkQualityLabel).addComponent(dataRateLabel).addComponent(linkDelayLabel).addComponent(lossRatioLabel)/*.addComponent(throughputLabel)*/.addComponent(packetCountLabel).addComponent(setData))
+			.addGroup(layout.createParallelGroup().addComponent(snr).addComponent(linkQuality).addComponent(dataRate).addComponent(linkDelay).addComponent(lossRatio)/*.addComponent(throughput)*/.addComponent(packetCount))
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
@@ -86,7 +86,7 @@ public class EdgeAttributePanel extends JPanel {
 				
 				.addGroup(layout.createParallelGroup().addComponent(linkDelayLabel).addComponent(linkDelay))
 				.addGroup(layout.createParallelGroup().addComponent(lossRatioLabel).addComponent(lossRatio))
-				.addGroup(layout.createParallelGroup().addComponent(throughputLabel).addComponent(throughput))
+//				.addGroup(layout.createParallelGroup().addComponent(throughputLabel).addComponent(throughput))
 				.addGroup(layout.createParallelGroup().addComponent(packetCountLabel).addComponent(packetCount))
 				.addComponent(setData)
 				
@@ -100,9 +100,14 @@ public class EdgeAttributePanel extends JPanel {
 		linkQuality.setText(edge.linkQuality + "");
 		dataRate.setText(edge.dataRate + "");
 		
-		linkDelay.setText(edge.linkDelay + " ms");
-		lossRatio.setText(edge.lossRatio * 100 + "%");
-		throughput.setText(edge.throughput + "");
-		packetCount.setText(edge.packetCount + " packets");
+		String linkDelayStr = String.format("%.3f\n", edge.linkDelay);
+		linkDelay.setText(linkDelayStr + " ms");
+		String lossRatioStr = String.format("%.3f\n", edge.lossRatio * 100);
+		lossRatio.setText(lossRatioStr + " %");
+		//EOF
+//		String throughputStr = String.format("%.3f\n", edge.throughput);
+//		throughput.setText(throughputStr + " pps"); // packets per second
+		String packetCountStr = String.format("%d\n", edge.packetCount);
+		packetCount.setText(packetCountStr + " packets");
 	}
 }

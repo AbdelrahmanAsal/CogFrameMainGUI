@@ -17,11 +17,11 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableColumn;
-
 
 import All.DrawingPanel;
 
@@ -47,9 +47,9 @@ public class VisualizeAttributePanel extends JPanel{
 		JRadioButton lossRatio = new JRadioButton("Loss Ratio");
 		lossRatio.setActionCommand("LossRatio");
 		buttons.add(lossRatio);
-		JRadioButton throughput = new JRadioButton("Throughput");
-		throughput.setActionCommand("Throughput");
-		buttons.add(throughput);
+//		JRadioButton throughput = new JRadioButton("Throughput");
+//		throughput.setActionCommand("Throughput");
+//		buttons.add(throughput);
 		JRadioButton nodalDelay = new JRadioButton("Nodal Delay");
 		nodalDelay.setActionCommand("NodalDelay");
 		buttons.add(nodalDelay);
@@ -57,9 +57,9 @@ public class VisualizeAttributePanel extends JPanel{
 		linkDelay.setActionCommand("LinkDelay");
 		buttons.add(linkDelay);
 
-		JRadioButton wirelessInterfaces = new JRadioButton("Wireless Interfaces");
-		wirelessInterfaces.setActionCommand("WirelessInterfaces");
-		buttons.add(wirelessInterfaces);
+		JRadioButton numOfSwitches = new JRadioButton("No. of switches");
+		numOfSwitches.setActionCommand("NumOfSwitches");
+		buttons.add(numOfSwitches);
 
 		JButton backward = new JButton("<<");
 		backward.addActionListener(new ActionListener() {
@@ -106,7 +106,6 @@ public class VisualizeAttributePanel extends JPanel{
 				currentSimulationTime += playerStepSize;
 				currentSimulationTime = Math.min(drawingP.maxRange, currentSimulationTime);
 				ticker.setValue((int)currentSimulationTime);
-				System.out.println("Current Simulation time: " + currentSimulationTime);
 			}
 		});
 
@@ -121,7 +120,13 @@ public class VisualizeAttributePanel extends JPanel{
 		    }
 
 			@Override
-			public void keyReleased(KeyEvent e) {}
+			public void keyReleased(KeyEvent e) {
+				try {
+					if(step.getText().length() > 0)
+			    		playerStepSize = Integer.parseInt(step.getText().trim());
+				} catch (Exception ex) {
+				}
+			}
 
 			@Override
 			public void keyTyped(KeyEvent e) {}
@@ -129,18 +134,29 @@ public class VisualizeAttributePanel extends JPanel{
 
 		JLabel seekLabel = new JLabel("Seek:");
 		final JTextField seek = new JTextField("");
+//		seek.setPreferredSize(new Dimension(getWidth()/3, 30));
 		seek.addKeyListener(new KeyListener() {
 		    public void keyPressed(KeyEvent e) {
-		    	if(e.getKeyCode() == KeyEvent.VK_ENTER) {
-			    	if(seek.getText().length() > 0) {
-			    		currentSimulationTime = Integer.parseInt(seek.getText().trim());
-			    		ticker.setValue((int)currentSimulationTime);
-			    	}
-		    	}
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					if (seek.getText().length() > 0) {
+						currentSimulationTime = Integer.parseInt(seek.getText()
+								.trim());
+						ticker.setValue((int) currentSimulationTime);
+					}
+				}
 		    }
 
 			@Override
-			public void keyReleased(KeyEvent e) {}
+			public void keyReleased(KeyEvent e) {
+				try {
+					if(seek.getText().length() > 0) {
+			    		currentSimulationTime = Integer.parseInt(seek.getText().trim());
+			    		ticker.setValue((int)currentSimulationTime);
+			    	}
+				} catch(Exception ex) {
+					
+				}
+			}
 
 			@Override
 			public void keyTyped(KeyEvent e) {}
@@ -156,13 +172,16 @@ public class VisualizeAttributePanel extends JPanel{
 				drawingP.repaint();
 			}
 		});
+		
+		JLabel expPacketsLabel = new JLabel("Experiment packets:");
 
 		packetsColorModel = new PacketsColorTableModel();
 		packetsColorTable = new JTable();
 		packetsColorTable.setModel(packetsColorModel);
-		packetsColorTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+//		packetsColorTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		packetsColorTable.setBorder(BorderFactory.createLoweredBevelBorder());
-		int[] colWidth = {235, 85};
+//		int[] colWidth = {235, 85};
+		int[] colWidth = {215, 85};
 		for (int i = 0; i < 2; i++) {
 			TableColumn tcol = packetsColorTable.getColumnModel().getColumn(i);
 			tcol.setPreferredWidth(colWidth[i]);
@@ -171,8 +190,9 @@ public class VisualizeAttributePanel extends JPanel{
 
 		JScrollPane ps = new JScrollPane(packetsColorTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		ps.setPreferredSize( new Dimension(200,250));
-
+//		ps.setPreferredSize(new Dimension(200,250));
+		ps.setPreferredSize(new Dimension(getWidth(), 350));
+		
 		GroupLayout layout = new GroupLayout(this);
 		setLayout(layout);
 
@@ -187,25 +207,27 @@ public class VisualizeAttributePanel extends JPanel{
 		layout.setHorizontalGroup(
 				layout.createParallelGroup()
 					.addComponent(lossRatio)
-					.addComponent(throughput)
+//					.addComponent(throughput)
 					.addComponent(nodalDelay)
 					.addComponent(linkDelay)
-					.addComponent(wirelessInterfaces)
+					.addComponent(numOfSwitches)
 					.addGroup(layout.createSequentialGroup().addComponent(backward).addComponent(run).addComponent(pause).addComponent(stop).addComponent(forward))
 					.addComponent(ticker)
 					.addGroup(layout.createSequentialGroup().addComponent(stepLabel).addComponent(step).addComponent(seekLabel).addComponent(seek))
+					.addComponent(expPacketsLabel)
 					.addComponent(ps)
 		);
 		layout.setVerticalGroup(
 				layout.createSequentialGroup()
 					.addComponent(lossRatio)
-					.addComponent(throughput)
+//					.addComponent(throughput)
 					.addComponent(nodalDelay)
 					.addComponent(linkDelay)
-					.addComponent(wirelessInterfaces)
+					.addComponent(numOfSwitches)
 					.addGroup(layout.createParallelGroup().addComponent(backward).addComponent(run).addComponent(pause).addComponent(stop).addComponent(forward))
 					.addComponent(ticker)
 					.addGroup(layout.createParallelGroup().addComponent(stepLabel).addComponent(step).addComponent(seekLabel).addComponent(seek))
+					.addComponent(expPacketsLabel)
 					.addComponent(ps)
 		);
 	}

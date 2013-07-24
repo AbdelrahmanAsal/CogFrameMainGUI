@@ -92,6 +92,7 @@ public class CogAgent {
 
 	public void getStatistics() {
 		try {
+			
 			PrintWriter fileWriter = new PrintWriter("Statistics_" + node.name + ".txt");
 
 			System.out.println("Getting statistics of the node");
@@ -174,7 +175,18 @@ public class CogAgent {
 			String command = "Stop";
 			out.println(command);
 			close();
-		}catch(Exception ex){
+		} catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
+	
+	public void synch() {
+		try {
+			System.out.println("Synch Experiment");
+			String command = "Synch";
+			out.println(command);
+			close();
+		} catch(Exception ex){
 			ex.printStackTrace();
 		}
 	}

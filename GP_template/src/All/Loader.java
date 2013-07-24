@@ -23,7 +23,6 @@ public class Loader {
 	public void load() {
 
 		try {
-			drawingPanel.listOfNodes.clear();
 			String fileName = JOptionPane.showInputDialog(null,
 					"Enter the saved file name");
 			InputReader r = new InputReader(new FileReader(fileName));
@@ -31,6 +30,8 @@ public class Loader {
 			ArrayList<StringPair> pairs = new ArrayList<StringPair>();
 			HashMap<String, String> srcToDestName = new HashMap<String, String>();
 
+			//faking
+//			drawingPanel.listOfNodes.clear();
 			// Number Of Nodes
 			int noOfNodes = r.nextInt();
 			boolean isPrimary;
@@ -61,7 +62,7 @@ public class Loader {
 				// Mobility & Topology
 				node.mobilityOption = r.next();
 				node.topologyOption = r.next();
-
+				
 				// WLS_HW
 				node.WLS_HW = new ArrayList<String>();
 				int wls_hw_count = r.nextInt();
@@ -74,7 +75,7 @@ public class Loader {
 				int wls_name_cnt = r.nextInt();
 				for (int j = 0; j < wls_name_cnt; j++) {
 					String wls_n = r.next();
-					node.WLS_HW.add(wls_n);
+					node.WLS_Name.add(wls_n);
 				}
 
 				// Edges

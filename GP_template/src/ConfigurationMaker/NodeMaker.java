@@ -54,7 +54,7 @@ public class NodeMaker extends TemplateMaker {
 		// ************************************ for testing only to handle N/A
 //		mac = "00:27:10:a0:f6:b4"; // mac = BROADCAST_HW;
 		String sp[] = mac.split(":");
-		
+		System.out.println(mac+"...");
 		String ret = "";
 		if (type.equals(F2addressType.A)) {
 			ret = "0/" + sp[0] + sp[1] + " 2/" + sp[2] + sp[3] + " 4/" + sp[4]
